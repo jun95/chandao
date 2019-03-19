@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>项目管理系统</title>
+    <link rel="stylesheet" type="text/css"
+          href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css"
+          href="bootstrap/css/bootstrap-table.css">
+    <link rel="stylesheet" type="text/css"
+          href="bootstrap/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" type="text/css"
+          href="bootstrap/css/jquery-ui.css">
+    <link rel="stylesheet" type="text/css"
+          href="bootstrap/css/mainPage.css">
+
+    <link rel="stylesheet" type="text/css"
+          href="css/bootstrap-treeview.min.css">
+
+</head>
+<body>
+
+<!-- 导航栏 -->
+<div id="navBar">
+    <!-- 此处加载顶部导航栏 -->
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container-fluid">
+            <!-- 导航栏标题 -->
+            <div class="navbar-header">
+                <a href="javascript:void(0)" class="navbar-brand home">项目管理系统</a>
+            </div>
+
+            <!-- 导航栏下拉菜单；用户信息与注销登陆 -->
+            <div>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle"
+                           data-toggle="dropdown"> <span class="glyphicon glyphicon-user"></span>
+                            <span>欢迎&nbsp;用户名:</span> <span id="nav_userName">游客</span>
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                                <li>
+                                    <a href="#" id="editInfo"> <span
+                                            class="glyphicon glyphicon-pencil"></span> &nbsp;&nbsp;修改个人信息</a></li>
+                            <li>
+                                <a href="javascript:void(0)" id="signOut"> <span
+                                        class="glyphicon glyphicon-off"></span> &nbsp;&nbsp;注销登录
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+
+<div class="container-fluid" style="padding-left: 0px;">
+    <div class="row">
+        <!-- 左侧导航栏 -->
+        <div id="sideBar" class="col-md-2 col-sm-3">
+            <!--  此处加载左侧导航栏 -->
+            <!-- 左侧导航栏  -->
+            <div class="panel-group" id="accordion">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a href="#collapse1" data-toggle="collapse" data-parent="#accordion"
+                               class="parentMenuTitle collapseHead">成员管理</a>
+                            <div class="pull-right">
+                                <span class="caret"></span>
+                            </div>
+                        </h4>
+                    </div>
+                    <div id="collapse1" class="panel-collapse collapse collapseBody">
+                        <div class="panel-body">
+                            <ul class="list-group">
+                                    <li class="list-group-item">
+                                        <a href="javascript:void(0)"  class="menu_item"
+                                           name="pagecomponent/member/userlist.html">成员管理</a>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <a href="javascript:void(0)" id="" class="menu_item"
+                                           name="pagecomponent/member/treedemo.html">角色管理</a>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <a href="javascript:void(0)" id=""
+                                           class="menu_item"
+                                           name="pagecomponent/stockRecordManagement.html">权限管理</a>
+                                    </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a href="#collapse2" data-toggle="collapse" data-parent="#accordion"
+                               class="parentMenuTitle collapseHead">项目管理</a>
+                            <div class="pull-right">
+                                <span class="caret"></span>
+                            </div>
+                        </h4>
+                    </div>
+                    <div id="collapse2" class="panel-collapse collapse collapseBody">
+                        <div class="panel-body">
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        <a href="javascript:void(0)" id="" class="menu_item"
+                                           name="pagecomponent/stock-inManagement.jsp">项目流程管理</a>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <a href="javascript:void(0)" id="" class="menu_item"
+                                           name="pagecomponent/stock-outManagement.jsp">人员分配</a>
+                                    </li>
+                                </ul>
+                        </div>
+                    </div>
+                </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a href="#collapse3" data-toggle="collapse" data-parent="#accordion"
+                                   class="parentMenuTitle collapseHead">需求管理</a>
+                                <div class="pull-right	">
+                                    <span class="caret"></span>
+                                </div>
+                            </h4>
+                        </div>
+                        <div id="collapse3" class="panel-collapse collapse collapseBody">
+                            <div class="panel-body">
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        <a href="javascript:void(0)" id="" class="menu_item"
+                                           name="pagecomponent/repositoryAdminManagement.jsp">需求管理</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a href="#collapse4" data-toggle="collapse" data-parent="#accordion"
+                                   class="parentMenuTitle collapseHead">测试管理</a>
+                                <div class="pull-right	">
+                                    <span class="caret"></span>
+                                </div>
+                            </h4>
+                        </div>
+                        <div id="collapse4" class="panel-collapse collapse collapseBody">
+                            <div class="panel-body">
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        <a href="javascript:void(0)" id="" class="menu_item"
+                                           name="pagecomponent/supplierManagement.jsp">测试任务管理</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a href="#collapse5" data-toggle="collapse" data-parent="#accordion"
+                                   class="parentMenuTitle collapseHead">bug管理</a>
+                                <div class="pull-right	">
+                                    <span class="caret"></span>
+                                </div>
+                            </h4>
+                        </div>
+                        <div id="collapse5" class="panel-collapse collapse collapseBody">
+                            <div class="panel-body">
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        <a href="javascript:void(0)" id="" class="menu_item"
+                                           name="pagecomponent/supplierManagement.jsp">bug管理</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a href="#collapse6" data-toggle="collapse" data-parent="#accordion"
+                               class="parentMenuTitle collapseHead">统计分析模块</a>
+                            <div class="pull-right	"><span class="caret"></span></div>
+                        </h4>
+                    </div>
+                    <div id="collapse6" class="panel-collapse collapse collapseBody">
+                        <div class="panel-body">
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    <a href="javascript:void(0)" id="" class="menu_item"
+                                       name="pagecomponent/passwordModification.jsp">项目分析</a>
+                                </li>
+                                    <li class="list-group-item">
+                                        <a href="javascript:void(0)" id=""
+                                           class="menu_item" name="pagecomponent/userOperationRecorderManagement.html">人员分析</a>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <a href="javascript:void(0)" id=""
+                                           class="menu_item" name="pagecomponent/accessRecordManagement.html">测试分析</a>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <a href="javascript:void(0)" id=""
+                                           class="menu_item" name="pagecomponent/accessRecordManagement.html">bug分析</a>
+                                    </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 面板区域 -->
+        <div id="panel" class="col-md-10 col-sm-9">
+            <!--  此处异步加载各个面板 -->
+
+            <!-- 欢迎界面 -->
+            <div class="panel panel-default">
+                <!-- 面包屑 -->
+                <ol class="breadcrumb">
+                    <li>主页</li>
+                </ol>
+
+                <div class="panel-body">
+                    <div class="row" style="margin-top: 100px; margin-bottom: 100px">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-10" style="text-align: center">
+                            <div class="col-md-4 col-sm-4">
+                                <a href="javascript:void(0)" class="thumbnail shortcut"> <!--<img
+                                        class="img-rounded link" style="width: 150px; height: 150px;">-->
+                                    <div class="caption">
+                                        <h3 class="title">项目分析</h3>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-md-4 col-sm-4">
+                                <a href="javascript:void(0)" class="thumbnail shortcut"> <!--<img
+                                        class="img-rounded link" style="width: 150px; height: 150px;">-->
+                                    <div class="caption">
+                                        <h3 class="title">测试分析</h3>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-md-4 col-sm-4">
+                                <a href="javascript:void(0)" class="thumbnail shortcut"> <!--<img
+                                        class="img-rounded link" style="width: 150px; height: 150px;">-->
+                                    <div class="caption">
+                                        <h3 class="title">bug分析</h3>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-1"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- end -->
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript"
+        src="js/jquery.min.js"></script>
+<script type="text/javascript"
+        src="bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript"
+        src="js/jquery-ui.min.js"></script>
+<script type="text/javascript"
+        src="js/bootstrap-table.min.js"></script>
+<script type="text/javascript"
+        src="js/bootstrap-table-zh-CN.min.js"></script>
+<script type="text/javascript"
+        src="js/mainPage.js"></script>
+<script type="text/javascript"
+        src="js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript"
+        src="js/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript" src="layer/layer.js"></script>
+
+<script type="text/javascript"
+        src="js/bootstrap-treeview.min.js"></script>
+
+
+<script>
+    setUserName();
+    function setUserName() {
+        $.ajax({
+            type: "POST",
+            url: "/user/getUserInfo",
+            headers: {
+                "content-Type": "application/json"
+            },
+            success: function (data) {
+                layer.closeAll();
+                if (data.code == 200) {
+                    $("#nav_userName").text(data.result.account);
+                } else {
+                    layer.msg(data.message);
+                }
+            },
+            error: function (data) {
+                layer.msg(data.responseText);
+            }
+        });
+
+        $(function() {
+            signOut();
+        });
+
+        // 注销登陆
+        function signOut() {
+            $("#signOut").click(function() {
+                $.ajax({
+                    type : "GET",
+                    url : "/logout",
+                    headers: {
+                        "content-Type": "application/json"
+                    },
+                    success:function(data){
+                        //window.location.reload(true);
+                        window.location.href = '/page/login.html'
+                    },error:function(data){
+
+                    }
+                })
+            })
+        }
+
+    }
+</script>
+</body>
+</html>

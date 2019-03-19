@@ -1,0 +1,342 @@
+<!--<%@ page language="java" contentType="text/html; charset=UTF-8"-->
+<!--pageEncoding="UTF-8"%>-->
+
+<script>
+    // 查询参数
+    search_user_id = null
+    search_user_account = null
+    search_user_nick_name = null
+    search_start_date = null
+    search_end_date = null
+
+    $(function(){
+        //datePickerInit();
+        userOperationRecordTableInit();
+        searchActionInit();
+        delActionInit();
+    })
+
+    // 日期选择器初始化
+	/*function datePickerInit(){
+		$('.form_date').datetimepicker({
+			format:'yyyy-mm-dd',
+			language : 'zh-CN',
+			endDate : new Date(),
+			weekStart : 1,
+			todayBtn : 1,
+			autoClose : 1,
+			todayHighlight : 1,
+			startView : 2,
+			forceParse : 0,
+			minView:2
+		});
+	}*/
+
+	// 表格初始化
+    /*function userOperationRecordTableInit(){
+        $('#userOperationRecordTable').bootstrapTable({
+            columns:[{
+                checkbox: true
+            },{
+                field : 'id',
+                title : '用户ID'
+            },{
+                field : 'account',
+                title : '用户名'
+            },{
+                field : 'nickname',
+                title : '用户昵称'
+            },{
+                field : 'gender',
+                title : '性别',
+                formatter: function (value, row, index) {
+                    if (value == 1) {
+                        return '男';
+                    }
+                    return '女';
+                }
+            },{
+                field : 'lastLoginTime',
+                title : '上次登录时间'
+            },{
+                field : 'operate',
+                title : '操作',
+                events:{     //为按钮添加事件
+                    "click #details":function(e,value,row,index){
+                        alert("项目名称："+row);
+                    }
+                },
+                formatter: operateFormatter //自定义方法，添加操作按钮
+            }],
+            ajax:function(request) {
+                $.ajax({
+                    url:"/user/getUserRecords",
+                    type:"POST",
+                    contentType: "application/json;charset=utf-8",
+                    data:JSON.stringify(queryParams()),
+                    success:function(data){
+                        request.success({
+                            row : data
+                        });
+                        $('#userOperationRecordTable').bootstrapTable('load', data);
+                    },
+                    error:function(error){
+                        console.log(error);
+                    }
+                })
+            },
+            sidePagination : "server",
+            pagination : true,
+            pageNumber : 1,
+            pageSize : 10,
+            pageList : [ 5, 10, 25, 50, 100 ],
+            clickToSelect : true
+        });
+    }*/
+	function userOperationRecordTableInit(){
+	    $('#userOperationRecordTable').bootstrapTable({
+	        columns:[{
+                checkbox: true
+            },{
+	            field : 'id',
+	            title : '用户ID'
+	        },{
+	            field : 'account',
+	            title : '用户名'
+	        },{
+	            field : 'nickname',
+	            title : '用户昵称'
+	        },{
+                field : 'gender',
+                title : '性别',
+                formatter: function (value, row, index) {
+                    if (value == 1) {
+                        return '男';
+                    }
+                    return '女';
+                }
+            },{
+	            field : 'lastLoginTime',
+	            title : '上次登录时间'
+	        },{
+                field : 'operate',
+                title : '操作',
+                events:{     //为按钮添加事件
+                    "click #edit":function(e,value,row,index){
+                        alert("项目名称："+value);
+                    }
+                },
+                formatter: operateFormatter //自定义方法，添加操作按钮
+            }],
+	        url : '/user/getUserRecords',
+	        method : 'GET',
+	        queryParams : queryParams,
+            sidePagination : "server",
+            dataType : 'json',
+            pagination : true,
+            pageNumber : 1,
+            pageSize : 10,
+            pageList : [ 5, 10, 25, 50, 100 ],
+            clickToSelect : false
+	    });
+	}
+
+	function operateFormatter(value, row, index) {
+	    var desc = row.deleted == 1 ? '禁用' : '启用';
+        return [
+                 /*'<a class="btn active disabled" href="#">编辑</a>',*/
+                 '<a class="btn btn-default" href="#" id="edit">编辑</a>',
+                 '<a class="btn btn-default" href="#">' + desc + '</a>'
+                 /*'<a class="btn active" href="#">准入</a>'*/
+             ].join('');
+    }
+
+	// 表格刷新
+	function tableRefresh() {
+		$('#userOperationRecordTable').bootstrapTable('refresh', {
+			query : {}
+		});
+	}
+
+	// 分页查询参数
+	function queryParams(params) {
+		var temp = {
+			limit : params.limit,
+			offset : params.offset,
+			id : search_user_id,
+            nickNameLike : search_user_nick_name,
+            accountLike : search_user_account
+			//startDate : search_start_date,
+			//endDate : search_end_date
+		}
+		return temp;
+	}
+
+    // 查询操作
+    function searchActionInit(){
+        $('#search_button').click(function(){
+            search_user_id = $('#id').val();
+            search_user_account = $('#accountLike').val();
+            search_user_nick_name = $('#nickNameLike').val();
+            //search_start_date = $('#start_date').val();
+            //search_end_date = $('#end_date').val();
+            tableRefresh();
+        })
+    }
+
+    function addMember(){
+        var account = $('#account').val(),
+            nickName = $('#nickName').val(),
+            mobile = $('#mobile').val();
+        var gender = $('input:radio[name="gender"]:checked').val();
+
+        <!--loding-->
+        var load = layer.load();
+        $.ajax({
+            type: "POST",
+            url: "/user/addMember",
+            headers: {
+                "content-Type": "application/json"
+            },
+            data: JSON.stringify({account: account, nickname: nickName,mobile:mobile,gender:gender}),
+            success: function (data) {
+                layer.close(load);
+                if (data.code == 200) {
+                    layer.msg("添加成功");
+                    $('#addmember').modal('hide');
+                    tableRefresh();
+                } else {
+                    layer.msg(data.message);
+                }
+            },
+            error: function (data) {
+                layer.msg(data.responseText);
+            }
+        });
+    }
+
+
+    function delActionInit(){
+        $('#del_button').click(function(){
+            var rows = $("#userOperationRecordTable").bootstrapTable('getSelections');
+            //console.log(rows);
+            if (rows.length == 0) {// rows 主要是为了判断是否选中，下面的else内容才是主要
+                layer.msg("请先选择要禁用的记录!");
+                return;
+            } else {
+                var arrays = new Array();// 声明一个数组
+                $(rows).each(function () {// 通过获得别选中的来进行遍历
+                    arrays.push(this.id);// cid为获得到的整条数据中的一列
+                });
+                //var idcard = arrays.join(','); // 获得要删除的id
+                //console.log(idcard);
+                console.log(arrays);
+
+                <!--loding-->
+                var load = layer.load();
+                $.ajax({
+                    type: "POST",
+                    url: "/user/removeMember",
+                    headers: {
+                        "content-Type": "application/json"
+                    },
+                    data: JSON.stringify(arrays),
+                    success: function (data) {
+                        layer.close(load);
+                        if (data.code == 200) {
+                            layer.msg("禁用成功");
+                            tableRefresh();
+                        } else {
+                            layer.msg(data.message);
+                        }
+                    },
+                    error: function (data) {
+                        layer.msg(data.responseText);
+                    }
+                });
+            }
+        })
+    }
+</script>
+
+<div class="panel panel-default">
+    <ol class="breadcrumb">
+        <li>成员管理</li>
+    </ol>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-3">
+                <form action="" class="form-inline">
+                    <div class="form-group">
+                        <label class="form-label">用户ID：</label>
+                            <input type="text" id="id" class="form-control" placeholder="指定用户ID">
+
+                        <!--<label class="form-label">用户昵称：</label>
+                        <input type="text" id="nickNameLike" class="form-control" placeholder="用户昵称" style="width:50%">
+
+                        <label class="form-label">用户名：</label>
+                        <input type="text" id="accountLike" class="form-control" placeholder="用户名" style="width:50%">-->
+                    </div>
+
+                </form>
+            </div>
+            <!--<div class="col-md-6">
+                <form action="" class="form-inline">
+                    <label class="form-label">用户昵称：</label>
+                    <input class="form-control" type="text" id="start_date" placeholder="用户昵称">
+                    <label class="form-label">&nbsp;&nbsp;用户名:&nbsp;&nbsp;</label>
+                    <input class="form-control" type="text" id="end_date" placeholder="用户名">
+                </form>
+            </div>-->
+            <div class="col-md-6">
+                <button class="btn btn-success" id="search_button">
+                    <span class="glyphicon glyphicon-search"></span> <span>查询</span>
+                </button>
+                <button id="insert_button" class="btn  btn-success" onclick="$('#addmember').modal();">新增</button>
+                <button id="del_button" class="btn  btn-danger">删除</button>
+            </div>
+        </div>
+        <div class="row" style="margin-top:25px">
+            <div class="col-md-12">
+                <table class="table table-striped" id="userOperationRecordTable"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <div class="modal fade" id="addmember" tabindex="-1" role="dialog" aria-labelledby="addmemberLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="addroleLabel">添加成员</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="boxRoleForm">
+                        <div class="form-group">
+                            <label class="control-label">成员账号:</label>
+                            <input type="text" class="form-control" name="account" id="account" placeholder="请输入成员账号"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">成员昵称:</label>
+                            <input type="text" class="form-control" id="nickName" name="nickName"  placeholder="请输入成员昵称">
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">成员手机号:</label>
+                            <input type="text" class="form-control" id="mobile" name="mobile"  placeholder="请输入成员手机号">
+                        </div>
+                        <div class="form-group">
+                            <label for="gender" class="control-label">成员性别：</label>
+                            <input type="radio" class="control-label" id="man" value="1" name="gender" checked/>男
+                            <input type="radio" class="control-label" id="women" value="2" name="gender" />女
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" onclick="addMember();" class="btn btn-primary">新增</button>
+                </div>
+            </div>
+        </div>
+    </div>

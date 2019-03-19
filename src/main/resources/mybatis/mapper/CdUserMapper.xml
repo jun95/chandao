@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.selfboot.chandao.dao.CdUserDAO">
+    <resultMap id="BaseResultMap" type="com.selfboot.chandao.domain.CdUser">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="account" property="account" jdbcType="CHAR"/>
+        <result column="password" property="password" jdbcType="CHAR"/>
+        <result column="realname" property="realname" jdbcType="VARCHAR"/>
+        <result column="nickname" property="nickname" jdbcType="CHAR"/>
+        <result column="mobile" property="mobile" jdbcType="CHAR"/>
+        <result column="gender" property="gender" jdbcType="INTEGER"/>
+        <result column="last_login_time" property="lastLoginTime" jdbcType="TIMESTAMP"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="update_id" property="updateId" jdbcType="BIGINT"/>
+        <result column="deleted" property="deleted" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, account, password, realname, nickname, mobile, gender, last_login_time, create_time, 
+    update_time, update_id, deleted
+  </sql>
+
+    <sql id="where_fragment">
+        WHERE 1 = 1
+        <if test="entity != null">
+            <if test="entity.account != null and entity.account != '' ">
+                AND account = #{entity.account,jdbcType=CHAR}
+            </if>
+            <if test="entity.password != null and entity.password != '' ">
+                AND password = #{entity.password,jdbcType=CHAR}
+            </if>
+            <if test="entity.deleted != null">
+                AND deleted = #{entity.deleted,jdbcType=INTEGER}
+            </if>
+            <if test="entity.id != null">
+                AND id = #{entity.id,jdbcType=BIGINT}
+            </if>
+        </if>
+    </sql>
+
+    <select id="selectListByCondition" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM cd_user
+        <include refid="where_fragment"/>
+    </select>
+
+    <select id="selectListWithPage" resultMap="BaseResultMap">
+        SELECT id, account, realname, nickname, mobile, gender, last_login_time, create_time,
+        update_time, update_id, deleted
+        FROM cd_user
+        <include refid="where_fragment"/>
+    </select>
+
+    <update id="updateBatch">
+        update cd_user
+        set deleted =
+        <foreach collection="list" item="item" index="index"
+                 separator=" " open="case id" close="end">
+            when #{item.id} then #{item.deleted}
+        </foreach>
+        where id in
+        <foreach collection="list" index="index" item="item"
+                 separator="," open="(" close=")">
+            #{item.id,jdbcType=BIGINT}
+        </foreach>
+    </update>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from cd_user
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from cd_user
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.selfboot.chandao.domain.CdUser">
+    insert into cd_user (id, account, password, 
+      realname, nickname, mobile, 
+      gender, last_login_time, create_time, 
+      update_time, update_id, deleted
+      )
+    values (#{id,jdbcType=BIGINT}, #{account,jdbcType=CHAR}, #{password,jdbcType=CHAR}, 
+      #{realname,jdbcType=VARCHAR}, #{nickname,jdbcType=CHAR}, #{mobile,jdbcType=CHAR}, 
+      #{gender,jdbcType=INTEGER}, #{lastLoginTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{updateId,jdbcType=BIGINT}, #{deleted,jdbcType=INTEGER}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.selfboot.chandao.domain.CdUser">
+        insert into cd_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="account != null">
+                account,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="realname != null">
+                realname,
+            </if>
+            <if test="nickname != null">
+                nickname,
+            </if>
+            <if test="mobile != null">
+                mobile,
+            </if>
+            <if test="gender != null">
+                gender,
+            </if>
+            <if test="lastLoginTime != null">
+                last_login_time,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="updateId != null">
+                update_id,
+            </if>
+            <if test="deleted != null">
+                deleted,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="account != null">
+                #{account,jdbcType=CHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=CHAR},
+            </if>
+            <if test="realname != null">
+                #{realname,jdbcType=VARCHAR},
+            </if>
+            <if test="nickname != null">
+                #{nickname,jdbcType=CHAR},
+            </if>
+            <if test="mobile != null">
+                #{mobile,jdbcType=CHAR},
+            </if>
+            <if test="gender != null">
+                #{gender,jdbcType=INTEGER},
+            </if>
+            <if test="lastLoginTime != null">
+                #{lastLoginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateId != null">
+                #{updateId,jdbcType=BIGINT},
+            </if>
+            <if test="deleted != null">
+                #{deleted,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.selfboot.chandao.domain.CdUser">
+        update cd_user
+        <set>
+            <if test="account != null">
+                account = #{account,jdbcType=CHAR},
+            </if>
+            <if test="password != null">
+                password = #{password,jdbcType=CHAR},
+            </if>
+            <if test="realname != null">
+                realname = #{realname,jdbcType=VARCHAR},
+            </if>
+            <if test="nickname != null">
+                nickname = #{nickname,jdbcType=CHAR},
+            </if>
+            <if test="mobile != null">
+                mobile = #{mobile,jdbcType=CHAR},
+            </if>
+            <if test="gender != null">
+                gender = #{gender,jdbcType=INTEGER},
+            </if>
+            <if test="lastLoginTime != null">
+                last_login_time = #{lastLoginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateId != null">
+                update_id = #{updateId,jdbcType=BIGINT},
+            </if>
+            <if test="deleted != null">
+                deleted = #{deleted,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.selfboot.chandao.domain.CdUser">
+    update cd_user
+    set account = #{account,jdbcType=CHAR},
+      password = #{password,jdbcType=CHAR},
+      realname = #{realname,jdbcType=VARCHAR},
+      nickname = #{nickname,jdbcType=CHAR},
+      mobile = #{mobile,jdbcType=CHAR},
+      gender = #{gender,jdbcType=INTEGER},
+      last_login_time = #{lastLoginTime,jdbcType=TIMESTAMP},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_id = #{updateId,jdbcType=BIGINT},
+      deleted = #{deleted,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

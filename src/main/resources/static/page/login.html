@@ -1,0 +1,107 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>登录</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <!-- jquery -->
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <!-- bootstrap -->
+    <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css"/>
+    <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+    <!-- jquery-validator -->
+    <script type="text/javascript" src="jquery-validation/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="jquery-validation/localization/messages_zh.min.js"></script>
+    <!-- layer -->
+    <script type="text/javascript" src="layer/layer.js"></script>
+    <!-- md5.js -->
+    <script type="text/javascript" src="js/md5.min.js"></script>
+    <!-- common.js -->
+    <script type="text/javascript" src="js/common.js"></script>
+
+</head>
+<body>
+
+<form name="loginForm" id="loginForm" style="width:50%; margin:0 auto">
+
+    <h2 style="text-align:center; margin-bottom: 20px">用户登录</h2>
+
+    <div class="form-group">
+        <div class="row">
+            <label class="form-label col-md-4">请输入用户名</label>
+            <div class="col-md-5">
+                <input id="account" name="account" class="form-control" type="text" placeholder="用户名" required="true"
+                       minlength="5" maxlength="11"/>
+            </div>
+            <div class="col-md-1">
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="row">
+            <label class="form-label col-md-4">请输入密码</label>
+            <div class="col-md-5">
+                <input id="password" name="password" class="form-control" type="password" placeholder="密码"
+                       required="true" minlength="5" maxlength="16"/>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-5">
+            <button class="btn btn-primary btn-block" onclick="register()">注册</button>
+        </div>
+        <div class="col-md-5">
+            <button class="btn btn-primary btn-block" type="button" onclick="login()">登录</button>
+        </div>
+
+    </div>
+
+</form>
+</body>
+<script>
+    function register() {
+        window.location.href = '/user/do_register';
+    }
+
+    function login() {
+        doLogin();
+        /*$("#loginForm").validate({
+            submitHandler: function (form) {
+                doLogin();
+            }
+        });*/
+    }
+
+    function doLogin() {
+        //g_showLoading();
+        var inputPass = $("#password").val();
+        var salt = g_passsword_salt;
+        var str = "" + salt.charAt(0) + salt.charAt(2) + inputPass + salt.charAt(5) + salt.charAt(4);
+        var account = $("#account").val();
+        var password = md5(str);
+
+        $.ajax({
+            type: "POST",
+            url: "/login",
+            headers: {
+                "content-Type": "application/json"
+            },
+            data: JSON.stringify({account: account, password: password}),
+            success: function (data) {
+                layer.closeAll();
+                if (data.code == 200) {
+                    layer.msg("成功");
+                    window.location.href="/page/mainPage.html";
+                } else {
+                    layer.msg(data.message);
+                }
+            },
+            error: function (data) {
+                layer.msg(data.responseText);
+            }
+        });
+    }
+</script>
+</html>

@@ -1,0 +1,67 @@
+<script>
+    $(function () {
+        $('#tree').treeview({
+            highlightSelected: true,    //是否高亮选中
+            enableLinks: true,//必须在节点属性给出href属性
+            multiSelect: false,    //多选
+            onNodeChecked: function (event, node) {
+
+            },
+            onNodeSelected:function(event, data) {
+                alert('a')
+            },
+            data: getTree()//节点数据
+        });
+    });
+
+    function getTree() {
+        var tree = [
+            {
+                text: "Parent 1",
+                nodes: [
+                    {
+                        text: "Child 1",
+                        nodes: [
+                            {
+                                text: "Grandchild 1"
+                            },
+                            {
+                                text: "Grandchild 2"
+                            }
+                        ]
+                    },
+                    {
+                        text: "Child 2"
+                    }
+                ]
+            },
+            {
+                text: "Parent 2"
+            },
+            {
+                text: "Parent 3"
+            },
+            {
+                text: "Parent 4"
+            },
+            {
+                text: "Parent 5"
+            }
+        ];
+
+        return tree;
+    }
+
+</script>
+
+<div class="panel panel-default">
+    <ol class="breadcrumb">
+        <li>角色管理</li>
+    </ol>
+
+    <div class="panel-body">
+
+        <div id="tree" style="width: 150px"></div>
+
+    </div>
+</div>
