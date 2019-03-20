@@ -37,9 +37,9 @@ public class UserController extends BaseController<CdUser, CdUserService> {
     }
 
     @GetMapping("getUserRecords")
-    public Map<String,Object> getUserRecords(CdUser cdUser,@RequestParam("id") String id,
-                                             @RequestParam("offset") Integer offset,
-                                             @RequestParam("limit") Integer limit) {
+    public Map<String,Object> getUserRecords(CdUser cdUser,@RequestParam(value = "id",required = false) String id,
+                                             @RequestParam(value = "offset",required = false) Integer offset,
+                                             @RequestParam(value = "limit" ,required = false) Integer limit) {
         if (!StringUtils.isBlank(id)) {
             cdUser.setId(Long.parseLong(id));
         }

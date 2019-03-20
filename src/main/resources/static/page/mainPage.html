@@ -307,6 +307,7 @@
                     $("#nav_userName").text(data.result.account);
                 } else {
                     layer.msg(data.message);
+                    window.location.href="/page/login.html";
                 }
             },
             error: function (data) {

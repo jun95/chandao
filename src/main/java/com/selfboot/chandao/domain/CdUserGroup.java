@@ -4,7 +4,8 @@ import com.selfboot.chandao.persist.BaseEntity;
 
 import java.util.Date;
 
-public class CdUserGroup extends BaseEntity {
+public class CdUserGroup extends BaseEntity{
+
     /**  */
     private Long userId;
 
@@ -12,7 +13,13 @@ public class CdUserGroup extends BaseEntity {
     private String account;
 
     /**  */
-    private Long group;
+    private Long groupId;
+
+    /**  */
+    private Long createBy;
+
+    /**  */
+    private String createName;
 
     /**  */
     private Date createTime;
@@ -33,12 +40,28 @@ public class CdUserGroup extends BaseEntity {
         this.account = account == null ? null : account.trim();
     }
 
-    public Long getGroup() {
-        return group;
+    public Long getGroupId() {
+        return groupId;
     }
 
-    public void setGroup(Long group) {
-        this.group = group;
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
+    }
+
+    public Long getCreateBy() {
+        return createBy;
+    }
+
+    public void setCreateBy(Long createBy) {
+        this.createBy = createBy;
+    }
+
+    public String getCreateName() {
+        return createName;
+    }
+
+    public void setCreateName(String createName) {
+        this.createName = createName == null ? null : createName.trim();
     }
 
     public Date getCreateTime() {

@@ -5,14 +5,45 @@
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="user_id" property="userId" jdbcType="BIGINT" />
     <result column="account" property="account" jdbcType="VARCHAR" />
-    <result column="group" property="group" jdbcType="BIGINT" />
+    <result column="group_id" property="groupId" jdbcType="BIGINT" />
+    <result column="create_by" property="createBy" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, user_id, account, group, create_time
+    id, user_id, account, group_id, create_by, create_name, create_time
   </sql>
+
+  <sql id="where_fragment">
+    WHERE 1 = 1
+    <if test="entity != null">
+      <if test="entity.id != null">
+        AND id = #{entity.id,jdbcType=BIGINT}
+      </if>
+    </if>
+  </sql>
+
+  <select id="selectListByCondition" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM cd_usergroup
+    <include refid="where_fragment"/>
+  </select>
+
+  <insert id="insertBatch">
+    insert into cd_usergroup (id, user_id, account,
+    group_id, create_by, create_name,
+    create_time)
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.id,jdbcType=BIGINT}, #{item.userId,jdbcType=BIGINT}, #{item.account,jdbcType=VARCHAR},
+      #{item.groupId,jdbcType=BIGINT}, #{item.createBy,jdbcType=BIGINT}, #{item.createName,jdbcType=VARCHAR},
+      #{item.createTime,jdbcType=TIMESTAMP})
+    </foreach>
+  </insert>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select 
+    select
     <include refid="Base_Column_List" />
     from cd_usergroup
     where id = #{id,jdbcType=BIGINT}
@@ -22,10 +53,12 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.selfboot.chandao.domain.CdUserGroup" >
-    insert into cd_usergroup (id, user_id, account, 
-      group, create_time)
-    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{account,jdbcType=VARCHAR}, 
-      #{group,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP})
+    insert into cd_usergroup (id, user_id, account,
+    group_id, create_by, create_name,
+    create_time)
+    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{account,jdbcType=VARCHAR},
+    #{groupId,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR},
+    #{createTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.selfboot.chandao.domain.CdUserGroup" >
     insert into cd_usergroup
@@ -39,8 +72,14 @@
       <if test="account != null" >
         account,
       </if>
-      <if test="group != null" >
-        group,
+      <if test="groupId != null" >
+        group_id,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="createName != null" >
+        create_name,
       </if>
       <if test="createTime != null" >
         create_time,
@@ -56,8 +95,14 @@
       <if test="account != null" >
         #{account,jdbcType=VARCHAR},
       </if>
-      <if test="group != null" >
-        #{group,jdbcType=BIGINT},
+      <if test="groupId != null" >
+        #{groupId,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
@@ -73,8 +118,14 @@
       <if test="account != null" >
         account = #{account,jdbcType=VARCHAR},
       </if>
-      <if test="group != null" >
-        group = #{group,jdbcType=BIGINT},
+      <if test="groupId != null" >
+        group_id = #{groupId,jdbcType=BIGINT},
+      </if>
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -86,7 +137,9 @@
     update cd_usergroup
     set user_id = #{userId,jdbcType=BIGINT},
       account = #{account,jdbcType=VARCHAR},
-      group = #{group,jdbcType=BIGINT},
+      group_id = #{groupId,jdbcType=BIGINT},
+      create_by = #{createBy,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
