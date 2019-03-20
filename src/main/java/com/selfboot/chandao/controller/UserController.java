@@ -7,31 +7,22 @@ import com.selfboot.chandao.domain.CdUser;
 import com.selfboot.chandao.service.CdUserService;
 import com.selfboot.chandao.util.UserUtil;
 import com.selfboot.chandao.vo.UserInfoVO;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
-
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by 87570 on 2019/3/18.
  */
 @RestController
 @RequestMapping("user")
-public class UserController {
+public class UserController extends BaseController<CdUser, CdUserService> {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
-
-    @Resource
-    private CdUserService cdUserService;
 
     @RequestMapping("getUserInfo")
     public ResponseResult<UserInfoVO> getUserName(HttpServletRequest request) {
@@ -46,23 +37,13 @@ public class UserController {
     }
 
     @GetMapping("getUserRecords")
-    public Map<String,Object> getUserRecords(CdUser cdUser,@RequestParam("id") String id) {
-        Map<String,Object> responseContent = new HashedMap();
-        long total = 0;
-        List<CdUser> rows = null;
+    public Map<String,Object> getUserRecords(CdUser cdUser,@RequestParam("id") String id,
+                                             @RequestParam("offset") Integer offset,
+                                             @RequestParam("limit") Integer limit) {
         if (!StringUtils.isBlank(id)) {
             cdUser.setId(Long.parseLong(id));
         }
-
-        Map<String, Object> queryResult = cdUserService.selectUserRecord(cdUser, 0, 10);
-        if (queryResult != null) {
-            rows = (List<CdUser>) queryResult.get("data");
-            total = (long) queryResult.get("total");
-        }
-        responseContent.put("rows", rows);
-        responseContent.put("total",total);
-
-        return responseContent;
+        return getRecords(cdUser,offset,limit);
     }
 
     @PostMapping("addMember")
@@ -70,7 +51,7 @@ public class UserController {
         ResponseResult<String> result = new ResponseResult<>();
         cdUser.setPassword("b7797cce01b4b131b433b6acf4add449");
         cdUser.setDeleted(1);
-        ServiceResult serviceResult = cdUserService.save(Collections.singletonList(cdUser));
+        ServiceResult serviceResult = targetService.save(Collections.singletonList(cdUser));
         if (serviceResult.isSuccess()) {
             result.setResponseStatus(ResponseStatus.OK);
         } else {
@@ -99,7 +80,7 @@ public class UserController {
             cdUserList.add(cdUser);
         }
 
-        ServiceResult serviceResult = cdUserService.save(cdUserList);
+        ServiceResult serviceResult = targetService.save(cdUserList);
         if (serviceResult.isSuccess()) {
             result.setResponseStatus(ResponseStatus.OK);
         } else {

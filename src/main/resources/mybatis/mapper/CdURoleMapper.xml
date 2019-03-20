@@ -9,6 +9,23 @@
   <sql id="Base_Column_List" >
     id, name, type
   </sql>
+
+  <sql id="where_fragment">
+    WHERE 1 = 1
+    <if test="entity != null">
+      <if test="entity.id != null">
+        AND id = #{entity.id,jdbcType=BIGINT}
+      </if>
+    </if>
+  </sql>
+
+  <select id="selectListByCondition" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM cd_u_role
+    <include refid="where_fragment"/>
+  </select>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />

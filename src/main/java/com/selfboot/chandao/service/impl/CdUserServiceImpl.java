@@ -5,8 +5,10 @@ import com.github.pagehelper.PageInfo;
 import com.selfboot.chandao.common.ServiceResult;
 import com.selfboot.chandao.dao.CdUserDAO;
 import com.selfboot.chandao.domain.CdUser;
+import com.selfboot.chandao.persist.BootStrapServiceImpl;
 import com.selfboot.chandao.persist.CrudService;
 import com.selfboot.chandao.service.CdUserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -16,7 +18,7 @@ import java.util.*;
  * Created by 87570 on 2019/3/18.
  */
 @Service("cdUserService")
-public class CdUserServiceImpl extends CrudService<CdUser,CdUserDAO> implements CdUserService {
+public class CdUserServiceImpl extends BootStrapServiceImpl<CdUser,CdUserDAO> implements CdUserService {
 
     @Override
     public void updateByPrimaryKeySelective(CdUser user) {
@@ -32,9 +34,7 @@ public class CdUserServiceImpl extends CrudService<CdUser,CdUserDAO> implements 
         return super.queryOne(entity);
     }
 
-
-
-    @Override
+    /*@Override
     public Map<String, Object> selectUserRecord(CdUser user, int offset, int limit) {
         // 准备结果集
         Map<String, Object> resultSet = new HashMap<>();
@@ -57,5 +57,5 @@ public class CdUserServiceImpl extends CrudService<CdUser,CdUserDAO> implements 
         resultSet.put("data", userRecordDOS);
         resultSet.put("total", total);
         return resultSet;
-    }
+    }*/
 }
