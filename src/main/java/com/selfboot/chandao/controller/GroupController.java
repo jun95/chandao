@@ -1,7 +1,7 @@
 package com.selfboot.chandao.controller;
 
-import com.selfboot.chandao.common.ResponseResult;
-import com.selfboot.chandao.common.ServiceResult;
+import com.selfboot.chandao.common.*;
+import com.selfboot.chandao.common.ResponseStatus;
 import com.selfboot.chandao.domain.CdGroup;
 import com.selfboot.chandao.domain.CdUser;
 import com.selfboot.chandao.domain.CdUserGroup;
@@ -31,12 +31,26 @@ public class GroupController extends BaseController<CdGroup, CdGroupService> {
 
     @GetMapping("getGroupRecords")
     public Map<String,Object> getGroupRecords(CdGroup cdGroup, @RequestParam(value = "id",required = false) String id,
-                                             @RequestParam(value = "offset",required = false) Integer offset,
-                                             @RequestParam(value = "limit",required = false) Integer limit) {
+                                              @RequestParam(value = "offset",required = false) Integer offset,
+                                              @RequestParam(value = "limit",required = false) Integer limit) {
         if (!StringUtils.isBlank(id)) {
             cdGroup.setId(Long.parseLong(id));
         }
         return getRecords(cdGroup,offset,limit);
+    }
+
+    @PostMapping("getGroupTotalRecord")
+    public ResponseResult<List<CdGroup>> getGroupTotalRecord() {
+        ResponseResult<List<CdGroup>> result = new ResponseResult<>();
+        ServiceResult serviceResult = targetService.queryList(null);
+        if (serviceResult.isSuccess()) {
+            result.setResult((List<CdGroup>) serviceResult.getResult());
+            result.setResponseStatus(ResponseStatus.OK);
+        } else {
+            result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+            result.setMessage((String) serviceResult.getErrorMessage().get(0));
+        }
+        return result;
     }
 
     @GetMapping("getGroupMemberRecords")

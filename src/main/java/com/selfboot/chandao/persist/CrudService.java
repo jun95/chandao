@@ -94,10 +94,6 @@ public abstract class CrudService<V extends BaseEntity,D extends CrudDAO<V>> imp
     @Override
     public ServiceResult queryList(V entity) {
         ServiceResult result = new ServiceResult();
-        if (entity == null) {
-            result.addError("入参不能为空");
-            return result;
-        }
         List<V> vs = targetDAO.selectListByCondition(entity);
         result.setResult(vs);
         return result;
