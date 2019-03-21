@@ -16,7 +16,18 @@
 
     <link rel="stylesheet" type="text/css"
           href="css/bootstrap-treeview.min.css">
-
+    <style>
+        .panel-style{
+            background-color:#f5f5f5;
+        }
+        a{
+            text-decoration:none;
+            color:#333;
+        }
+        a:hover{
+            color:#333;
+        }
+    </style>
 </head>
 <body>
 
@@ -64,16 +75,19 @@
             <!--  此处加载左侧导航栏 -->
             <!-- 左侧导航栏  -->
             <div class="panel-group" id="accordion">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4 class="panel-title">
-                            <a href="#collapse1" data-toggle="collapse" data-parent="#accordion"
-                               class="parentMenuTitle collapseHead">成员管理</a>
-                            <div class="pull-right">
-                                <span class="caret"></span>
-                            </div>
-                        </h4>
-                    </div>
+                <div class="panel panel-default panel-style">
+                    <a href="#collapse1" data-toggle="collapse" data-parent="#accordion">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <!--<a href="#collapse1" data-toggle="collapse" data-parent="#accordion"-->
+                                <!--class="parentMenuTitle collapseHead">成员管理</a>-->
+                                成员管理
+                                <div class="pull-right">
+                                    <span class="caret"></span>
+                                </div>
+                            </h4>
+                        </div>
+                    </a>
                     <div id="collapse1" class="panel-collapse collapse collapseBody">
                         <div class="panel-body">
                             <ul class="list-group">
@@ -306,6 +320,7 @@
                 if (data.code == 200) {
                     $("#nav_userName").text(data.result.account);
                 } else {
+                    console.log(data)
                     layer.msg(data.message);
                     window.location.href="/page/login.html";
                 }

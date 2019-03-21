@@ -2,22 +2,28 @@ package com.selfboot.chandao.domain;
 
 import com.selfboot.chandao.persist.BaseEntity;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 public class CdProject extends BaseEntity {
     /**  */
+    @NotNull(message = "所在项目组不能为空")
     private Long groupId;
 
     /**  */
     private String groupName;
 
     /** 项目名称 */
+    @NotBlank(message = "项目名称不能为空")
     private String name;
 
     /** 项目开始时间 */
+    @NotNull(message = "开始时间不能为空")
     private Date begin;
 
     /** 项目结束时间 */
+    @NotNull(message = "结束时间不能为空")
     private Date end;
 
     /** 项目耗时，以天为单位 */
