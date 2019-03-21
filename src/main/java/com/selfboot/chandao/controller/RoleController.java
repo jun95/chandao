@@ -7,6 +7,7 @@ import com.selfboot.chandao.service.RoleService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Collections;
 import java.util.Map;
 
@@ -18,9 +19,9 @@ import java.util.Map;
 public class RoleController extends BaseController<CdURole, RoleService> {
 
     @GetMapping("getRoleRecords")
-    public Map<String,Object> getUserRecords(CdURole cdURole, @RequestParam("id") String id,
-                                             @RequestParam("offset") Integer offset,
-                                             @RequestParam("limit") Integer limit) {
+    public Map<String,Object> getUserRecords(CdURole cdURole, @RequestParam(value = "id",required = false) String id,
+                                             @RequestParam(value = "offset",required = false) Integer offset,
+                                             @RequestParam(value = "limit",required = false) Integer limit) {
         if (!StringUtils.isBlank(id)) {
             cdURole.setId(Long.parseLong(id));
         }
@@ -28,7 +29,7 @@ public class RoleController extends BaseController<CdURole, RoleService> {
     }
 
     @PostMapping("addRole")
-    public ResponseResult<String> addRole(@RequestBody CdURole cdURole) {
+    public ResponseResult<String> addRole(@RequestBody @Valid CdURole cdURole) {
         ResponseResult<String> result = new ResponseResult<>();
         ServiceResult serviceResult = targetService.save(Collections.singletonList(cdURole));
         if (serviceResult.isSuccess()) {

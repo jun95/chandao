@@ -2,14 +2,18 @@ package com.selfboot.chandao.domain;
 
 import com.selfboot.chandao.persist.BaseEntity;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 public class CdURole extends BaseEntity implements Serializable{
 
-    /** ½ÇÉ«Ãû³Æ */
+    /** ï¿½ï¿½É«ï¿½ï¿½ï¿½ï¿½ */
+    @NotBlank
     private String name;
 
-    /** ½ÇÉ«ÀàÐÍ */
+    /** ï¿½ï¿½É«ï¿½ï¿½ï¿½ï¿½ */
+    @NotNull
     private Integer type;
 
 

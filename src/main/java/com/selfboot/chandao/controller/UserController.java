@@ -11,8 +11,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import java.util.*;
 
 /**
@@ -20,6 +23,7 @@ import java.util.*;
  */
 @RestController
 @RequestMapping("user")
+@Validated
 public class UserController extends BaseController<CdUser, CdUserService> {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -47,7 +51,7 @@ public class UserController extends BaseController<CdUser, CdUserService> {
     }
 
     @PostMapping("addMember")
-    public ResponseResult<String> addMember(@RequestBody CdUser cdUser) {
+    public ResponseResult<String> addMember(@RequestBody @Valid CdUser cdUser) {
         ResponseResult<String> result = new ResponseResult<>();
         cdUser.setPassword("b7797cce01b4b131b433b6acf4add449");
         cdUser.setDeleted(1);
@@ -63,7 +67,7 @@ public class UserController extends BaseController<CdUser, CdUserService> {
     }
 
     @PostMapping("removeMember")
-    public ResponseResult<String> removeMember(@RequestBody List<Long> ids) {
+    public ResponseResult<String> removeMember(@RequestBody @NotEmpty(message = "请选择要删除的记录") List<Long> ids) {
         ResponseResult<String> result = new ResponseResult<>();
         if (CollectionUtils.isEmpty(ids)) {
             result.setResponseStatus(ResponseStatus.ILLEGAL_ARG);

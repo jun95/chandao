@@ -1,15 +1,15 @@
 package com.selfboot.chandao.vo;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 /**
  * Created by hwj on 2019/3/15.
  */
 public class LoginVO implements Serializable {
-    @NotNull
+    @NotBlank(message = "账号不能为空")
     private String account;
-    @NotNull
+    @NotBlank(message = "密码不能为空")
     private String password;
 
     public String getAccount() {

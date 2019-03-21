@@ -1,13 +1,16 @@
 package com.selfboot.chandao.domain;
 
 import com.selfboot.chandao.persist.BaseEntity;
+import com.selfboot.chandao.validator.MobileCheck;
 
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.Date;
 
 public class CdUser extends BaseEntity implements Serializable {
 
     /** 账号 */
+    @NotBlank(message = "账号不能为空")
     private String account;
 
     /** 密码 */
@@ -20,6 +23,7 @@ public class CdUser extends BaseEntity implements Serializable {
     private String nickname;
 
     /** 手机号 */
+    @MobileCheck
     private String mobile;
 
     /** 性别,1:男；2：女 */

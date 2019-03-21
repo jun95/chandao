@@ -2,17 +2,20 @@ package com.selfboot.chandao.domain;
 
 import com.selfboot.chandao.persist.BaseEntity;
 
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 public class CdUserGroup extends BaseEntity{
 
     /**  */
+    @NotNull
     private Long userId;
 
     /**  */
     private String account;
 
     /**  */
+    @NotNull
     private Long groupId;
 
     /**  */

@@ -50,7 +50,7 @@ public class GroupController extends BaseController<CdGroup, CdGroupService> {
     }
 
     @PostMapping("addGroup")
-    public ResponseResult<String> addGroup(HttpServletRequest request, @RequestBody CdGroup cdGroup) {
+    public ResponseResult<String> addGroup(HttpServletRequest request, @RequestBody @Valid CdGroup cdGroup) {
         ResponseResult<String> result = new ResponseResult<>();
         CdUser user = UserUtil.getUser(request);
 

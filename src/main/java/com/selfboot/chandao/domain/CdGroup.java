@@ -2,11 +2,13 @@ package com.selfboot.chandao.domain;
 
 import com.selfboot.chandao.persist.BaseEntity;
 
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 public class CdGroup extends BaseEntity {
 
     /**  */
+    @NotBlank(message = "项目组名称不能为空")
     private String name;
 
     /**  */

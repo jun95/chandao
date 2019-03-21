@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.selfboot.chandao.dao.CdProjectDAO" >
+  <resultMap id="BaseResultMap" type="com.selfboot.chandao.domain.CdProject" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="group_id" property="groupId" jdbcType="BIGINT" />
+    <result column="group_name" property="groupName" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="begin" property="begin" jdbcType="DATE" />
+    <result column="end" property="end" jdbcType="DATE" />
+    <result column="days" property="days" jdbcType="SMALLINT" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="create_by" property="createBy" jdbcType="BIGINT" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="closed_by" property="closedBy" jdbcType="BIGINT" />
+    <result column="closed_name" property="closedName" jdbcType="VARCHAR" />
+    <result column="closed_date" property="closedDate" jdbcType="TIMESTAMP" />
+    <result column="canceled_by" property="canceledBy" jdbcType="BIGINT" />
+    <result column="canceled_name" property="canceledName" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="LONGVARCHAR" />
+    <result column="canceled_date" property="canceledDate" jdbcType="TIMESTAMP" />
+    <result column="deleted" property="deleted" jdbcType="INTEGER" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, group_id, group_name, name, begin, end, days, status, create_by, create_name,description,
+    create_date, closed_by, closed_name, closed_date, canceled_by, canceled_name, canceled_date, 
+    deleted
+  </sql>
+
+  <sql id="where_fragment">
+    WHERE 1 = 1
+    <if test="entity != null">
+      <if test="entity.deleted != null">
+        AND deleted = #{entity.deleted,jdbcType=INTEGER}
+      </if>
+      <if test="entity.id != null">
+        AND id = #{entity.id,jdbcType=BIGINT}
+      </if>
+    </if>
+  </sql>
+
+  <select id="selectListByCondition" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM cd_project
+    <include refid="where_fragment"/>
+  </select>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from cd_project
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from cd_project
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.selfboot.chandao.domain.CdProject" >
+    insert into cd_project (id, group_id, group_name, 
+      name, begin, end, days, 
+      status, create_by, create_name, 
+      create_date, closed_by, closed_name, 
+      closed_date, canceled_by, canceled_name, 
+      canceled_date, deleted, description
+      )
+    values (#{id,jdbcType=BIGINT}, #{groupId,jdbcType=BIGINT}, #{groupName,jdbcType=VARCHAR}, 
+      #{name,jdbcType=VARCHAR}, #{begin,jdbcType=DATE}, #{end,jdbcType=DATE}, #{days,jdbcType=SMALLINT}, 
+      #{status,jdbcType=VARCHAR}, #{createBy,jdbcType=BIGINT}, #{createName,jdbcType=VARCHAR}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{closedBy,jdbcType=BIGINT}, #{closedName,jdbcType=VARCHAR}, 
+      #{closedDate,jdbcType=TIMESTAMP}, #{canceledBy,jdbcType=BIGINT}, #{canceledName,jdbcType=VARCHAR}, 
+      #{canceledDate,jdbcType=TIMESTAMP}, #{deleted,jdbcType=INTEGER}, #{description,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.selfboot.chandao.domain.CdProject" >
+    insert into cd_project
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="groupId != null" >
+        group_id,
+      </if>
+      <if test="groupName != null" >
+        group_name,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="begin != null" >
+        begin,
+      </if>
+      <if test="end != null" >
+        end,
+      </if>
+      <if test="days != null" >
+        days,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="createBy != null" >
+        create_by,
+      </if>
+      <if test="createName != null" >
+        create_name,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="closedBy != null" >
+        closed_by,
+      </if>
+      <if test="closedName != null" >
+        closed_name,
+      </if>
+      <if test="closedDate != null" >
+        closed_date,
+      </if>
+      <if test="canceledBy != null" >
+        canceled_by,
+      </if>
+      <if test="canceledName != null" >
+        canceled_name,
+      </if>
+      <if test="canceledDate != null" >
+        canceled_date,
+      </if>
+      <if test="deleted != null" >
+        deleted,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="groupId != null" >
+        #{groupId,jdbcType=BIGINT},
+      </if>
+      <if test="groupName != null" >
+        #{groupName,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="begin != null" >
+        #{begin,jdbcType=DATE},
+      </if>
+      <if test="end != null" >
+        #{end,jdbcType=DATE},
+      </if>
+      <if test="days != null" >
+        #{days,jdbcType=SMALLINT},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="closedBy != null" >
+        #{closedBy,jdbcType=BIGINT},
+      </if>
+      <if test="closedName != null" >
+        #{closedName,jdbcType=VARCHAR},
+      </if>
+      <if test="closedDate != null" >
+        #{closedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="canceledBy != null" >
+        #{canceledBy,jdbcType=BIGINT},
+      </if>
+      <if test="canceledName != null" >
+        #{canceledName,jdbcType=VARCHAR},
+      </if>
+      <if test="canceledDate != null" >
+        #{canceledDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleted != null" >
+        #{deleted,jdbcType=INTEGER},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.selfboot.chandao.domain.CdProject" >
+    update cd_project
+    <set >
+      <if test="groupId != null" >
+        group_id = #{groupId,jdbcType=BIGINT},
+      </if>
+      <if test="groupName != null" >
+        group_name = #{groupName,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="begin != null" >
+        begin = #{begin,jdbcType=DATE},
+      </if>
+      <if test="end != null" >
+        end = #{end,jdbcType=DATE},
+      </if>
+      <if test="days != null" >
+        days = #{days,jdbcType=SMALLINT},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="closedBy != null" >
+        closed_by = #{closedBy,jdbcType=BIGINT},
+      </if>
+      <if test="closedName != null" >
+        closed_name = #{closedName,jdbcType=VARCHAR},
+      </if>
+      <if test="closedDate != null" >
+        closed_date = #{closedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="canceledBy != null" >
+        canceled_by = #{canceledBy,jdbcType=BIGINT},
+      </if>
+      <if test="canceledName != null" >
+        canceled_name = #{canceledName,jdbcType=VARCHAR},
+      </if>
+      <if test="canceledDate != null" >
+        canceled_date = #{canceledDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleted != null" >
+        deleted = #{deleted,jdbcType=INTEGER},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.selfboot.chandao.domain.CdProject" >
+    update cd_project
+    set group_id = #{groupId,jdbcType=BIGINT},
+      group_name = #{groupName,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      begin = #{begin,jdbcType=DATE},
+      end = #{end,jdbcType=DATE},
+      days = #{days,jdbcType=SMALLINT},
+      status = #{status,jdbcType=VARCHAR},
+      create_by = #{createBy,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      closed_by = #{closedBy,jdbcType=BIGINT},
+      closed_name = #{closedName,jdbcType=VARCHAR},
+      closed_date = #{closedDate,jdbcType=TIMESTAMP},
+      canceled_by = #{canceledBy,jdbcType=BIGINT},
+      canceled_name = #{canceledName,jdbcType=VARCHAR},
+      canceled_date = #{canceledDate,jdbcType=TIMESTAMP},
+      deleted = #{deleted,jdbcType=INTEGER},
+      description = #{description,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.selfboot.chandao.domain.CdProject" >
+    update cd_project
+    set group_id = #{groupId,jdbcType=BIGINT},
+      group_name = #{groupName,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      begin = #{begin,jdbcType=DATE},
+      end = #{end,jdbcType=DATE},
+      days = #{days,jdbcType=SMALLINT},
+      status = #{status,jdbcType=VARCHAR},
+      create_by = #{createBy,jdbcType=BIGINT},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      closed_by = #{closedBy,jdbcType=BIGINT},
+      closed_name = #{closedName,jdbcType=VARCHAR},
+      closed_date = #{closedDate,jdbcType=TIMESTAMP},
+      canceled_by = #{canceledBy,jdbcType=BIGINT},
+      canceled_name = #{canceledName,jdbcType=VARCHAR},
+      canceled_date = #{canceledDate,jdbcType=TIMESTAMP},
+      deleted = #{deleted,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
