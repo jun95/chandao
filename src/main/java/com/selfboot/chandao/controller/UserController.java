@@ -43,7 +43,7 @@ public class UserController extends BaseController<CdUser, CdUserService> {
         if (!StringUtils.isBlank(id)) {
             cdUser.setId(Long.parseLong(id));
         }
-        return getRecords(cdUser,offset,limit);
+        return getRecords(cdUser, offset, limit);
     }
 
     @PostMapping("addMember")

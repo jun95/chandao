@@ -20,6 +20,9 @@
       <if test="entity.id != null">
         AND id = #{entity.id,jdbcType=BIGINT}
       </if>
+      <if test="entity.groupId != null">
+        AND group_id = #{entity.groupId,jdbcType=BIGINT}
+      </if>
     </if>
   </sql>
 

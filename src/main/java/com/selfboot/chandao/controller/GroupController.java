@@ -40,11 +40,11 @@ public class GroupController extends BaseController<CdGroup, CdGroupService> {
     }
 
     @GetMapping("getGroupMemberRecords")
-    public Map<String,Object> getGroupMemberRecords(CdUserGroup cdUserGroup, @RequestParam(value = "id",required = false) String id,
+    public Map<String,Object> getGroupMemberRecords(CdUserGroup cdUserGroup, @RequestParam(value = "groupId",required = false) String groupId,
                                               @RequestParam(value = "offset",required = false) Integer offset,
                                               @RequestParam(value = "limit",required = false) Integer limit) {
-        if (!StringUtils.isBlank(id)) {
-            cdUserGroup.setId(Long.parseLong(id));
+        if (!StringUtils.isBlank(groupId)) {
+            cdUserGroup.setGroupId(Long.parseLong(groupId));
         }
         return getRecords(cdUserGroupService,cdUserGroup,offset,limit);
     }
