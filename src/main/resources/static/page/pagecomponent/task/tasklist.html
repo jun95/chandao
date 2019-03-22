@@ -1,0 +1,368 @@
+<script type="text/javascript" src="/page/js/common.js"></script>
+<script>
+    // 查询参数
+    search_id = null;
+    project_name_like = null;
+    status_like = null;
+
+    $(function(){
+        datePickerInit();
+        userOperationRecordTableInit();
+        searchActionInit();
+        insertActionInit();
+    });
+
+    // 日期选择器初始化
+    function datePickerInit(){
+         $('.form_date').datetimepicker({
+             format:'yyyy-mm-dd',
+             language : 'zh-CN',
+             startDate : new Date(),
+             //endDate : new Date(),
+             weekStart : 1,
+             todayBtn : 1,
+             autoClose : 1,
+             todayHighlight : 1,
+             startView : 2,
+             forceParse : 0,
+             minView:2
+        });
+     }
+
+	function userOperationRecordTableInit(){
+	    $('#userOperationRecordTable').bootstrapTable({
+	        columns:[{
+	            field : 'name',
+	            title : '任务名称'
+	        },{
+	            field : 'groupName',
+	            title : '所在项目组'
+	        },{
+                field : 'begin',
+                title : '开始时间',
+                formatter: function (value, row, index) {
+                    if (row.begin != null) {
+                        return new Date(row.begin).format('yyyy-MM-dd');
+                    }
+                    return null;
+                }
+            },{
+                field : 'end',
+                title : '结束时间',
+                formatter: function (value, row, index) {
+                    if (row.end != null) {
+                        return new Date(row.end).format('yyyy-MM-dd');
+                    }
+                    return null;
+                }
+            },{
+                field : 'days',
+                title : '耗时(天)'
+            },{
+                field : 'status',
+                title : '状态',
+                formatter: function (value, row, index) {
+                    var s = row.status;
+                    if (s == 'wait') {
+                        return '待开始';
+                    } else if (s == 'done') {
+                        return '已关闭';
+                    } else if (s == 'doing') {
+                        return '进行中';
+                    }else if (s == 'finished') {
+                        return '已完成';
+                    }
+                }
+            },{
+                field : 'description',
+                title : '描述'
+            },{
+                field : 'createDate',
+                title : '创建时间',
+                formatter: function (value, row, index) {
+                    if (row.createDate != null) {
+                        return new Date(row.createDate).format('yyyy-MM-dd hh:mm:ss');
+                    }
+                    return null;
+                }
+            },{
+                field : 'createName',
+                title : '创建者'
+            },{
+                field : 'closedName',
+                title : '关闭者'
+            },{
+                field : 'canceledName',
+                title : '取消者'
+            },{
+                field : 'operate',
+                title : '操作',
+                events:{     //为按钮添加事件
+                    "click #edit":function(e,value,row,index){
+                        alert("项目名称："+value);
+                    },
+                    "click #tostart":function(e,value,row,index){
+                        toStart(row.id,row.status);
+                    }
+                },
+                formatter: operateFormatter //自定义方法，添加操作按钮
+            }],
+	        url : '/task/getTaskRecords',
+	        method : 'GET',
+	        queryParams : queryParams,
+            sidePagination : "server",
+            dataType : 'json',
+            pagination : true,
+            pageNumber : 1,
+            pageSize : 10,
+            pageList : [ 5, 10, 25, 50, 100 ],
+            clickToSelect : false
+	    });
+	}
+
+	function toStart(projectId,status) {
+        var s = status == 'wait' ? 'doing' : status == 'doing' ? 'done' : null;
+        if (s == null) {
+            return;
+        }
+        var entity = {};
+        entity.id = projectId;
+        entity.status = s;
+
+        <!--loding-->
+        var load = layer.load();
+        $.ajax({
+            type: "POST",
+            url: "/project/updateStatus",
+            headers: {
+                "content-Type": "application/json"
+            },
+            data: JSON.stringify(entity),
+            success: function (data) {
+                layer.close(load);
+                if (data.code == 200) {
+                    layer.msg("状态变更成功");
+                    tableRefresh();
+                } else {
+                    layer.msg(data.message);
+                }
+            },
+            error: function (data) {
+                layer.msg(data.responseText);
+            }
+        });
+    }
+
+	function operateFormatter(value, row, index) {
+        var s = row.status;
+        var desc = s == 'wait' ? '开始' : s == 'doing' ? '关闭' : null;
+        if (desc != null) {
+            return [
+                '<a class="btn btn-default" href="#" id="tostart">'+ desc +'</a>',
+                '<a class="btn btn-default" href="#" id="edit">编辑</a>'
+            ].join('');
+        }
+        return [
+                 '<a class="btn btn-default" href="#" id="edit">编辑</a>'
+             ].join('');
+    }
+
+	// 表格刷新
+	function tableRefresh() {
+		$('#userOperationRecordTable').bootstrapTable('refresh', {
+			query : {}
+		});
+	}
+
+	// 分页查询参数
+	function queryParams(params) {
+		var temp = {
+			limit : params.limit,
+			offset : params.offset,
+			id : search_id,
+            projectNameLike : project_name_like,
+            status : status_like
+		};
+		return temp;
+	}
+
+    // 查询操作
+    function searchActionInit(){
+        $('#search_button').click(function(){
+            search_id = $('#id').val();
+            project_name_like = $('#projectNameLike').val();
+            status_like = $('#status').val() == 'all' ? '' : $('#status').val();
+            tableRefresh();
+        })
+    }
+
+    function addMember(){
+
+        var entity = {};
+        entity.name = $('#name').val();
+        entity.begin = $('#begin').val();
+        entity.description = $('#description').val();
+        entity.end = $('#end').val();
+
+        var select = $('#group_type');
+        entity.groupName = select.find("option:selected").text();
+        entity.groupId = parseInt(select.val());
+
+        <!--loding-->
+        var load = layer.load();
+        $.ajax({
+            type: "POST",
+            url: "/project/addProject",
+            headers: {
+                "content-Type": "application/json"
+            },
+            data: JSON.stringify(entity),
+            success: function (data) {
+                layer.close(load);
+                if (data.code == 200) {
+                    layer.msg("添加成功");
+                    $('#addmember').modal('hide');
+                    tableRefresh();
+                } else {
+                    layer.msg(data.message);
+                }
+            },
+            error: function (data) {
+                layer.msg(data.responseText);
+            }
+        });
+    }
+
+    function insertActionInit() {
+        $('#insert_button').click(function(){
+            initGroup();
+
+            $('#name').val('');
+            $('#begin').val('');
+            $('#end').val('');
+            $('#description').val('');
+            $('#addmember').modal();
+        });
+    }
+
+    function initGroup() {
+        $.ajax({
+            type: "POST",
+            url: "/group/getGroupTotalRecord",
+            headers: {
+                "content-Type": "application/json"
+            },
+            success: function (data) {
+                if (data.code == 200) {
+                    fillingGroup(data.result);
+                } else {
+                    layer.msg(data.message);
+                }
+            },
+            error: function (data) {
+                layer.msg(data.responseText);
+            }
+        });
+    }
+
+    function fillingGroup(result) {
+        var select = $('#group_type');
+        var options = '';
+        for (var i = 0; i < result.length; i++) {
+            options += '<option value="' + result[i].id + '">' + result[i].name + '</option>';
+        }
+        select.html(options);
+    }
+</script>
+
+<div class="panel panel-default">
+    <ol class="breadcrumb">
+        <li>项目流程管理</li>
+    </ol>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-3">
+                <form action="" class="form-inline">
+                <div class="form-group">
+
+                    <label class="form-label">项目名：</label>
+                    <input type="text" id="projectNameLike" class="form-control" placeholder="项目名" style="width:50%">
+
+                </div>
+
+                </form>
+            </div>
+
+            <div class="col-md-3">
+                <form action="" class="form-inline">
+                    <div class="form-group">
+                        <label class="form-label">状态：</label>
+                        <select name="" id="status" class="form-control">
+                            <option value="all">所有状态</option>
+                            <option value="wait">待开始</option>
+                            <option value="doing">进行中</option>
+                            <option value="done">已关闭</option>
+                        </select>
+                    </div>
+
+                </form>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-success" id="search_button">
+                    <span class="glyphicon glyphicon-search"></span> <span>查询</span>
+                </button>
+                <button id="insert_button" class="btn  btn-success">新增</button>
+                <!--<button id="del_button" class="btn  btn-danger">禁用</button>-->
+            </div>
+        </div>
+        <div class="row" style="margin-top:25px">
+            <div class="col-md-12">
+                <table class="table table-striped" id="userOperationRecordTable"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <div class="modal fade" id="addmember" tabindex="-1" role="dialog" aria-labelledby="addmemberLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="addroleLabel">创建项目</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="boxRoleForm">
+                        <div class="form-group">
+                            <label class="control-label">项目名称:</label>
+                            <input type="text" class="form-control" name="name" id="name" placeholder="请输入项目名称"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">所在项目组:</label>
+                            <select name="" id="group_type" class="form-control">
+                                <!--<option value="all">显示所有</option>
+                                <option value="stockInOnly">仅显示入库记录</option>
+                                <option value="stockOutOnly">仅显示出库记录</option>-->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">项目开始时间:</label>
+                            <input class="form_date form-control" value="" id="begin" name="begin" placeholder="请输入项目开始时间">
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">项目结束时间:</label>
+                            <input class="form_date form-control" value="" id="end" name="end" placeholder="请输入项目开始时间">
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">项目描述:</label>
+                            <input type="text" class="form-control" id="description" name="description"  placeholder="请输入项目描述">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" onclick="addMember();" class="btn btn-primary" data-dismiss="modal">新增</button>
+                </div>
+            </div>
+        </div>
+    </div>

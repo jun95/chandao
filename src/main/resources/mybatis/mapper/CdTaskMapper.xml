@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.selfboot.chandao.dao.CdTaskDAO" >
+  <resultMap id="BaseResultMap" type="com.selfboot.chandao.domain.CdTask" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="parent" property="parent" jdbcType="BIGINT" />
+    <result column="requirement_id" property="requirementId" jdbcType="BIGINT" />
+    <result column="requirement_name" property="requirementName" jdbcType="VARCHAR" />
+    <result column="project_id" property="projectId" jdbcType="BIGINT" />
+    <result column="project_name" property="projectName" jdbcType="VARCHAR" />
+    <result column="from_bug" property="fromBug" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="pri" property="pri" jdbcType="TINYINT" />
+    <result column="estimate" property="estimate" jdbcType="REAL" />
+    <result column="consumed" property="consumed" jdbcType="REAL" />
+    <result column="status" property="status" jdbcType="CHAR" />
+    <result column="opened_by" property="openedBy" jdbcType="BIGINT" />
+    <result column="opened_name" property="openedName" jdbcType="VARCHAR" />
+    <result column="opened_date" property="openedDate" jdbcType="TIMESTAMP" />
+    <result column="assigned_by" property="assignedBy" jdbcType="BIGINT" />
+    <result column="assigned_by_name" property="assignedByName" jdbcType="BIGINT" />
+    <result column="assigned_date" property="assignedDate" jdbcType="TIMESTAMP" />
+    <result column="finished_by" property="finishedBy" jdbcType="BIGINT" />
+    <result column="finished_name" property="finishedName" jdbcType="VARCHAR" />
+    <result column="finished_date" property="finishedDate" jdbcType="TIMESTAMP" />
+    <result column="closed_by" property="closedBy" jdbcType="BIGINT" />
+    <result column="closed_name" property="closedName" jdbcType="VARCHAR" />
+    <result column="closed_date" property="closedDate" jdbcType="TIMESTAMP" />
+    <result column="canceled_by" property="canceledBy" jdbcType="BIGINT" />
+    <result column="canceled_name" property="canceledName" jdbcType="VARCHAR" />
+    <result column="canceled_date" property="canceledDate" jdbcType="TIMESTAMP" />
+    <result column="closed_reason" property="closedReason" jdbcType="VARCHAR" />
+    <result column="last_edited_by" property="lastEditedBy" jdbcType="BIGINT" />
+    <result column="last_edited_name" property="lastEditedName" jdbcType="VARCHAR" />
+    <result column="last_edited_date" property="lastEditedDate" jdbcType="TIMESTAMP" />
+    <result column="deleted" property="deleted" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.selfboot.chandao.domain.CdTask" extends="BaseResultMap" >
+    <result column="description" property="description" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, parent, requirement_id, requirement_name, project_id, project_name, from_bug, 
+    name, type, pri, estimate, consumed, status, opened_by, opened_name, opened_date, 
+    assigned_by, assigned_by_name, assigned_date, finished_by, finished_name, finished_date, 
+    closed_by, closed_name, closed_date, canceled_by, canceled_name, canceled_date, closed_reason, 
+    last_edited_by, last_edited_name, last_edited_date, deleted
+  </sql>
+  <sql id="Blob_Column_List" >
+    description
+  </sql>
+
+  <sql id="where_fragment">
+    WHERE 1 = 1
+    <if test="entity != null">
+      <if test="entity.projectNameLike != null and entity.projectNameLike != '' ">
+        AND name like CONCAT('%',#{entity.projectNameLike,jdbcType=CHAR},'%')
+      </if>
+      <if test="entity.status != null and entity.status != '' ">
+        AND status = #{entity.status,jdbcType=INTEGER}
+      </if>
+      <if test="entity.id != null">
+        AND id = #{entity.id,jdbcType=BIGINT}
+      </if>
+      <if test="entity.deleted != null">
+        AND deleted = #{entity.deleted,jdbcType=INTEGER}
+      </if>
+    </if>
+  </sql>
+
+  <select id="selectListByCondition" resultMap="ResultMapWithBLOBs">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM cd_task
+    <include refid="where_fragment"/>
+  </select>
+
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from cd_task
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from cd_task
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.selfboot.chandao.domain.CdTask" >
+    insert into cd_task (id, parent, requirement_id, 
+      requirement_name, project_id, project_name, 
+      from_bug, name, type, 
+      pri, estimate, consumed, 
+      status, opened_by, opened_name, 
+      opened_date, assigned_by, assigned_by_name, 
+      assigned_date, finished_by, finished_name, 
+      finished_date, closed_by, closed_name, 
+      closed_date, canceled_by, canceled_name, 
+      canceled_date, closed_reason, last_edited_by, 
+      last_edited_name, last_edited_date, deleted, 
+      description)
+    values (#{id,jdbcType=BIGINT}, #{parent,jdbcType=BIGINT}, #{requirementId,jdbcType=BIGINT}, 
+      #{requirementName,jdbcType=VARCHAR}, #{projectId,jdbcType=BIGINT}, #{projectName,jdbcType=VARCHAR}, 
+      #{fromBug,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, 
+      #{pri,jdbcType=TINYINT}, #{estimate,jdbcType=REAL}, #{consumed,jdbcType=REAL}, 
+      #{status,jdbcType=CHAR}, #{openedBy,jdbcType=BIGINT}, #{openedName,jdbcType=VARCHAR}, 
+      #{openedDate,jdbcType=TIMESTAMP}, #{assignedBy,jdbcType=BIGINT}, #{assignedByName,jdbcType=BIGINT}, 
+      #{assignedDate,jdbcType=TIMESTAMP}, #{finishedBy,jdbcType=BIGINT}, #{finishedName,jdbcType=VARCHAR}, 
+      #{finishedDate,jdbcType=TIMESTAMP}, #{closedBy,jdbcType=BIGINT}, #{closedName,jdbcType=VARCHAR}, 
+      #{closedDate,jdbcType=TIMESTAMP}, #{canceledBy,jdbcType=BIGINT}, #{canceledName,jdbcType=VARCHAR}, 
+      #{canceledDate,jdbcType=TIMESTAMP}, #{closedReason,jdbcType=VARCHAR}, #{lastEditedBy,jdbcType=BIGINT}, 
+      #{lastEditedName,jdbcType=VARCHAR}, #{lastEditedDate,jdbcType=TIMESTAMP}, #{deleted,jdbcType=INTEGER}, 
+      #{description,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.selfboot.chandao.domain.CdTask" >
+    insert into cd_task
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="parent != null" >
+        parent,
+      </if>
+      <if test="requirementId != null" >
+        requirement_id,
+      </if>
+      <if test="requirementName != null" >
+        requirement_name,
+      </if>
+      <if test="projectId != null" >
+        project_id,
+      </if>
+      <if test="projectName != null" >
+        project_name,
+      </if>
+      <if test="fromBug != null" >
+        from_bug,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="pri != null" >
+        pri,
+      </if>
+      <if test="estimate != null" >
+        estimate,
+      </if>
+      <if test="consumed != null" >
+        consumed,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="openedBy != null" >
+        opened_by,
+      </if>
+      <if test="openedName != null" >
+        opened_name,
+      </if>
+      <if test="openedDate != null" >
+        opened_date,
+      </if>
+      <if test="assignedBy != null" >
+        assigned_by,
+      </if>
+      <if test="assignedByName != null" >
+        assigned_by_name,
+      </if>
+      <if test="assignedDate != null" >
+        assigned_date,
+      </if>
+      <if test="finishedBy != null" >
+        finished_by,
+      </if>
+      <if test="finishedName != null" >
+        finished_name,
+      </if>
+      <if test="finishedDate != null" >
+        finished_date,
+      </if>
+      <if test="closedBy != null" >
+        closed_by,
+      </if>
+      <if test="closedName != null" >
+        closed_name,
+      </if>
+      <if test="closedDate != null" >
+        closed_date,
+      </if>
+      <if test="canceledBy != null" >
+        canceled_by,
+      </if>
+      <if test="canceledName != null" >
+        canceled_name,
+      </if>
+      <if test="canceledDate != null" >
+        canceled_date,
+      </if>
+      <if test="closedReason != null" >
+        closed_reason,
+      </if>
+      <if test="lastEditedBy != null" >
+        last_edited_by,
+      </if>
+      <if test="lastEditedName != null" >
+        last_edited_name,
+      </if>
+      <if test="lastEditedDate != null" >
+        last_edited_date,
+      </if>
+      <if test="deleted != null" >
+        deleted,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="parent != null" >
+        #{parent,jdbcType=BIGINT},
+      </if>
+      <if test="requirementId != null" >
+        #{requirementId,jdbcType=BIGINT},
+      </if>
+      <if test="requirementName != null" >
+        #{requirementName,jdbcType=VARCHAR},
+      </if>
+      <if test="projectId != null" >
+        #{projectId,jdbcType=BIGINT},
+      </if>
+      <if test="projectName != null" >
+        #{projectName,jdbcType=VARCHAR},
+      </if>
+      <if test="fromBug != null" >
+        #{fromBug,jdbcType=BIGINT},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="pri != null" >
+        #{pri,jdbcType=TINYINT},
+      </if>
+      <if test="estimate != null" >
+        #{estimate,jdbcType=REAL},
+      </if>
+      <if test="consumed != null" >
+        #{consumed,jdbcType=REAL},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=CHAR},
+      </if>
+      <if test="openedBy != null" >
+        #{openedBy,jdbcType=BIGINT},
+      </if>
+      <if test="openedName != null" >
+        #{openedName,jdbcType=VARCHAR},
+      </if>
+      <if test="openedDate != null" >
+        #{openedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="assignedBy != null" >
+        #{assignedBy,jdbcType=BIGINT},
+      </if>
+      <if test="assignedByName != null" >
+        #{assignedByName,jdbcType=BIGINT},
+      </if>
+      <if test="assignedDate != null" >
+        #{assignedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="finishedBy != null" >
+        #{finishedBy,jdbcType=BIGINT},
+      </if>
+      <if test="finishedName != null" >
+        #{finishedName,jdbcType=VARCHAR},
+      </if>
+      <if test="finishedDate != null" >
+        #{finishedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="closedBy != null" >
+        #{closedBy,jdbcType=BIGINT},
+      </if>
+      <if test="closedName != null" >
+        #{closedName,jdbcType=VARCHAR},
+      </if>
+      <if test="closedDate != null" >
+        #{closedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="canceledBy != null" >
+        #{canceledBy,jdbcType=BIGINT},
+      </if>
+      <if test="canceledName != null" >
+        #{canceledName,jdbcType=VARCHAR},
+      </if>
+      <if test="canceledDate != null" >
+        #{canceledDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="closedReason != null" >
+        #{closedReason,jdbcType=VARCHAR},
+      </if>
+      <if test="lastEditedBy != null" >
+        #{lastEditedBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastEditedName != null" >
+        #{lastEditedName,jdbcType=VARCHAR},
+      </if>
+      <if test="lastEditedDate != null" >
+        #{lastEditedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleted != null" >
+        #{deleted,jdbcType=INTEGER},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.selfboot.chandao.domain.CdTask" >
+    update cd_task
+    <set >
+      <if test="parent != null" >
+        parent = #{parent,jdbcType=BIGINT},
+      </if>
+      <if test="requirementId != null" >
+        requirement_id = #{requirementId,jdbcType=BIGINT},
+      </if>
+      <if test="requirementName != null" >
+        requirement_name = #{requirementName,jdbcType=VARCHAR},
+      </if>
+      <if test="projectId != null" >
+        project_id = #{projectId,jdbcType=BIGINT},
+      </if>
+      <if test="projectName != null" >
+        project_name = #{projectName,jdbcType=VARCHAR},
+      </if>
+      <if test="fromBug != null" >
+        from_bug = #{fromBug,jdbcType=BIGINT},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="pri != null" >
+        pri = #{pri,jdbcType=TINYINT},
+      </if>
+      <if test="estimate != null" >
+        estimate = #{estimate,jdbcType=REAL},
+      </if>
+      <if test="consumed != null" >
+        consumed = #{consumed,jdbcType=REAL},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=CHAR},
+      </if>
+      <if test="openedBy != null" >
+        opened_by = #{openedBy,jdbcType=BIGINT},
+      </if>
+      <if test="openedName != null" >
+        opened_name = #{openedName,jdbcType=VARCHAR},
+      </if>
+      <if test="openedDate != null" >
+        opened_date = #{openedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="assignedBy != null" >
+        assigned_by = #{assignedBy,jdbcType=BIGINT},
+      </if>
+      <if test="assignedByName != null" >
+        assigned_by_name = #{assignedByName,jdbcType=BIGINT},
+      </if>
+      <if test="assignedDate != null" >
+        assigned_date = #{assignedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="finishedBy != null" >
+        finished_by = #{finishedBy,jdbcType=BIGINT},
+      </if>
+      <if test="finishedName != null" >
+        finished_name = #{finishedName,jdbcType=VARCHAR},
+      </if>
+      <if test="finishedDate != null" >
+        finished_date = #{finishedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="closedBy != null" >
+        closed_by = #{closedBy,jdbcType=BIGINT},
+      </if>
+      <if test="closedName != null" >
+        closed_name = #{closedName,jdbcType=VARCHAR},
+      </if>
+      <if test="closedDate != null" >
+        closed_date = #{closedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="canceledBy != null" >
+        canceled_by = #{canceledBy,jdbcType=BIGINT},
+      </if>
+      <if test="canceledName != null" >
+        canceled_name = #{canceledName,jdbcType=VARCHAR},
+      </if>
+      <if test="canceledDate != null" >
+        canceled_date = #{canceledDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="closedReason != null" >
+        closed_reason = #{closedReason,jdbcType=VARCHAR},
+      </if>
+      <if test="lastEditedBy != null" >
+        last_edited_by = #{lastEditedBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastEditedName != null" >
+        last_edited_name = #{lastEditedName,jdbcType=VARCHAR},
+      </if>
+      <if test="lastEditedDate != null" >
+        last_edited_date = #{lastEditedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleted != null" >
+        deleted = #{deleted,jdbcType=INTEGER},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.selfboot.chandao.domain.CdTask" >
+    update cd_task
+    set parent = #{parent,jdbcType=BIGINT},
+      requirement_id = #{requirementId,jdbcType=BIGINT},
+      requirement_name = #{requirementName,jdbcType=VARCHAR},
+      project_id = #{projectId,jdbcType=BIGINT},
+      project_name = #{projectName,jdbcType=VARCHAR},
+      from_bug = #{fromBug,jdbcType=BIGINT},
+      name = #{name,jdbcType=VARCHAR},
+      type = #{type,jdbcType=INTEGER},
+      pri = #{pri,jdbcType=TINYINT},
+      estimate = #{estimate,jdbcType=REAL},
+      consumed = #{consumed,jdbcType=REAL},
+      status = #{status,jdbcType=CHAR},
+      opened_by = #{openedBy,jdbcType=BIGINT},
+      opened_name = #{openedName,jdbcType=VARCHAR},
+      opened_date = #{openedDate,jdbcType=TIMESTAMP},
+      assigned_by = #{assignedBy,jdbcType=BIGINT},
+      assigned_by_name = #{assignedByName,jdbcType=BIGINT},
+      assigned_date = #{assignedDate,jdbcType=TIMESTAMP},
+      finished_by = #{finishedBy,jdbcType=BIGINT},
+      finished_name = #{finishedName,jdbcType=VARCHAR},
+      finished_date = #{finishedDate,jdbcType=TIMESTAMP},
+      closed_by = #{closedBy,jdbcType=BIGINT},
+      closed_name = #{closedName,jdbcType=VARCHAR},
+      closed_date = #{closedDate,jdbcType=TIMESTAMP},
+      canceled_by = #{canceledBy,jdbcType=BIGINT},
+      canceled_name = #{canceledName,jdbcType=VARCHAR},
+      canceled_date = #{canceledDate,jdbcType=TIMESTAMP},
+      closed_reason = #{closedReason,jdbcType=VARCHAR},
+      last_edited_by = #{lastEditedBy,jdbcType=BIGINT},
+      last_edited_name = #{lastEditedName,jdbcType=VARCHAR},
+      last_edited_date = #{lastEditedDate,jdbcType=TIMESTAMP},
+      deleted = #{deleted,jdbcType=INTEGER},
+      description = #{description,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.selfboot.chandao.domain.CdTask" >
+    update cd_task
+    set parent = #{parent,jdbcType=BIGINT},
+      requirement_id = #{requirementId,jdbcType=BIGINT},
+      requirement_name = #{requirementName,jdbcType=VARCHAR},
+      project_id = #{projectId,jdbcType=BIGINT},
+      project_name = #{projectName,jdbcType=VARCHAR},
+      from_bug = #{fromBug,jdbcType=BIGINT},
+      name = #{name,jdbcType=VARCHAR},
+      type = #{type,jdbcType=INTEGER},
+      pri = #{pri,jdbcType=TINYINT},
+      estimate = #{estimate,jdbcType=REAL},
+      consumed = #{consumed,jdbcType=REAL},
+      status = #{status,jdbcType=CHAR},
+      opened_by = #{openedBy,jdbcType=BIGINT},
+      opened_name = #{openedName,jdbcType=VARCHAR},
+      opened_date = #{openedDate,jdbcType=TIMESTAMP},
+      assigned_by = #{assignedBy,jdbcType=BIGINT},
+      assigned_by_name = #{assignedByName,jdbcType=BIGINT},
+      assigned_date = #{assignedDate,jdbcType=TIMESTAMP},
+      finished_by = #{finishedBy,jdbcType=BIGINT},
+      finished_name = #{finishedName,jdbcType=VARCHAR},
+      finished_date = #{finishedDate,jdbcType=TIMESTAMP},
+      closed_by = #{closedBy,jdbcType=BIGINT},
+      closed_name = #{closedName,jdbcType=VARCHAR},
+      closed_date = #{closedDate,jdbcType=TIMESTAMP},
+      canceled_by = #{canceledBy,jdbcType=BIGINT},
+      canceled_name = #{canceledName,jdbcType=VARCHAR},
+      canceled_date = #{canceledDate,jdbcType=TIMESTAMP},
+      closed_reason = #{closedReason,jdbcType=VARCHAR},
+      last_edited_by = #{lastEditedBy,jdbcType=BIGINT},
+      last_edited_name = #{lastEditedName,jdbcType=VARCHAR},
+      last_edited_date = #{lastEditedDate,jdbcType=TIMESTAMP},
+      deleted = #{deleted,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
