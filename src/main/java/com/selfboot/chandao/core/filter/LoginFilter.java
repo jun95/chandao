@@ -1,5 +1,8 @@
 package com.selfboot.chandao.core.filter;
 
+import com.alibaba.fastjson.JSON;
+import com.selfboot.chandao.common.ResponseResult;
+import com.selfboot.chandao.common.ResponseStatus;
 import com.selfboot.chandao.config.constant.FilterURL;
 import com.selfboot.chandao.domain.CdUser;
 import com.selfboot.chandao.util.HttpUtil;
@@ -35,7 +38,10 @@ public class LoginFilter extends AccessControlFilter {
             String requestURI = httpServletRequest.getRequestURI();
 
             if (!checkIsAccess(requestURI)) {
-                HttpUtil.writeJson(response,"当前用户没有登录!");
+                ResponseResult<String> result = new ResponseResult<>(ResponseStatus.ERROR);
+                result.setMessage("当前用户没有登录");
+                //HttpUtil.writeJson(response,"当前用户没有登录!");
+                HttpUtil.writeJson(response, JSON.toJSONString(result));
                 return Boolean.FALSE;
             }
         }

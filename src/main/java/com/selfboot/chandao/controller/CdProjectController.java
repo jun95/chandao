@@ -9,6 +9,7 @@ import com.selfboot.chandao.domain.CdUser;
 import com.selfboot.chandao.service.CdProjectService;
 import com.selfboot.chandao.util.DateUtil;
 import com.selfboot.chandao.util.UserUtil;
+import com.selfboot.chandao.vo.ProjectVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,6 +37,45 @@ public class CdProjectController extends BaseController<CdProject, CdProjectServ
         }
         return getRecords(cdProject, offset, limit);
     }
+
+    @PostMapping("getProjectTotalRecord")
+    public ResponseResult<List<CdProject>> getGroupTotalRecord() {
+        ResponseResult<List<CdProject>> result = new ResponseResult<>();
+        List<CdProject> list = targetService.selectUnCloseProject(null);
+        result.setResult(list);
+        result.setResponseStatus(ResponseStatus.OK);
+        return result;
+    }
+
+    @PostMapping("updateStatus")
+    public ResponseResult<String> updateStatus(HttpServletRequest request,@RequestBody @Valid ProjectVO projectVO) {
+        ResponseResult<String> result = new ResponseResult<>();
+        CdProject cdProject = new CdProject();
+        cdProject.setId(projectVO.getId());
+        ServiceResult serviceResult = targetService.queryOne(cdProject);
+        if (serviceResult.isSuccess()) {
+            cdProject = (CdProject) serviceResult.getResult();
+            if (cdProject != null) {
+                cdProject.setStatus(projectVO.getStatus());
+                cdProject.setUpdate(true);
+
+                serviceResult = targetService.save(Collections.singletonList(cdProject));
+                if (serviceResult.isSuccess()) {
+                    result.setResponseStatus(ResponseStatus.OK);
+                    return result;
+                }
+                result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+            } else {
+                result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+                result.setMessage("项目不存在");
+            }
+        } else {
+            result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+            result.setMessage((String) serviceResult.getErrorMessage().get(0));
+        }
+        return result;
+    }
+
 
     @PostMapping("addProject")
     public ResponseResult<String> addProject(HttpServletRequest request,@RequestBody @Valid CdProject cdProject) {

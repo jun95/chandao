@@ -3,33 +3,27 @@ package com.selfboot.chandao.domain;
 import com.selfboot.chandao.persist.BaseEntity;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 
-public class CdProject extends BaseEntity {
-    /**  */
-    @NotNull(message = "所在项目组不能为空")
-    private Long groupId;
+public class CdRequirement extends BaseEntity {
 
-    /**  */
-    private String groupName;
+    /** 项目id */
+    private Long projectId;
 
-    /** 项目名称 */
-    @NotBlank(message = "项目名称不能为空")
-    private String name;
+    /** 项目标题 */
+    private String projectName;
 
-    /** 项目开始时间 */
-    @NotNull(message = "开始时间不能为空")
+    /** 需求标题 */
+    @NotBlank(message = "需求标题不能为空")
+    private String title;
+
+    /** 需求开始时间 */
     private Date begin;
 
-    /** 项目结束时间 */
-    @NotNull(message = "结束时间不能为空")
+    /** 需求结束时间 */
     private Date end;
 
-    /** 项目耗时，以天为单位 */
-    private Short days;
-
-    /** 项目状态；有done、wait */
+    /** 状态；有done、doing、wait */
     private String status;
 
     /**  */
@@ -62,10 +56,12 @@ public class CdProject extends BaseEntity {
     /**  */
     private Integer deleted;
 
-    /** 项目描述 */
+    /** 需求描述 */
     private String description;
 
     private String projectNameLike;
+
+    private String requireNameLike;
 
     public String getProjectNameLike() {
         return projectNameLike;
@@ -75,28 +71,36 @@ public class CdProject extends BaseEntity {
         this.projectNameLike = projectNameLike;
     }
 
-    public String getGroupName() {
-        return groupName;
+    public String getRequireNameLike() {
+        return requireNameLike;
     }
 
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
+    public void setRequireNameLike(String requireNameLike) {
+        this.requireNameLike = requireNameLike;
     }
 
-    public Long getGroupId() {
-        return groupId;
+    public Long getProjectId() {
+        return projectId;
     }
 
-    public void setGroupId(Long groupId) {
-        this.groupId = groupId;
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
     }
 
-    public String getName() {
-        return name;
+    public String getProjectName() {
+        return projectName;
     }
 
-    public void setName(String name) {
-        this.name = name == null ? null : name.trim();
+    public void setProjectName(String projectName) {
+        this.projectName = projectName == null ? null : projectName.trim();
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title == null ? null : title.trim();
     }
 
     public Date getBegin() {
@@ -113,14 +117,6 @@ public class CdProject extends BaseEntity {
 
     public void setEnd(Date end) {
         this.end = end;
-    }
-
-    public Short getDays() {
-        return days;
-    }
-
-    public void setDays(Short days) {
-        this.days = days;
     }
 
     public String getStatus() {

@@ -26,6 +26,12 @@
             <if test="entity.account != null and entity.account != '' ">
                 AND account = #{entity.account,jdbcType=CHAR}
             </if>
+            <if test="entity.accountLike != null and entity.accountLike != '' ">
+                AND account like CONCAT('%',#{entity.accountLike,jdbcType=CHAR},'%')
+            </if>
+            <if test="entity.nicknameLike != null and entity.nicknameLike != '' ">
+                AND nickname like CONCAT('%',#{entity.nicknameLike,jdbcType=CHAR},'%')
+            </if>
             <if test="entity.password != null and entity.password != '' ">
                 AND password = #{entity.password,jdbcType=CHAR}
             </if>
@@ -43,6 +49,13 @@
         <include refid="Base_Column_List"/>
         FROM cd_user
         <include refid="where_fragment"/>
+    </select>
+
+    <select id="count" parameterType="com.selfboot.chandao.domain.CdUser" resultType="long">
+        SELECT count(1) from cd_user where 1 = 1
+        <if test="account != null and account != '' ">
+            and account = #{account,jdbcType=CHAR}
+        </if>
     </select>
 
     <select id="selectListWithPage" resultMap="BaseResultMap">

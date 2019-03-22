@@ -129,10 +129,10 @@
                                         <a href="javascript:void(0)" class="menu_item"
                                            name="pagecomponent/project/projectlist.html">项目流程管理</a>
                                     </li>
-                                    <li class="list-group-item">
+                                    <!--<li class="list-group-item">
                                         <a href="javascript:void(0)" class="menu_item"
                                            name="pagecomponent/stock-outManagement.jsp">人员分配</a>
-                                    </li>
+                                    </li>-->
                                 </ul>
                         </div>
                     </div>
@@ -152,7 +152,7 @@
                                 <ul class="list-group">
                                     <li class="list-group-item">
                                         <a href="javascript:void(0)" class="menu_item"
-                                           name="pagecomponent/repositoryAdminManagement.jsp">需求管理</a>
+                                           name="pagecomponent/require/requirelist.html">需求管理</a>
                                     </li>
                                 </ul>
                             </div>
@@ -320,7 +320,6 @@
                 if (data.code == 200) {
                     $("#nav_userName").text(data.result.account);
                 } else {
-                    console.log(data)
                     layer.msg(data.message);
                     window.location.href="/page/login.html";
                 }

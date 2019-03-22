@@ -41,6 +41,26 @@ public class CdUser extends BaseEntity implements Serializable {
     /** 更新人id */
     private Long updateId;
 
+    private String nicknameLike;
+
+    private String accountLike;
+
+    public String getNicknameLike() {
+        return nicknameLike;
+    }
+
+    public void setNicknameLike(String nicknameLike) {
+        this.nicknameLike = nicknameLike;
+    }
+
+    public String getAccountLike() {
+        return accountLike;
+    }
+
+    public void setAccountLike(String accountLike) {
+        this.accountLike = accountLike;
+    }
+
     public String getAccount() {
         return account;
     }

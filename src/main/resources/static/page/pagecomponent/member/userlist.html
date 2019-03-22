@@ -1,10 +1,8 @@
+<script type="text/javascript" src="/page/js/common.js"></script>
 <script>
     // 查询参数
-    search_user_id = null
-    search_user_account = null
-    search_user_nick_name = null
-    search_start_date = null
-    search_end_date = null
+    search_user_account = null;
+    search_user_nick_name = null;
 
     $(function(){
         //datePickerInit();
@@ -12,93 +10,17 @@
         searchActionInit();
         insertActionInit();
         delActionInit();
-    })
+        $('#userOperationRecordTable').bootstrapTable('hideColumn', 'id');
+    });
 
-    // 日期选择器初始化
-	/*function datePickerInit(){
-		$('.form_date').datetimepicker({
-			format:'yyyy-mm-dd',
-			language : 'zh-CN',
-			endDate : new Date(),
-			weekStart : 1,
-			todayBtn : 1,
-			autoClose : 1,
-			todayHighlight : 1,
-			startView : 2,
-			forceParse : 0,
-			minView:2
-		});
-	}*/
-
-	// 表格初始化
-    /*function userOperationRecordTableInit(){
-        $('#userOperationRecordTable').bootstrapTable({
-            columns:[{
-                checkbox: true
-            },{
-                field : 'id',
-                title : '用户ID'
-            },{
-                field : 'account',
-                title : '用户名'
-            },{
-                field : 'nickname',
-                title : '用户昵称'
-            },{
-                field : 'gender',
-                title : '性别',
-                formatter: function (value, row, index) {
-                    if (value == 1) {
-                        return '男';
-                    }
-                    return '女';
-                }
-            },{
-                field : 'lastLoginTime',
-                title : '上次登录时间'
-            },{
-                field : 'operate',
-                title : '操作',
-                events:{     //为按钮添加事件
-                    "click #details":function(e,value,row,index){
-                        alert("项目名称："+row);
-                    }
-                },
-                formatter: operateFormatter //自定义方法，添加操作按钮
-            }],
-            ajax:function(request) {
-                $.ajax({
-                    url:"/user/getUserRecords",
-                    type:"POST",
-                    contentType: "application/json;charset=utf-8",
-                    data:JSON.stringify(queryParams()),
-                    success:function(data){
-                        request.success({
-                            row : data
-                        });
-                        $('#userOperationRecordTable').bootstrapTable('load', data);
-                    },
-                    error:function(error){
-                        console.log(error);
-                    }
-                })
-            },
-            sidePagination : "server",
-            pagination : true,
-            pageNumber : 1,
-            pageSize : 10,
-            pageList : [ 5, 10, 25, 50, 100 ],
-            clickToSelect : true
-        });
-    }*/
 	function userOperationRecordTableInit(){
 	    $('#userOperationRecordTable').bootstrapTable({
 	        columns:[{
                 checkbox: true
             },{
-	            field : 'id',
-	            title : '用户ID'
-	        },{
+                field : 'id',
+                title : '用户ID'
+            },{
 	            field : 'account',
 	            title : '用户名'
 	        },{
@@ -118,7 +40,7 @@
 	            title : '上次登录时间',
                 formatter : function (value, row, index) {
 	                if (row.lastLoginTime != null) {
-                        return formatDate(row.lastLoginTime);
+                        return new Date(row.lastLoginTime).format('yyyy-MM-dd hh:mm:ss');
                     }
                     return null;
                 }
@@ -167,11 +89,8 @@
 		var temp = {
 			limit : params.limit,
 			offset : params.offset,
-			id : search_user_id,
-            nickNameLike : search_user_nick_name,
+            nicknameLike : search_user_nick_name,
             accountLike : search_user_account
-			//startDate : search_start_date,
-			//endDate : search_end_date
 		}
 		return temp;
 	}
@@ -179,11 +98,8 @@
     // 查询操作
     function searchActionInit(){
         $('#search_button').click(function(){
-            search_user_id = $('#id').val();
             search_user_account = $('#accountLike').val();
-            search_user_nick_name = $('#nickNameLike').val();
-            //search_start_date = $('#start_date').val();
-            //search_end_date = $('#end_date').val();
+            search_user_nick_name = $('#nicknameLike').val();
             tableRefresh();
         })
     }
@@ -270,24 +186,6 @@
             }
         })
     }
-
-    function formatDate(time){
-        var date = new Date(time);
-
-        var year = date.getFullYear(),
-            month = date.getMonth() + 1,//月份是从0开始的
-            day = date.getDate(),
-            hour = date.getHours(),
-            min = date.getMinutes(),
-            sec = date.getSeconds();
-        var newTime = year + '-' +
-            month + '-' +
-            day + ' ' +
-            hour + ':' +
-            min + ':' +
-            sec;
-        return newTime;
-    }
 </script>
 
 <div class="panel panel-default">
@@ -298,28 +196,11 @@
         <div class="row">
             <div class="col-md-3">
                 <form action="" class="form-inline">
-                    <div class="form-group">
-                        <label class="form-label">用户ID：</label>
-                            <input type="text" id="id" class="form-control" placeholder="指定用户ID" style="width:50%">
-                       <!-- <label class="form-label">用户昵称：</label>
-                        <input type="text" id="nickNameLike" class="form-control" placeholder="用户昵称" style="width:50%">
-
-                        <label class="form-label">用户名：</label>
-                        <input type="text" id="accountLike" class="form-control" placeholder="用户名" style="width:50%">-->
-                    </div>
-
-                </form>
-            </div>
-
-            <div class="col-md-3">
-                <form action="" class="form-inline">
                 <div class="form-group">
 
                     <label class="form-label">用户昵称：</label>
-                    <input type="text" id="nickNameLike" class="form-control" placeholder="用户昵称" style="width:50%">
+                    <input type="text" id="nicknameLike" class="form-control" placeholder="用户昵称" style="width:50%">
 
-                    <!--<label class="form-label">用户名：</label>
-                    <input type="text" id="accountLike" class="form-control" placeholder="用户名" style="width:50%">-->
                 </div>
 
                 </form>
@@ -334,14 +215,6 @@
 
                 </form>
             </div>
-            <!--<div class="col-md-6">
-                <form action="" class="form-inline">
-                    <label class="form-label">用户昵称：</label>
-                    <input class="form-control" type="text" id="start_date" placeholder="用户昵称">
-                    <label class="form-label">&nbsp;&nbsp;用户名:&nbsp;&nbsp;</label>
-                    <input class="form-control" type="text" id="end_date" placeholder="用户名">
-                </form>
-            </div>-->
             <div class="col-md-3">
                 <button class="btn btn-success" id="search_button">
                     <span class="glyphicon glyphicon-search"></span> <span>查询</span>
@@ -389,7 +262,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                    <button type="button" onclick="addMember();" class="btn btn-primary" data-dismiss="modal">新增</button>
+                    <button type="button" onclick="addMember();" class="btn btn-primary">新增</button>
                 </div>
             </div>
         </div>

@@ -1,18 +1,16 @@
+<script type="text/javascript" src="/page/js/common.js"></script>
 <script>
     // 查询参数
-    search_user_id = null
-    search_user_account = null
-    search_user_nick_name = null
-    search_start_date = null
-    search_end_date = null
+    search_user_id = null;
+    search_user_account = null;
+    search_user_nick_name = null;
+    search_start_date = null;
+    search_end_date = null;
 
     $(function(){
-        //datePickerInit();
         groupOperationRecordTableInit();
         searchActionInit();
         insertActionInit();
-        //delActionInit();
-        //addGroupMember();
     })
 
     function groupOperationRecordTableInit(){
@@ -34,7 +32,7 @@
                 title : '创建时间',
                 formatter : function (value,row,index) {
                     if (row.createTime != null) {
-                        return formatDate(row.createTime);
+                        return new Date(row.createTime).format('yyyy-MM-dd hh:mm:ss');
                     }
                     return null;
                 }
@@ -65,24 +63,6 @@
             pageList : [ 5, 10, 25, 50, 100 ],
             clickToSelect : false
         });
-    }
-
-    function formatDate(time){
-        var date = new Date(time);
-
-        var year = date.getFullYear(),
-            month = date.getMonth() + 1,//月份是从0开始的
-            day = date.getDate(),
-            hour = date.getHours(),
-            min = date.getMinutes(),
-            sec = date.getSeconds();
-        var newTime = year + '-' +
-            month + '-' +
-            day + ' ' +
-            hour + ':' +
-            min + ':' +
-            sec;
-        return newTime;
     }
 
     function operateFormatter(value, row, index) {

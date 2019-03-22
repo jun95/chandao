@@ -7,8 +7,8 @@ import java.util.Map;
  * Created by 87570 on 2019/3/21.
  */
 public enum ProjectStatusEnum {
-
-    WAIT("wait"),DONE("done"),DOING("doing");
+    //待开始 已关闭 进行中 已完成
+    WAIT("wait"),DONE("done"),DOING("doing"),FINISHED("finished");
 
     private String statusName;
 
@@ -24,8 +24,8 @@ public enum ProjectStatusEnum {
         }
     }
 
-    public static ProjectStatusEnum getResponseStatus(int code) {
-        return resultMap.get(code);
+    public static ProjectStatusEnum getStatus(String statusName) {
+        return resultMap.get(statusName);
     }
 
     public String getStatusName() {

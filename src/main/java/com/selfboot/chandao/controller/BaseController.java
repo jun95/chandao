@@ -1,9 +1,12 @@
 package com.selfboot.chandao.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.selfboot.chandao.domain.CdUser;
 import com.selfboot.chandao.listener.DataCallback;
 import com.selfboot.chandao.persist.BaseEntity;
 import com.selfboot.chandao.persist.BootStrapService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
@@ -14,6 +17,8 @@ import java.util.Map;
  * Created by hwj on 2019/3/20.
  */
 public class BaseController<T extends BaseEntity,S extends BootStrapService<T>> {
+
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     protected S targetService;
@@ -31,6 +36,8 @@ public class BaseController<T extends BaseEntity,S extends BootStrapService<T>> 
         } else {
             service.selectRecord(v,offset,limit,callback);
         }
+
+        logger.info("查询出的结果为：{}", JSON.toJSONString(queryResult));
 
         if (queryResult != null) {
             rows = (List<CdUser>) queryResult.get("data");

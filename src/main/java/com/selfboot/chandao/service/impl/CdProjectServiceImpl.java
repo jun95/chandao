@@ -6,6 +6,8 @@ import com.selfboot.chandao.persist.BootStrapServiceImpl;
 import com.selfboot.chandao.service.CdProjectService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Created by hwj on 2019/3/21.
  */
@@ -13,5 +15,8 @@ import org.springframework.stereotype.Service;
 public class CdProjectServiceImpl extends BootStrapServiceImpl<CdProject, CdProjectDAO> implements CdProjectService {
 
 
-
+    @Override
+    public List<CdProject> selectUnCloseProject(CdProject cdProject) {
+        return targetDAO.selectUnCloseProject(cdProject);
+    }
 }

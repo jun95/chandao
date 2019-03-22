@@ -3,6 +3,9 @@ package com.selfboot.chandao.dao;
 import com.selfboot.chandao.domain.CdProject;
 import com.selfboot.chandao.persist.CrudDAO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * Created by hwj on 2019/3/21.
@@ -10,4 +13,5 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface CdProjectDAO extends CrudDAO<CdProject> {
 
+    List<CdProject> selectUnCloseProject(@Param("entity") CdProject cdProject);
 }

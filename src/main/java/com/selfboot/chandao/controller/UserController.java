@@ -53,6 +53,14 @@ public class UserController extends BaseController<CdUser, CdUserService> {
     @PostMapping("addMember")
     public ResponseResult<String> addMember(@RequestBody @Valid CdUser cdUser) {
         ResponseResult<String> result = new ResponseResult<>();
+
+        Long count = targetService.queryCount(cdUser);
+        if (count > 0) {
+            result.setResponseStatus(ResponseStatus.ERROR);
+            result.setMessage("当前用户名已经被使用，请更换");
+            return result;
+        }
+
         cdUser.setPassword("b7797cce01b4b131b433b6acf4add449");
         cdUser.setDeleted(1);
         ServiceResult serviceResult = targetService.save(Collections.singletonList(cdUser));
@@ -67,7 +75,7 @@ public class UserController extends BaseController<CdUser, CdUserService> {
     }
 
     @PostMapping("removeMember")
-    public ResponseResult<String> removeMember(@RequestBody @NotEmpty(message = "请选择要删除的记录") List<Long> ids) {
+    public ResponseResult<String> removeMember(@RequestBody @NotEmpty(message = "请选择要禁用的记录") List<Long> ids) {
         ResponseResult<String> result = new ResponseResult<>();
         if (CollectionUtils.isEmpty(ids)) {
             result.setResponseStatus(ResponseStatus.ILLEGAL_ARG);

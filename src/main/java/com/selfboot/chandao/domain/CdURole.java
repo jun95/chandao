@@ -12,10 +12,19 @@ public class CdURole extends BaseEntity implements Serializable{
     @NotBlank
     private String name;
 
+    private String nameLike;
+
     /** ��ɫ���� */
     @NotNull
     private Integer type;
 
+    public String getNameLike() {
+        return nameLike;
+    }
+
+    public void setNameLike(String nameLike) {
+        this.nameLike = nameLike;
+    }
 
     public String getName() {
         return name;
