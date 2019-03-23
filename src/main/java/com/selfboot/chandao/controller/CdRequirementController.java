@@ -4,7 +4,6 @@ import com.selfboot.chandao.common.ProjectStatusEnum;
 import com.selfboot.chandao.common.ResponseResult;
 import com.selfboot.chandao.common.ResponseStatus;
 import com.selfboot.chandao.common.ServiceResult;
-import com.selfboot.chandao.domain.CdProject;
 import com.selfboot.chandao.domain.CdRequirement;
 import com.selfboot.chandao.domain.CdUser;
 import com.selfboot.chandao.service.CdRequirementService;
@@ -17,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,8 +36,29 @@ public class CdRequirementController extends BaseController<CdRequirement, CdReq
         return getRecords(cdRequirement, offset, limit);
     }
 
+    @PostMapping("getRequireTotalRecordByProjectId")
+    public ResponseResult<List<CdRequirement>> getGroupTotalRecord(@RequestBody CdRequirement cdRequirement) {
+        ResponseResult<List<CdRequirement>> result = new ResponseResult<>();
+        if (cdRequirement.getProjectId() == null) {
+            result.setResponseStatus(ResponseStatus.ERROR);
+            result.setMessage("项目id不能为空");
+            return result;
+        }
+
+        ServiceResult serviceResult = targetService.queryList(cdRequirement);
+        if (serviceResult.isSuccess()) {
+            result.setResult((List<CdRequirement>) serviceResult.getResult());
+            result.setResponseStatus(ResponseStatus.OK);
+        } else {
+            result.setResponseStatus(ResponseStatus.ERROR);
+            result.setMessage((String) serviceResult.getErrorMessage().get(0));
+        }
+
+        return result;
+    }
+
     @PostMapping("addRequire")
-    public ResponseResult<String> addProject(HttpServletRequest request, @RequestBody @Valid CdRequirement cdRequirement) {
+    public ResponseResult<String> addRequire(HttpServletRequest request, @RequestBody @Valid CdRequirement cdRequirement) {
         ResponseResult<String> result = new ResponseResult<>();
 
         Date begin = cdRequirement.getBegin();

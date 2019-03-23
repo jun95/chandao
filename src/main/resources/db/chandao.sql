@@ -150,7 +150,9 @@ CREATE TABLE IF NOT EXISTS `cd_testtask` (
   `id` bigint(20) NOT NULL auto_increment,
   `name` char(90) NOT NULL,
   `project_id` bigint(20) NOT NULL default '0',
+  `project_name` varchar(90) NOT NULL COMMENT '项目标题',
   `requirement_id` bigint(20) NOT NULL default '0',
+  `requirement_name` varchar(90) NOT NULL COMMENT '需求名称',
   `owner` varchar(30) NOT NULL COMMENT '测试任务创建人',
   `begin` date NOT NULL,
   `end` date NOT NULL,
@@ -176,6 +178,7 @@ CREATE TABLE IF NOT EXISTS `cd_testtask` (
 CREATE TABLE IF NOT EXISTS `cd_bug` (
   `id` bigint(20) NOT NULL auto_increment,
   `project_id` bigint(20) NOT NULL default '0',
+  `project_name` varchar(90) NOT NULL COMMENT '项目标题',
   `task_id` bigint(20) NOT NULL default '0',
   `title` varchar(255) NULL,
   `keywords` varchar(255) NOT NULL COMMENT '关键词',

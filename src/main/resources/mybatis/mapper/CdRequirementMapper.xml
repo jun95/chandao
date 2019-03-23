@@ -47,6 +47,9 @@
       <if test="entity.id != null">
         AND id = #{entity.id,jdbcType=BIGINT}
       </if>
+      <if test="entity.projectId != null">
+        AND project_id = #{entity.projectId,jdbcType=BIGINT}
+      </if>
       <if test="entity.deleted != null">
         AND deleted = #{entity.deleted,jdbcType=INTEGER}
       </if>

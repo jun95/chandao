@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.selfboot.chandao.dao.CdActionLogDAO" >
+  <resultMap id="BaseResultMap" type="com.selfboot.chandao.domain.CdActionLog" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="object_type" property="objectType" jdbcType="VARCHAR" />
+    <result column="object_id" property="objectId" jdbcType="BIGINT" />
+    <result column="project_id" property="projectId" jdbcType="BIGINT" />
+    <result column="action" property="action" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="previous_owner" property="previousOwner" jdbcType="BIGINT" />
+    <result column="assigned_by" property="assignedBy" jdbcType="BIGINT" />
+    <result column="account" property="account" jdbcType="CHAR" />
+    <result column="date" property="date" jdbcType="DATE" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.selfboot.chandao.domain.CdActionLog" extends="BaseResultMap" >
+    <result column="comment" property="comment" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, object_type, object_id, project_id, action, status, previous_owner, assigned_by, 
+    account, date
+  </sql>
+  <sql id="Blob_Column_List" >
+    comment
+  </sql>
+
+  <sql id="where_fragment">
+    WHERE 1 = 1
+    <if test="entity != null">
+      <if test="entity.status != null and entity.status != '' ">
+        AND status = #{entity.status,jdbcType=INTEGER}
+      </if>
+      <if test="entity.id != null">
+        AND id = #{entity.id,jdbcType=BIGINT}
+      </if>
+      <if test="entity.projectId != null">
+        AND project_id = #{entity.projectId,jdbcType=BIGINT}
+      </if>
+    </if>
+  </sql>
+
+  <select id="selectListByCondition" resultMap="ResultMapWithBLOBs">
+    SELECT
+    <include refid="Base_Column_List"/>
+    ,
+    <include refid="Blob_Column_List" />
+    FROM cd_action_log
+    <include refid="where_fragment"/>
+  </select>
+
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from cd_action_log
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from cd_action_log
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.selfboot.chandao.domain.CdActionLog" >
+    insert into cd_action_log (id, object_type, object_id, 
+      project_id, action, status, 
+      previous_owner, assigned_by, account, 
+      date, comment)
+    values (#{id,jdbcType=BIGINT}, #{objectType,jdbcType=VARCHAR}, #{objectId,jdbcType=BIGINT}, 
+      #{projectId,jdbcType=BIGINT}, #{action,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
+      #{previousOwner,jdbcType=BIGINT}, #{assignedBy,jdbcType=BIGINT}, #{account,jdbcType=CHAR}, 
+      #{date,jdbcType=DATE}, #{comment,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.selfboot.chandao.domain.CdActionLog" >
+    insert into cd_action_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="objectType != null" >
+        object_type,
+      </if>
+      <if test="objectId != null" >
+        object_id,
+      </if>
+      <if test="projectId != null" >
+        project_id,
+      </if>
+      <if test="action != null" >
+        action,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="previousOwner != null" >
+        previous_owner,
+      </if>
+      <if test="assignedBy != null" >
+        assigned_by,
+      </if>
+      <if test="account != null" >
+        account,
+      </if>
+      <if test="date != null" >
+        date,
+      </if>
+      <if test="comment != null" >
+        comment,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="objectType != null" >
+        #{objectType,jdbcType=VARCHAR},
+      </if>
+      <if test="objectId != null" >
+        #{objectId,jdbcType=BIGINT},
+      </if>
+      <if test="projectId != null" >
+        #{projectId,jdbcType=BIGINT},
+      </if>
+      <if test="action != null" >
+        #{action,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="previousOwner != null" >
+        #{previousOwner,jdbcType=BIGINT},
+      </if>
+      <if test="assignedBy != null" >
+        #{assignedBy,jdbcType=BIGINT},
+      </if>
+      <if test="account != null" >
+        #{account,jdbcType=CHAR},
+      </if>
+      <if test="date != null" >
+        #{date,jdbcType=DATE},
+      </if>
+      <if test="comment != null" >
+        #{comment,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.selfboot.chandao.domain.CdActionLog" >
+    update cd_action_log
+    <set >
+      <if test="objectType != null" >
+        object_type = #{objectType,jdbcType=VARCHAR},
+      </if>
+      <if test="objectId != null" >
+        object_id = #{objectId,jdbcType=BIGINT},
+      </if>
+      <if test="projectId != null" >
+        project_id = #{projectId,jdbcType=BIGINT},
+      </if>
+      <if test="action != null" >
+        action = #{action,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="previousOwner != null" >
+        previous_owner = #{previousOwner,jdbcType=BIGINT},
+      </if>
+      <if test="assignedBy != null" >
+        assigned_by = #{assignedBy,jdbcType=BIGINT},
+      </if>
+      <if test="account != null" >
+        account = #{account,jdbcType=CHAR},
+      </if>
+      <if test="date != null" >
+        date = #{date,jdbcType=DATE},
+      </if>
+      <if test="comment != null" >
+        comment = #{comment,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.selfboot.chandao.domain.CdActionLog" >
+    update cd_action_log
+    set object_type = #{objectType,jdbcType=VARCHAR},
+      object_id = #{objectId,jdbcType=BIGINT},
+      project_id = #{projectId,jdbcType=BIGINT},
+      action = #{action,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      previous_owner = #{previousOwner,jdbcType=BIGINT},
+      assigned_by = #{assignedBy,jdbcType=BIGINT},
+      account = #{account,jdbcType=CHAR},
+      date = #{date,jdbcType=DATE},
+      comment = #{comment,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.selfboot.chandao.domain.CdActionLog" >
+    update cd_action_log
+    set object_type = #{objectType,jdbcType=VARCHAR},
+      object_id = #{objectId,jdbcType=BIGINT},
+      project_id = #{projectId,jdbcType=BIGINT},
+      action = #{action,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      previous_owner = #{previousOwner,jdbcType=BIGINT},
+      assigned_by = #{assignedBy,jdbcType=BIGINT},
+      account = #{account,jdbcType=CHAR},
+      date = #{date,jdbcType=DATE}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

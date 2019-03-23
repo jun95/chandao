@@ -2,6 +2,8 @@ package com.selfboot.chandao.domain;
 
 import com.selfboot.chandao.persist.BaseEntity;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 public class CdTask extends BaseEntity {
@@ -10,12 +12,14 @@ public class CdTask extends BaseEntity {
     private Long parent;
 
     /** 需求id */
+    @NotNull(message = "需求不能为空")
     private Long requirementId;
 
     /** 需求名称 */
     private String requirementName;
 
     /** 项目id */
+    @NotNull(message = "项目不能为空")
     private Long projectId;
 
     /** 项目名称 */
@@ -25,15 +29,18 @@ public class CdTask extends BaseEntity {
     private Long fromBug;
 
     /** 任务名称 */
+    @NotBlank(message = "任务名称不能为空")
     private String name;
 
     /** 任务类型；1：开发 */
     private Integer type;
 
     /** 优先级 */
+    @NotNull(message = "优先级不能为空")
     private Byte pri;
 
     /** 预计耗时 */
+    @NotNull(message = "预计耗时不能为空")
     private Float estimate;
 
     /** 耗时 */
@@ -103,6 +110,7 @@ public class CdTask extends BaseEntity {
     private Integer deleted;
 
     /** 任务描述 */
+    @NotBlank(message = "任务描述不能为空")
     private String description;
 
     private String projectNameLike;

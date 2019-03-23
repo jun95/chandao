@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.selfboot.chandao.dao.CdBugDAO">
+  <resultMap id="BaseResultMap" type="com.selfboot.chandao.domain.CdBug">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="project_id" jdbcType="BIGINT" property="projectId" />
+    <result column="project_name" jdbcType="VARCHAR" property="projectName" />
+    <result column="task_id" jdbcType="BIGINT" property="taskId" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="keywords" jdbcType="VARCHAR" property="keywords" />
+    <result column="severity" jdbcType="TINYINT" property="severity" />
+    <result column="pri" jdbcType="TINYINT" property="pri" />
+    <result column="status" jdbcType="CHAR" property="status" />
+    <result column="activated_count" jdbcType="SMALLINT" property="activatedCount" />
+    <result column="activated_date" jdbcType="TIMESTAMP" property="activatedDate" />
+    <result column="opened_by" jdbcType="BIGINT" property="openedBy" />
+    <result column="opened_name" jdbcType="VARCHAR" property="openedName" />
+    <result column="opened_date" jdbcType="TIMESTAMP" property="openedDate" />
+    <result column="assigned_by" jdbcType="BIGINT" property="assignedBy" />
+    <result column="assigned_by_name" jdbcType="BIGINT" property="assignedByName" />
+    <result column="assigned_date" jdbcType="TIMESTAMP" property="assignedDate" />
+    <result column="resolved_by" jdbcType="BIGINT" property="resolvedBy" />
+    <result column="resolved_name" jdbcType="VARCHAR" property="resolvedName" />
+    <result column="resolution" jdbcType="VARCHAR" property="resolution" />
+    <result column="resolved_date" jdbcType="TIMESTAMP" property="resolvedDate" />
+    <result column="closed_by" jdbcType="BIGINT" property="closedBy" />
+    <result column="closed_name" jdbcType="VARCHAR" property="closedName" />
+    <result column="closed_date" jdbcType="TIMESTAMP" property="closedDate" />
+    <result column="duplicate_bug" jdbcType="INTEGER" property="duplicateBug" />
+    <result column="link_bug" jdbcType="VARCHAR" property="linkBug" />
+    <result column="testtask_id" jdbcType="BIGINT" property="testtaskId" />
+    <result column="last_edited_by" jdbcType="BIGINT" property="lastEditedBy" />
+    <result column="last_edited_name" jdbcType="VARCHAR" property="lastEditedName" />
+    <result column="last_edited_date" jdbcType="TIMESTAMP" property="lastEditedDate" />
+    <result column="deleted" jdbcType="INTEGER" property="deleted" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.selfboot.chandao.domain.CdBug">
+    <result column="steps" jdbcType="LONGVARCHAR" property="steps" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, project_id, project_name, task_id, title, keywords, severity, pri, status, activated_count, 
+    activated_date, opened_by, opened_name, opened_date, assigned_by, assigned_by_name, 
+    assigned_date, resolved_by, resolved_name, resolution, resolved_date, closed_by, 
+    closed_name, closed_date, duplicate_bug, link_bug, testtask_id, last_edited_by, last_edited_name, 
+    last_edited_date, deleted
+  </sql>
+  <sql id="Blob_Column_List">
+    steps
+  </sql>
+
+  <sql id="where_fragment">
+    WHERE 1 = 1
+    <if test="entity != null">
+      <!--<if test="entity.projectNameLike != null and entity.projectNameLike != '' ">
+        AND project_name like CONCAT('%',#{entity.projectNameLike,jdbcType=CHAR},'%')
+      </if>
+      <if test="entity.requireNameLike != null and entity.requireNameLike != '' ">
+        AND requirement_name like CONCAT('%',#{entity.requireNameLike,jdbcType=CHAR},'%')
+      </if>
+      <if test="entity.testTaskNameLike != null and entity.testTaskNameLike != '' ">
+        AND name like CONCAT('%',#{entity.testTaskNameLike,jdbcType=CHAR},'%')
+      </if>-->
+      <if test="entity.status != null and entity.status != '' ">
+        AND status = #{entity.status,jdbcType=INTEGER}
+      </if>
+      <if test="entity.id != null">
+        AND id = #{entity.id,jdbcType=BIGINT}
+      </if>
+      <if test="entity.projectId != null">
+        AND project_id = #{entity.projectId,jdbcType=BIGINT}
+      </if>
+      <if test="entity.deleted != null">
+        AND deleted = #{entity.deleted,jdbcType=INTEGER}
+      </if>
+    </if>
+  </sql>
+
+  <select id="selectListByCondition" resultMap="ResultMapWithBLOBs">
+    SELECT
+    <include refid="Base_Column_List"/>
+    ,
+    <include refid="Blob_Column_List" />
+    FROM cd_bug
+    <include refid="where_fragment"/>
+  </select>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from cd_bug
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from cd_bug
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.selfboot.chandao.domain.CdBug">
+    insert into cd_bug (id, project_id, project_name, 
+      task_id, title, keywords, 
+      severity, pri, status, 
+      activated_count, activated_date, opened_by, 
+      opened_name, opened_date, assigned_by, 
+      assigned_by_name, assigned_date, resolved_by, 
+      resolved_name, resolution, resolved_date, 
+      closed_by, closed_name, closed_date, 
+      duplicate_bug, link_bug, testtask_id, 
+      last_edited_by, last_edited_name, last_edited_date, 
+      deleted, steps)
+    values (#{id,jdbcType=BIGINT}, #{projectId,jdbcType=BIGINT}, #{projectName,jdbcType=VARCHAR}, 
+      #{taskId,jdbcType=BIGINT}, #{title,jdbcType=VARCHAR}, #{keywords,jdbcType=VARCHAR}, 
+      #{severity,jdbcType=TINYINT}, #{pri,jdbcType=TINYINT}, #{status,jdbcType=CHAR}, 
+      #{activatedCount,jdbcType=SMALLINT}, #{activatedDate,jdbcType=TIMESTAMP}, #{openedBy,jdbcType=BIGINT}, 
+      #{openedName,jdbcType=VARCHAR}, #{openedDate,jdbcType=TIMESTAMP}, #{assignedBy,jdbcType=BIGINT}, 
+      #{assignedByName,jdbcType=BIGINT}, #{assignedDate,jdbcType=TIMESTAMP}, #{resolvedBy,jdbcType=BIGINT}, 
+      #{resolvedName,jdbcType=VARCHAR}, #{resolution,jdbcType=VARCHAR}, #{resolvedDate,jdbcType=TIMESTAMP}, 
+      #{closedBy,jdbcType=BIGINT}, #{closedName,jdbcType=VARCHAR}, #{closedDate,jdbcType=TIMESTAMP}, 
+      #{duplicateBug,jdbcType=INTEGER}, #{linkBug,jdbcType=VARCHAR}, #{testtaskId,jdbcType=BIGINT}, 
+      #{lastEditedBy,jdbcType=BIGINT}, #{lastEditedName,jdbcType=VARCHAR}, #{lastEditedDate,jdbcType=TIMESTAMP}, 
+      #{deleted,jdbcType=INTEGER}, #{steps,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.selfboot.chandao.domain.CdBug">
+    insert into cd_bug
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="projectId != null">
+        project_id,
+      </if>
+      <if test="projectName != null">
+        project_name,
+      </if>
+      <if test="taskId != null">
+        task_id,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="keywords != null">
+        keywords,
+      </if>
+      <if test="severity != null">
+        severity,
+      </if>
+      <if test="pri != null">
+        pri,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="activatedCount != null">
+        activated_count,
+      </if>
+      <if test="activatedDate != null">
+        activated_date,
+      </if>
+      <if test="openedBy != null">
+        opened_by,
+      </if>
+      <if test="openedName != null">
+        opened_name,
+      </if>
+      <if test="openedDate != null">
+        opened_date,
+      </if>
+      <if test="assignedBy != null">
+        assigned_by,
+      </if>
+      <if test="assignedByName != null">
+        assigned_by_name,
+      </if>
+      <if test="assignedDate != null">
+        assigned_date,
+      </if>
+      <if test="resolvedBy != null">
+        resolved_by,
+      </if>
+      <if test="resolvedName != null">
+        resolved_name,
+      </if>
+      <if test="resolution != null">
+        resolution,
+      </if>
+      <if test="resolvedDate != null">
+        resolved_date,
+      </if>
+      <if test="closedBy != null">
+        closed_by,
+      </if>
+      <if test="closedName != null">
+        closed_name,
+      </if>
+      <if test="closedDate != null">
+        closed_date,
+      </if>
+      <if test="duplicateBug != null">
+        duplicate_bug,
+      </if>
+      <if test="linkBug != null">
+        link_bug,
+      </if>
+      <if test="testtaskId != null">
+        testtask_id,
+      </if>
+      <if test="lastEditedBy != null">
+        last_edited_by,
+      </if>
+      <if test="lastEditedName != null">
+        last_edited_name,
+      </if>
+      <if test="lastEditedDate != null">
+        last_edited_date,
+      </if>
+      <if test="deleted != null">
+        deleted,
+      </if>
+      <if test="steps != null">
+        steps,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="projectId != null">
+        #{projectId,jdbcType=BIGINT},
+      </if>
+      <if test="projectName != null">
+        #{projectName,jdbcType=VARCHAR},
+      </if>
+      <if test="taskId != null">
+        #{taskId,jdbcType=BIGINT},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="keywords != null">
+        #{keywords,jdbcType=VARCHAR},
+      </if>
+      <if test="severity != null">
+        #{severity,jdbcType=TINYINT},
+      </if>
+      <if test="pri != null">
+        #{pri,jdbcType=TINYINT},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=CHAR},
+      </if>
+      <if test="activatedCount != null">
+        #{activatedCount,jdbcType=SMALLINT},
+      </if>
+      <if test="activatedDate != null">
+        #{activatedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="openedBy != null">
+        #{openedBy,jdbcType=BIGINT},
+      </if>
+      <if test="openedName != null">
+        #{openedName,jdbcType=VARCHAR},
+      </if>
+      <if test="openedDate != null">
+        #{openedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="assignedBy != null">
+        #{assignedBy,jdbcType=BIGINT},
+      </if>
+      <if test="assignedByName != null">
+        #{assignedByName,jdbcType=BIGINT},
+      </if>
+      <if test="assignedDate != null">
+        #{assignedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="resolvedBy != null">
+        #{resolvedBy,jdbcType=BIGINT},
+      </if>
+      <if test="resolvedName != null">
+        #{resolvedName,jdbcType=VARCHAR},
+      </if>
+      <if test="resolution != null">
+        #{resolution,jdbcType=VARCHAR},
+      </if>
+      <if test="resolvedDate != null">
+        #{resolvedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="closedBy != null">
+        #{closedBy,jdbcType=BIGINT},
+      </if>
+      <if test="closedName != null">
+        #{closedName,jdbcType=VARCHAR},
+      </if>
+      <if test="closedDate != null">
+        #{closedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="duplicateBug != null">
+        #{duplicateBug,jdbcType=INTEGER},
+      </if>
+      <if test="linkBug != null">
+        #{linkBug,jdbcType=VARCHAR},
+      </if>
+      <if test="testtaskId != null">
+        #{testtaskId,jdbcType=BIGINT},
+      </if>
+      <if test="lastEditedBy != null">
+        #{lastEditedBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastEditedName != null">
+        #{lastEditedName,jdbcType=VARCHAR},
+      </if>
+      <if test="lastEditedDate != null">
+        #{lastEditedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleted != null">
+        #{deleted,jdbcType=INTEGER},
+      </if>
+      <if test="steps != null">
+        #{steps,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.selfboot.chandao.domain.CdBug">
+    update cd_bug
+    <set>
+      <if test="projectId != null">
+        project_id = #{projectId,jdbcType=BIGINT},
+      </if>
+      <if test="projectName != null">
+        project_name = #{projectName,jdbcType=VARCHAR},
+      </if>
+      <if test="taskId != null">
+        task_id = #{taskId,jdbcType=BIGINT},
+      </if>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="keywords != null">
+        keywords = #{keywords,jdbcType=VARCHAR},
+      </if>
+      <if test="severity != null">
+        severity = #{severity,jdbcType=TINYINT},
+      </if>
+      <if test="pri != null">
+        pri = #{pri,jdbcType=TINYINT},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=CHAR},
+      </if>
+      <if test="activatedCount != null">
+        activated_count = #{activatedCount,jdbcType=SMALLINT},
+      </if>
+      <if test="activatedDate != null">
+        activated_date = #{activatedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="openedBy != null">
+        opened_by = #{openedBy,jdbcType=BIGINT},
+      </if>
+      <if test="openedName != null">
+        opened_name = #{openedName,jdbcType=VARCHAR},
+      </if>
+      <if test="openedDate != null">
+        opened_date = #{openedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="assignedBy != null">
+        assigned_by = #{assignedBy,jdbcType=BIGINT},
+      </if>
+      <if test="assignedByName != null">
+        assigned_by_name = #{assignedByName,jdbcType=BIGINT},
+      </if>
+      <if test="assignedDate != null">
+        assigned_date = #{assignedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="resolvedBy != null">
+        resolved_by = #{resolvedBy,jdbcType=BIGINT},
+      </if>
+      <if test="resolvedName != null">
+        resolved_name = #{resolvedName,jdbcType=VARCHAR},
+      </if>
+      <if test="resolution != null">
+        resolution = #{resolution,jdbcType=VARCHAR},
+      </if>
+      <if test="resolvedDate != null">
+        resolved_date = #{resolvedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="closedBy != null">
+        closed_by = #{closedBy,jdbcType=BIGINT},
+      </if>
+      <if test="closedName != null">
+        closed_name = #{closedName,jdbcType=VARCHAR},
+      </if>
+      <if test="closedDate != null">
+        closed_date = #{closedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="duplicateBug != null">
+        duplicate_bug = #{duplicateBug,jdbcType=INTEGER},
+      </if>
+      <if test="linkBug != null">
+        link_bug = #{linkBug,jdbcType=VARCHAR},
+      </if>
+      <if test="testtaskId != null">
+        testtask_id = #{testtaskId,jdbcType=BIGINT},
+      </if>
+      <if test="lastEditedBy != null">
+        last_edited_by = #{lastEditedBy,jdbcType=BIGINT},
+      </if>
+      <if test="lastEditedName != null">
+        last_edited_name = #{lastEditedName,jdbcType=VARCHAR},
+      </if>
+      <if test="lastEditedDate != null">
+        last_edited_date = #{lastEditedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleted != null">
+        deleted = #{deleted,jdbcType=INTEGER},
+      </if>
+      <if test="steps != null">
+        steps = #{steps,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.selfboot.chandao.domain.CdBug">
+    update cd_bug
+    set project_id = #{projectId,jdbcType=BIGINT},
+      project_name = #{projectName,jdbcType=VARCHAR},
+      task_id = #{taskId,jdbcType=BIGINT},
+      title = #{title,jdbcType=VARCHAR},
+      keywords = #{keywords,jdbcType=VARCHAR},
+      severity = #{severity,jdbcType=TINYINT},
+      pri = #{pri,jdbcType=TINYINT},
+      status = #{status,jdbcType=CHAR},
+      activated_count = #{activatedCount,jdbcType=SMALLINT},
+      activated_date = #{activatedDate,jdbcType=TIMESTAMP},
+      opened_by = #{openedBy,jdbcType=BIGINT},
+      opened_name = #{openedName,jdbcType=VARCHAR},
+      opened_date = #{openedDate,jdbcType=TIMESTAMP},
+      assigned_by = #{assignedBy,jdbcType=BIGINT},
+      assigned_by_name = #{assignedByName,jdbcType=BIGINT},
+      assigned_date = #{assignedDate,jdbcType=TIMESTAMP},
+      resolved_by = #{resolvedBy,jdbcType=BIGINT},
+      resolved_name = #{resolvedName,jdbcType=VARCHAR},
+      resolution = #{resolution,jdbcType=VARCHAR},
+      resolved_date = #{resolvedDate,jdbcType=TIMESTAMP},
+      closed_by = #{closedBy,jdbcType=BIGINT},
+      closed_name = #{closedName,jdbcType=VARCHAR},
+      closed_date = #{closedDate,jdbcType=TIMESTAMP},
+      duplicate_bug = #{duplicateBug,jdbcType=INTEGER},
+      link_bug = #{linkBug,jdbcType=VARCHAR},
+      testtask_id = #{testtaskId,jdbcType=BIGINT},
+      last_edited_by = #{lastEditedBy,jdbcType=BIGINT},
+      last_edited_name = #{lastEditedName,jdbcType=VARCHAR},
+      last_edited_date = #{lastEditedDate,jdbcType=TIMESTAMP},
+      deleted = #{deleted,jdbcType=INTEGER},
+      steps = #{steps,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.selfboot.chandao.domain.CdBug">
+    update cd_bug
+    set project_id = #{projectId,jdbcType=BIGINT},
+      project_name = #{projectName,jdbcType=VARCHAR},
+      task_id = #{taskId,jdbcType=BIGINT},
+      title = #{title,jdbcType=VARCHAR},
+      keywords = #{keywords,jdbcType=VARCHAR},
+      severity = #{severity,jdbcType=TINYINT},
+      pri = #{pri,jdbcType=TINYINT},
+      status = #{status,jdbcType=CHAR},
+      activated_count = #{activatedCount,jdbcType=SMALLINT},
+      activated_date = #{activatedDate,jdbcType=TIMESTAMP},
+      opened_by = #{openedBy,jdbcType=BIGINT},
+      opened_name = #{openedName,jdbcType=VARCHAR},
+      opened_date = #{openedDate,jdbcType=TIMESTAMP},
+      assigned_by = #{assignedBy,jdbcType=BIGINT},
+      assigned_by_name = #{assignedByName,jdbcType=BIGINT},
+      assigned_date = #{assignedDate,jdbcType=TIMESTAMP},
+      resolved_by = #{resolvedBy,jdbcType=BIGINT},
+      resolved_name = #{resolvedName,jdbcType=VARCHAR},
+      resolution = #{resolution,jdbcType=VARCHAR},
+      resolved_date = #{resolvedDate,jdbcType=TIMESTAMP},
+      closed_by = #{closedBy,jdbcType=BIGINT},
+      closed_name = #{closedName,jdbcType=VARCHAR},
+      closed_date = #{closedDate,jdbcType=TIMESTAMP},
+      duplicate_bug = #{duplicateBug,jdbcType=INTEGER},
+      link_bug = #{linkBug,jdbcType=VARCHAR},
+      testtask_id = #{testtaskId,jdbcType=BIGINT},
+      last_edited_by = #{lastEditedBy,jdbcType=BIGINT},
+      last_edited_name = #{lastEditedName,jdbcType=VARCHAR},
+      last_edited_date = #{lastEditedDate,jdbcType=TIMESTAMP},
+      deleted = #{deleted,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
