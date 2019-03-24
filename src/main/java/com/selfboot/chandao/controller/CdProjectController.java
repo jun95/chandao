@@ -35,13 +35,16 @@ public class CdProjectController extends BaseController<CdProject, CdProjectServ
         if (!StringUtils.isBlank(id)) {
             cdProject.setId(Long.parseLong(id));
         }
+        cdProject.setDeleted(1);
         return getRecords(cdProject, offset, limit);
     }
 
     @PostMapping("getProjectTotalRecord")
     public ResponseResult<List<CdProject>> getGroupTotalRecord() {
         ResponseResult<List<CdProject>> result = new ResponseResult<>();
-        List<CdProject> list = targetService.selectUnCloseProject(null);
+        CdProject cdProject = new CdProject();
+        cdProject.setDeleted(1);
+        List<CdProject> list = targetService.selectUnCloseProject(cdProject);
         result.setResult(list);
         result.setResponseStatus(ResponseStatus.OK);
         return result;
@@ -108,6 +111,64 @@ public class CdProjectController extends BaseController<CdProject, CdProjectServ
             result.setMessage((String) serviceResult.getErrorMessage().get(0));
         }
 
+        return result;
+    }
+
+    @PostMapping("showDetail")
+    public ResponseResult<CdProject> showDetail(HttpServletRequest request, @RequestBody CdProject cdProject) {
+        ResponseResult<CdProject> result = new ResponseResult<>();
+
+        if (cdProject.getId() == null) {
+            result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+            result.setMessage("请选择要查看的项目");
+            return result;
+        }
+
+        CdProject project = new CdProject();
+        project.setId(cdProject.getId());
+        ServiceResult serviceResult = targetService.queryOne(project);
+        if (serviceResult.isSuccess()) {
+            cdProject = (CdProject) serviceResult.getResult();
+            if (cdProject != null) {
+                result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.OK);
+                result.setResult(cdProject);
+            } else {
+                result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+                result.setMessage("项目不存在");
+            }
+        } else {
+            result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+            result.setMessage((String) serviceResult.getErrorMessage().get(0));
+        }
+        return result;
+    }
+
+    @PostMapping("edit")
+    public ResponseResult<CdProject> edit(HttpServletRequest request, @RequestBody CdProject cdProject) {
+        ResponseResult<CdProject> result = new ResponseResult<>();
+
+        if (cdProject.getId() == null) {
+            result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+            result.setMessage("请选择要编辑的项目");
+            return result;
+        }
+
+        CdProject project = new CdProject();
+        project.setId(cdProject.getId());
+        ServiceResult serviceResult = targetService.queryOne(project);
+        if (serviceResult.isSuccess()) {
+            project = (CdProject) serviceResult.getResult();
+            if (project != null) {
+                cdProject.setUpdate(true);
+                targetService.save(Collections.singletonList(cdProject));
+            } else {
+                result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+                result.setMessage("项目不存在");
+            }
+        } else {
+            result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+            result.setMessage((String) serviceResult.getErrorMessage().get(0));
+        }
         return result;
     }
 }

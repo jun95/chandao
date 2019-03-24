@@ -2,7 +2,6 @@ package com.selfboot.chandao.persist;
 
 import com.selfboot.chandao.listener.DataCallback;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -13,6 +12,6 @@ public interface BootStrapService<T extends BaseEntity> extends BaseService<T> {
 
     Map<String, Object> selectRecord(T t, Integer offset, Integer limit);
 
-    Map<String, Object> selectRecord(T t, Integer offset, Integer limit, DataCallback<List<T>> callback);
+    Map<String, Object> selectRecord(T t, Integer offset, Integer limit, DataCallback<T> callback);
 
 }

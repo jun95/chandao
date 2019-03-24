@@ -99,6 +99,16 @@ public class CdBug extends BaseEntity {
     /** 重现步骤 */
     private String steps;
 
+    private String titleLike;
+
+    public String getTitleLike() {
+        return titleLike;
+    }
+
+    public void setTitleLike(String titleLike) {
+        this.titleLike = titleLike;
+    }
+
     public Long getProjectId() {
         return projectId;
     }

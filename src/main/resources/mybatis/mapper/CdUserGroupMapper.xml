@@ -33,6 +33,13 @@
     <include refid="where_fragment"/>
   </select>
 
+  <select id="getListByProjectId" resultMap="BaseResultMap">
+    SELECT
+    usergroup.*
+    FROM cd_usergroup usergroup
+    WHERE usergroup.group_id = (SELECT group_id FROM cd_project project WHERE project.id = #{projectId,jdbcType=BIGINT})
+  </select>
+
   <insert id="insertBatch">
     insert into cd_usergroup (id, user_id, account,
     group_id, create_by, create_name,

@@ -47,6 +47,7 @@ public class UserController extends BaseController<CdUser, CdUserService> {
         if (!StringUtils.isBlank(id)) {
             cdUser.setId(Long.parseLong(id));
         }
+        cdUser.setDeleted(1);
         return getRecords(cdUser, offset, limit);
     }
 

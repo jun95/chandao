@@ -38,6 +38,7 @@ public class ActionLogHelper {
         cdActionLog.setPreviousOwner(task.getAssignedBy());
         cdActionLog.setAssignedBy(nowOwner);
         cdActionLog.setComment(JSON.toJSONString(task));
+        cdActionLog.setDate(new Date());
 
         return cdActionLog;
     }
@@ -64,6 +65,7 @@ public class ActionLogHelper {
         cdActionLog.setPreviousOwner(task.getAssignedBy());
         cdActionLog.setAssignedBy(nowOwner);
         cdActionLog.setComment(JSON.toJSONString(task));
+        cdActionLog.setDate(new Date());
 
         return cdActionLog;
     }
@@ -90,6 +92,7 @@ public class ActionLogHelper {
         cdActionLog.setPreviousOwner(bug.getAssignedBy());
         cdActionLog.setAssignedBy(nowOwner);
         cdActionLog.setComment(JSON.toJSONString(bug));
+        cdActionLog.setDate(new Date());
 
         return cdActionLog;
     }

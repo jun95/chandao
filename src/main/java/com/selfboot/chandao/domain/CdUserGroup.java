@@ -18,6 +18,8 @@ public class CdUserGroup extends BaseEntity{
     @NotNull
     private Long groupId;
 
+    private Long projectId;
+
     /**  */
     private Long createBy;
 
@@ -26,6 +28,14 @@ public class CdUserGroup extends BaseEntity{
 
     /**  */
     private Date createTime;
+
+    public Long getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
+    }
 
     public Long getUserId() {
         return userId;

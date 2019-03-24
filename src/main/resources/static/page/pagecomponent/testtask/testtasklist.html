@@ -2,7 +2,7 @@
 <script>
     // 查询参数
     search_id = null;
-    project_name_like = null;
+    test_task_name_like = null;
     status_like = null;
 
     $(function(){
@@ -35,7 +35,7 @@
 	    $('#userOperationRecordTable').bootstrapTable({
 	        columns:[{
 	            field : 'name',
-	            title : '任务名称'
+	            title : '测试任务名称'
 	        },{
 	            field : 'projectName',
 	            title : '关联项目'
@@ -43,14 +43,26 @@
                 field : 'requirementName',
                 title : '关联需求'
             },{
-                field : 'pri',
-                title : '优先级'
+                field : 'owner',
+                title : '创建者'
             },{
-                field : 'estimate',
-                title : '预计耗时(小时)'
+                field : 'begin',
+                title : '开始时间',
+                formatter: function (value, row, index) {
+                    if (row.begin != null) {
+                        return new Date(row.begin).format('yyyy-MM-dd');
+                    }
+                    return null;
+                }
             },{
-                field : 'consumed',
-                title : '实际耗时(小时)'
+                field : 'end',
+                title : '结束时间',
+                formatter: function (value, row, index) {
+                    if (row.end != null) {
+                        return new Date(row.end).format('yyyy-MM-dd');
+                    }
+                    return null;
+                }
             },{
                 field : 'status',
                 title : '状态',
@@ -62,13 +74,11 @@
                         return '已关闭';
                     } else if (s == 'doing') {
                         return '进行中';
-                    }else if (s == 'finished') {
-                        return '已完成';
                     }
                 }
             },{
                 field : 'openedName',
-                title : '创建人'
+                title : '激活人'
             },{
                 field : 'assignedByName',
                 title : '指派给'
@@ -91,11 +101,14 @@
                 field : 'operate',
                 title : '操作',
                 events:{     //为按钮添加事件
-                    "click #edit":function(e,value,row,index){
-                        alert("项目名称："+value);
-                    },
                     "click #tostart":function(e,value,row,index){
                         toStart(row.id,row.status);
+                    },
+                    "click #del":function(e,value,row,index){
+                        del(row.id);
+                    },
+                    "click #look":function(e,value,row,index){
+                        showDetail(row.id);
                     }
                 },
                 formatter: operateFormatter //自定义方法，添加操作按钮
@@ -113,20 +126,79 @@
 	    });
 	}
 
-	function toStart(projectId,status) {
+    /*function edit(testtaskId) {
+
+        $('#detail_id').val(testtaskId);
+
+        layer.open({
+            type: 2,
+            shade: 0.2,
+            title:'编辑信息',
+            skin: 'layui-layer-blue',
+            maxmin: false,
+            area: ['40%', '90%'],
+            content: 'pagecomponent/testtask/testtaskedit.html'
+        });
+    }*/
+
+	function showDetail(testtaskId) {
+
+	    $('#detail_id').val(testtaskId);
+
+        layer.open({
+            type: 2,
+            shade: 0.2,
+            title:'详细信息',
+            skin: 'layui-layer-blue',
+            maxmin: false,
+            area: ['40%', '90%'],
+            content: 'pagecomponent/testtask/testtasklook.html'
+        });
+    }
+
+    function del(testtaskId) {
+
+        var entity = {};
+        entity.id = testtaskId;
+
+        <!--loding-->
+        var load = layer.load();
+        $.ajax({
+            type: "POST",
+            url: "/testtask/delete",
+            headers: {
+                "content-Type": "application/json"
+            },
+            data: JSON.stringify(entity),
+            success: function (data) {
+                layer.close(load);
+                if (data.code == 200) {
+                    layer.msg("删除成功");
+                    tableRefresh();
+                } else {
+                    layer.msg(data.message);
+                }
+            },
+            error: function (data) {
+                layer.msg(data.responseText);
+            }
+        });
+    }
+
+	function toStart(testtaskId,status) {
         var s = status == 'wait' ? 'doing' : status == 'doing' ? 'done' : null;
         if (s == null) {
             return;
         }
         var entity = {};
-        entity.id = projectId;
+        entity.id = testtaskId;
         entity.status = s;
 
         <!--loding-->
         var load = layer.load();
         $.ajax({
             type: "POST",
-            url: "/project/updateStatus",
+            url: "/testtask/updateStatus",
             headers: {
                 "content-Type": "application/json"
             },
@@ -152,11 +224,15 @@
         if (desc != null) {
             return [
                 '<a class="btn btn-default" href="#" id="tostart">'+ desc +'</a>',
-                '<a class="btn btn-default" href="#" id="edit">编辑</a>'
+                '<a class="btn btn-default" href="#" id="look">查看</a>',
+                '<a class="btn btn-default" href="#" id="assignedBy">指派</a>',
+                '<a class="btn btn-default" href="#" id="del">删除</a>'
             ].join('');
         }
         return [
-                 '<a class="btn btn-default" href="#" id="edit">编辑</a>'
+                 '<a class="btn btn-default" href="#" id="look">查看</a>',
+                 '<a class="btn btn-default" href="#" id="assignedBy">指派</a>',
+                 '<a class="btn btn-default" href="#" id="del">删除</a>'
              ].join('');
     }
 
@@ -173,7 +249,7 @@
 			limit : params.limit,
 			offset : params.offset,
 			id : search_id,
-            projectNameLike : project_name_like,
+            testTaskNameLike : test_task_name_like,
             status : status_like
 		};
 		return temp;
@@ -183,7 +259,7 @@
     function searchActionInit(){
         $('#search_button').click(function(){
             search_id = $('#id').val();
-            project_name_like = $('#projectNameLike').val();
+            test_task_name_like = $('#testTaskNameLike').val();
             status_like = $('#status').val() == 'all' ? '' : $('#status').val();
             tableRefresh();
         })
@@ -194,10 +270,8 @@
         var entity = {};
         entity.name = $('#name').val();
         entity.description = $('#description').val();
-        entity.estimate = $('#estimate').val();
-
-        var pri_type = $('#pri_level');
-        entity.pri = parseInt(pri_type.val());
+        entity.begin = $('#begin').val();
+        entity.end = $('#end').val();
 
         var select = $('#project_type');
         entity.projectName = select.find("option:selected").text();
@@ -211,7 +285,7 @@
         var load = layer.load();
         $.ajax({
             type: "POST",
-            url: "/task/addTask",
+            url: "/testtask/addTestTask",
             headers: {
                 "content-Type": "application/json"
             },
@@ -237,8 +311,8 @@
             initProject();
 
             $('#name').val('');
-            $('#estimate').val('');
-            //$('#pri_level').val('');
+            $('#begin').val('');
+            $('#end').val('');
             $('#description').val('');
             $('#addmember').modal();
         });
@@ -326,13 +400,14 @@
         <li>测试任务管理</li>
     </ol>
     <div class="panel-body">
+        <input type="hidden" id="detail_id">
         <div class="row">
             <div class="col-md-3">
                 <form action="" class="form-inline">
                 <div class="form-group">
 
-                    <label class="form-label">任务名称：</label>
-                    <input type="text" id="projectNameLike" class="form-control" placeholder="任务名称" style="width:50%">
+                    <label class="form-label">测试任务名称：</label>
+                    <input type="text" id="testTaskNameLike" class="form-control" placeholder="测试任务名称" style="width:50%">
 
                 </div>
 
@@ -375,21 +450,13 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="addroleLabel">创建任务</h4>
+                    <h4 class="modal-title" id="addroleLabel">创建测试任务</h4>
                 </div>
                 <div class="modal-body">
                     <form id="boxRoleForm">
                         <div class="form-group">
-                            <label class="control-label">任务名称:</label>
-                            <input type="text" class="form-control" name="name" id="name" placeholder="请输入任务名称"/>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label">优先级:</label>
-                            <select name="" id="pri_level" class="form-control">
-                                <option value="1">一级</option>
-                                <option value="2">二级</option>
-                                <option value="3">三级</option>
-                            </select>
+                            <label class="control-label">测试任务名称:</label>
+                            <input type="text" class="form-control" name="name" id="name" placeholder="请输入测试任务名称"/>
                         </div>
                         <div class="form-group">
                             <label class="control-label">关联项目:</label>
@@ -402,8 +469,12 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="control-label">预计耗时(小时为单位):</label>
-                            <input type="text" class="form-control" name="estimate" id="estimate" placeholder="预计耗时"/>
+                            <label class="control-label">测试任务开始时间:</label>
+                            <input class="form_date form-control" value="" id="begin" name="begin" placeholder="请输入项目开始时间">
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">测试任务结束时间:</label>
+                            <input class="form_date form-control" value="" id="end" name="end" placeholder="请输入项目开始时间">
                         </div>
                         <div class="form-group">
                             <label class="control-label">任务描述:</label>
@@ -413,7 +484,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                    <button type="button" onclick="addMember();" class="btn btn-primary" data-dismiss="modal">新增</button>
+                    <button type="button" onclick="addMember();" class="btn btn-primary">新增</button>
                 </div>
             </div>
         </div>

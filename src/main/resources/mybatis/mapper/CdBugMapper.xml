@@ -56,10 +56,10 @@
       </if>
       <if test="entity.requireNameLike != null and entity.requireNameLike != '' ">
         AND requirement_name like CONCAT('%',#{entity.requireNameLike,jdbcType=CHAR},'%')
-      </if>
-      <if test="entity.testTaskNameLike != null and entity.testTaskNameLike != '' ">
-        AND name like CONCAT('%',#{entity.testTaskNameLike,jdbcType=CHAR},'%')
       </if>-->
+      <if test="entity.titleLike != null and entity.titleLike != '' ">
+        AND title like CONCAT('%',#{entity.titleLike,jdbcType=CHAR},'%')
+      </if>
       <if test="entity.status != null and entity.status != '' ">
         AND status = #{entity.status,jdbcType=INTEGER}
       </if>

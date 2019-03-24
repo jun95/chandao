@@ -6,6 +6,8 @@ import com.selfboot.chandao.persist.BootStrapServiceImpl;
 import com.selfboot.chandao.service.CdUserGroupService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Created by 87570 on 2019/3/20.
  */
@@ -14,4 +16,9 @@ public class CdUserGroupServiceImpl extends BootStrapServiceImpl<CdUserGroup,CdU
         implements CdUserGroupService {
 
 
+    @Override
+    public List<CdUserGroup> getListByProjectId(Long projectId) {
+
+        return targetDAO.getListByProjectId(projectId);
+    }
 }

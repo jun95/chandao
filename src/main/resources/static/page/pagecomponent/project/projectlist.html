@@ -99,11 +99,22 @@
                 title : '操作',
                 events:{     //为按钮添加事件
                     "click #edit":function(e,value,row,index){
-                        alert("项目名称："+value);
+                        edit(row.id);
                     },
                     "click #tostart":function(e,value,row,index){
                         toStart(row.id,row.status);
-                    }
+                    },
+                    "click #allot":function(e,value,row,index){
+                        allot(row.id,row.groupId);
+                    },
+                    "click #showDetail":function(e,value,row,index){
+                        showDetail(row.id);
+                    },
+                    "click #show":function(e,value,row,index){
+                        $('#group_id').val(row.groupId);
+                        $('#showMember').modal();
+                        tableRefresh('showMemberOperationRecordTable');
+                    },
                 },
                 formatter: operateFormatter //自定义方法，添加操作按钮
             }],
@@ -119,6 +130,39 @@
             clickToSelect : false
 	    });
 	}
+
+	function allot(projectId,groupId) {
+        $('#group_id').val(groupId);
+        $('#addGroupMember').modal();
+    }
+
+	function showDetail(projectId) {
+        $('#detail_id').val(projectId);
+
+        layer.open({
+            type: 2,
+            shade: 0.2,
+            title:'详细信息',
+            skin: 'layui-layer-blue',
+            maxmin: false,
+            area: ['40%', '90%'],
+            content: 'pagecomponent/project/projectlook.html'
+        });
+    }
+    var index = null;
+    function edit(projectId) {
+        $('#detail_id').val(projectId);
+
+        index = layer.open({
+            type: 2,
+            shade: 0.2,
+            title:'编辑信息',
+            skin: 'layui-layer-blue',
+            maxmin: false,
+            area: ['40%', '90%'],
+            content: 'pagecomponent/project/projectedit.html'
+        });
+    }
 
 	function toStart(projectId,status) {
         var s = status == 'wait' ? 'doing' : status == 'doing' ? 'done' : null;
@@ -156,15 +200,30 @@
 	function operateFormatter(value, row, index) {
         var s = row.status;
         var desc = s == 'wait' ? '开始' : s == 'doing' ? '关闭' : null;
+
+        var arr = new Array();
         if (desc != null) {
-            return [
-                '<a class="btn btn-default" href="#" id="tostart">'+ desc +'</a>',
-                '<a class="btn btn-default" href="#" id="edit">编辑</a>'
-            ].join('');
+            arr[0] = '<a class="btn btn-default" href="#" id="tostart">'+ desc +'</a>';
+            if (s == 'wait') {
+                arr[1] = '<a class="btn btn-default" href="#" id="edit">编辑</a>';
+                arr[2] = '<a class="btn btn-default" href="#" id="showDetail">查看</a>';
+            } else {
+                arr[1] = '<a class="btn btn-default" href="#" id="showDetail">查看</a>';
+            }
+        } else {
+            if (s == 'wait') {
+                arr[0] = '<a class="btn btn-default" href="#" id="edit">编辑</a>';
+                arr[1] = '<a class="btn btn-default" href="#" id="showDetail">查看</a>';
+            } else {
+                arr[0] = '<a class="btn btn-default" href="#" id="showDetail">查看</a>';
+            }
         }
-        return [
-                 '<a class="btn btn-default" href="#" id="edit">编辑</a>'
-             ].join('');
+        if (s != 'done') {
+            arr.push('<a class="btn btn-default" href="#" id="allot">分配成员</a>');
+        }
+        arr.push('<a class="btn btn-default" href="#" id="show">查看成员</a>');
+
+        return arr.join('');
     }
 
 	// 表格刷新
@@ -280,6 +339,8 @@
         <li>项目流程管理</li>
     </ol>
     <div class="panel-body">
+        <input type="hidden" id="group_id">
+        <input type="hidden" id="detail_id">
         <div class="row">
             <div class="col-md-3">
                 <form action="" class="form-inline">
@@ -366,3 +427,173 @@
             </div>
         </div>
     </div>
+
+
+<div class="modal fade" id="addGroupMember" tabindex="-1" role="dialog" aria-labelledby="addgroupmemberLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="addgroupmemberLabel">分配成员</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped" id="groupMemberOperationRecordTable"></table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" onclick="addUserMember();" class="btn btn-primary">新增</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="showMember" tabindex="-1" role="dialog" aria-labelledby="showgroupmemberLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="showgroupmemberLabel">展示成员</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped" id="showMemberOperationRecordTable"></table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(function(){
+        userOperationRecordTableInit();
+        showMemberOperationRecordTableInit();
+    })
+
+    function showMemberOperationRecordTableInit(){
+        $('#showMemberOperationRecordTable').bootstrapTable({
+            columns:[{
+                field : 'account',
+                title : '组用户账号'
+            },{
+                field : 'createTime',
+                title : '关联时间',
+                formatter : function (value, row, index) {
+                    if (row.createTime != null) {
+                        return new Date(row.createTime).format("yyyy-MM-dd hh:mm:ss");
+                    }
+                    return null;
+                }
+            }],
+            url : '/group/getGroupMemberRecords',
+            method : 'GET',
+            queryParams : showMemberQueryParams,
+            sidePagination : "server",
+            dataType : 'json',
+            pagination : true,
+            pageNumber : 1,
+            pageSize : 10,
+            pageList : [ 5, 10, 25, 50, 100 ],
+            clickToSelect : false
+        });
+    }
+
+    // 分页查询参数
+    function showMemberQueryParams(params) {
+        var temp = {
+            limit : params.limit,
+            offset : params.offset,
+            groupId : $('#group_id').val()
+        };
+        return temp;
+    }
+
+    function userOperationRecordTableInit(){
+        $('#groupMemberOperationRecordTable').bootstrapTable({
+            columns:[{
+                checkbox: true
+            },{
+                field : 'id',
+                title : '用户ID'
+            },{
+                field : 'account',
+                title : '用户名'
+            },{
+                field : 'nickname',
+                title : '用户昵称'
+            },{
+                field : 'gender',
+                title : '性别',
+                formatter: function (value, row, index) {
+                    if (value == 1) {
+                        return '男';
+                    }
+                    return '女';
+                }
+            },{
+                field : 'lastLoginTime',
+                title : '上次登录时间',
+                formatter : function (value, row, index) {
+                    if (row.lastLoginTime != null) {
+                        return new Date(row.lastLoginTime).format("yyyy-MM-dd hh:mm:ss");
+                    }
+                    return null;
+                }
+            }],
+            url : '/user/getUserRecords',
+            method : 'GET',
+            //queryParams : queryParams,
+            sidePagination : "server",
+            dataType : 'json',
+            pagination : true,
+            pageNumber : 1,
+            pageSize : 10,
+            pageList : [ 5, 10, 25, 50, 100 ],
+            clickToSelect : false
+        });
+    }
+
+    function addUserMember() {
+        var rows = $("#groupMemberOperationRecordTable").bootstrapTable('getSelections');
+        //console.log(rows);
+        if (rows.length == 0) {// rows 主要是为了判断是否选中，下面的else内容才是主要
+            layer.msg("请先选择要加入的记录!");
+            return;
+        } else {
+            var arrays = new Array();// 声明一个数组
+            $(rows).each(function () {// 通过获得别选中的来进行遍历
+                var entity = {};
+                entity.userId = this.id;
+                entity.account = this.account;
+                entity.groupId = $('#group_id').val();
+
+                arrays.push(entity);// cid为获得到的整条数据中的一列
+            });
+            console.log(arrays);
+
+            <!--loding-->
+            var load = layer.load();
+            $.ajax({
+                type: "POST",
+                url: "/group/addGroupMember",
+                headers: {
+                    "content-Type": "application/json"
+                },
+                data: JSON.stringify(arrays),
+                success: function (data) {
+                    layer.close(load);
+                    if (data.code == 200) {
+                        layer.msg("添加成功");
+                        $('#addGroupMember').modal('hide');
+                    } else {
+                        layer.msg(data.message);
+                    }
+                },
+                error: function (data) {
+                    layer.msg(data.responseText);
+                }
+            });
+        }
+    }
+</script>

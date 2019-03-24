@@ -5,6 +5,9 @@ import com.selfboot.chandao.common.ResponseStatus;
 import com.selfboot.chandao.domain.CdGroup;
 import com.selfboot.chandao.domain.CdUser;
 import com.selfboot.chandao.domain.CdUserGroup;
+import com.selfboot.chandao.listener.DataCallback;
+import com.selfboot.chandao.persist.CrudService;
+import com.selfboot.chandao.persist.DataCallbackParam;
 import com.selfboot.chandao.service.CdGroupService;
 import com.selfboot.chandao.service.CdUserGroupService;
 import com.selfboot.chandao.util.UserUtil;
@@ -14,10 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by hwj on 2019/3/20.
@@ -36,13 +36,16 @@ public class GroupController extends BaseController<CdGroup, CdGroupService> {
         if (!StringUtils.isBlank(id)) {
             cdGroup.setId(Long.parseLong(id));
         }
+        cdGroup.setDeleted(1);
         return getRecords(cdGroup,offset,limit);
     }
 
     @PostMapping("getGroupTotalRecord")
     public ResponseResult<List<CdGroup>> getGroupTotalRecord() {
         ResponseResult<List<CdGroup>> result = new ResponseResult<>();
-        ServiceResult serviceResult = targetService.queryList(null);
+        CdGroup cdGroup = new CdGroup();
+        cdGroup.setDeleted(1);
+        ServiceResult serviceResult = targetService.queryList(cdGroup);
         if (serviceResult.isSuccess()) {
             result.setResult((List<CdGroup>) serviceResult.getResult());
             result.setResponseStatus(ResponseStatus.OK);
@@ -60,7 +63,19 @@ public class GroupController extends BaseController<CdGroup, CdGroupService> {
         if (!StringUtils.isBlank(groupId)) {
             cdUserGroup.setGroupId(Long.parseLong(groupId));
         }
-        return getRecords(cdUserGroupService,cdUserGroup,offset,limit);
+
+        if (cdUserGroup.getProjectId() == null) {
+            return getRecords(cdUserGroupService,cdUserGroup,offset,limit);
+        } else {
+            return getRecords(cdUserGroupService, cdUserGroup, offset, limit, new DataCallback<CdUserGroup>() {
+                @Override
+                public List<CdUserGroup> onPushData(CrudService crudService, DataCallbackParam<CdUserGroup> params) {
+                    CdUserGroupService service = (CdUserGroupService) crudService;
+                    List<CdUserGroup> groupList = service.getListByProjectId(params.getEntity().getProjectId());
+                    return groupList;
+                }
+            });
+        }
     }
 
     @PostMapping("addGroup")

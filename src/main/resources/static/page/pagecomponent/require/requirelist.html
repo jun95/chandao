@@ -96,11 +96,8 @@
                 field : 'operate',
                 title : '操作',
                 events:{     //为按钮添加事件
-                    "click #edit":function(e,value,row,index){
-                        alert("edit："+value);
-                    },
                     "click #del":function(e,value,row,index){
-                        alert("del："+value);
+                        del(row.id);
                     }
                 },
                 formatter: operateFormatter //自定义方法，添加操作按钮
@@ -118,10 +115,38 @@
         });
     }
 
+    function del(reqId) {
+
+        var entity = {};
+        entity.id = reqId;
+
+        <!--loding-->
+        var load = layer.load();
+        $.ajax({
+            type: "POST",
+            url: "/require/delete",
+            headers: {
+                "content-Type": "application/json"
+            },
+            data: JSON.stringify(entity),
+            success: function (data) {
+                layer.close(load);
+                if (data.code == 200) {
+                    layer.msg("删除成功");
+                    tableRefresh();
+                } else {
+                    layer.msg(data.message);
+                }
+            },
+            error: function (data) {
+                layer.msg(data.responseText);
+            }
+        });
+    }
+
     function operateFormatter(value, row, index) {
         return [
             /*'<a class="btn active disabled" href="#">编辑</a>',*/
-            '<a class="btn btn-default" href="#" id="edit">编辑</a>',
             '<a class="btn btn-default" href="#" id="del">删除</a>'
             /*'<a class="btn active" href="#">准入</a>'*/
         ].join('');

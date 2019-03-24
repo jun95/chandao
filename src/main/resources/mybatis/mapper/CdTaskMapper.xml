@@ -4,10 +4,10 @@
   <resultMap id="BaseResultMap" type="com.selfboot.chandao.domain.CdTask" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="parent" property="parent" jdbcType="BIGINT" />
-    <result column="requirement_id" property="requirementId" jdbcType="BIGINT" />
     <result column="requirement_name" property="requirementName" jdbcType="VARCHAR" />
-    <result column="project_id" property="projectId" jdbcType="BIGINT" />
+    <result column="requirement_id" property="requirementId" jdbcType="BIGINT" />
     <result column="project_name" property="projectName" jdbcType="VARCHAR" />
+    <result column="project_id" property="projectId" jdbcType="BIGINT" />
     <result column="from_bug" property="fromBug" jdbcType="BIGINT" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="type" property="type" jdbcType="INTEGER" />
@@ -19,7 +19,7 @@
     <result column="opened_name" property="openedName" jdbcType="VARCHAR" />
     <result column="opened_date" property="openedDate" jdbcType="TIMESTAMP" />
     <result column="assigned_by" property="assignedBy" jdbcType="BIGINT" />
-    <result column="assigned_by_name" property="assignedByName" jdbcType="BIGINT" />
+    <result column="assigned_by_name" property="assignedByName" jdbcType="VARCHAR" />
     <result column="assigned_date" property="assignedDate" jdbcType="TIMESTAMP" />
     <result column="finished_by" property="finishedBy" jdbcType="BIGINT" />
     <result column="finished_name" property="finishedName" jdbcType="VARCHAR" />
@@ -40,7 +40,7 @@
     <result column="description" property="description" jdbcType="LONGVARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, parent, requirement_id, requirement_name, project_id, project_name, from_bug, 
+    id, parent, requirement_name, requirement_id, project_name, project_id, from_bug, 
     name, type, pri, estimate, consumed, status, opened_by, opened_name, opened_date, 
     assigned_by, assigned_by_name, assigned_date, finished_by, finished_name, finished_date, 
     closed_by, closed_name, closed_date, canceled_by, canceled_name, canceled_date, closed_reason, 
@@ -88,8 +88,8 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.selfboot.chandao.domain.CdTask" >
-    insert into cd_task (id, parent, requirement_id, 
-      requirement_name, project_id, project_name, 
+    insert into cd_task (id, parent, requirement_name, 
+      requirement_id, project_name, project_id, 
       from_bug, name, type, 
       pri, estimate, consumed, 
       status, opened_by, opened_name, 
@@ -100,12 +100,12 @@
       canceled_date, closed_reason, last_edited_by, 
       last_edited_name, last_edited_date, deleted, 
       description)
-    values (#{id,jdbcType=BIGINT}, #{parent,jdbcType=BIGINT}, #{requirementId,jdbcType=BIGINT}, 
-      #{requirementName,jdbcType=VARCHAR}, #{projectId,jdbcType=BIGINT}, #{projectName,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=BIGINT}, #{parent,jdbcType=BIGINT}, #{requirementName,jdbcType=VARCHAR}, 
+      #{requirementId,jdbcType=BIGINT}, #{projectName,jdbcType=VARCHAR}, #{projectId,jdbcType=BIGINT}, 
       #{fromBug,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, 
       #{pri,jdbcType=TINYINT}, #{estimate,jdbcType=REAL}, #{consumed,jdbcType=REAL}, 
       #{status,jdbcType=CHAR}, #{openedBy,jdbcType=BIGINT}, #{openedName,jdbcType=VARCHAR}, 
-      #{openedDate,jdbcType=TIMESTAMP}, #{assignedBy,jdbcType=BIGINT}, #{assignedByName,jdbcType=BIGINT}, 
+      #{openedDate,jdbcType=TIMESTAMP}, #{assignedBy,jdbcType=BIGINT}, #{assignedByName,jdbcType=VARCHAR}, 
       #{assignedDate,jdbcType=TIMESTAMP}, #{finishedBy,jdbcType=BIGINT}, #{finishedName,jdbcType=VARCHAR}, 
       #{finishedDate,jdbcType=TIMESTAMP}, #{closedBy,jdbcType=BIGINT}, #{closedName,jdbcType=VARCHAR}, 
       #{closedDate,jdbcType=TIMESTAMP}, #{canceledBy,jdbcType=BIGINT}, #{canceledName,jdbcType=VARCHAR}, 
@@ -122,17 +122,17 @@
       <if test="parent != null" >
         parent,
       </if>
-      <if test="requirementId != null" >
-        requirement_id,
-      </if>
       <if test="requirementName != null" >
         requirement_name,
       </if>
-      <if test="projectId != null" >
-        project_id,
+      <if test="requirementId != null" >
+        requirement_id,
       </if>
       <if test="projectName != null" >
         project_name,
+      </if>
+      <if test="projectId != null" >
+        project_id,
       </if>
       <if test="fromBug != null" >
         from_bug,
@@ -226,17 +226,17 @@
       <if test="parent != null" >
         #{parent,jdbcType=BIGINT},
       </if>
-      <if test="requirementId != null" >
-        #{requirementId,jdbcType=BIGINT},
-      </if>
       <if test="requirementName != null" >
         #{requirementName,jdbcType=VARCHAR},
       </if>
-      <if test="projectId != null" >
-        #{projectId,jdbcType=BIGINT},
+      <if test="requirementId != null" >
+        #{requirementId,jdbcType=BIGINT},
       </if>
       <if test="projectName != null" >
         #{projectName,jdbcType=VARCHAR},
+      </if>
+      <if test="projectId != null" >
+        #{projectId,jdbcType=BIGINT},
       </if>
       <if test="fromBug != null" >
         #{fromBug,jdbcType=BIGINT},
@@ -272,7 +272,7 @@
         #{assignedBy,jdbcType=BIGINT},
       </if>
       <if test="assignedByName != null" >
-        #{assignedByName,jdbcType=BIGINT},
+        #{assignedByName,jdbcType=VARCHAR},
       </if>
       <if test="assignedDate != null" >
         #{assignedDate,jdbcType=TIMESTAMP},
@@ -330,17 +330,17 @@
       <if test="parent != null" >
         parent = #{parent,jdbcType=BIGINT},
       </if>
-      <if test="requirementId != null" >
-        requirement_id = #{requirementId,jdbcType=BIGINT},
-      </if>
       <if test="requirementName != null" >
         requirement_name = #{requirementName,jdbcType=VARCHAR},
       </if>
-      <if test="projectId != null" >
-        project_id = #{projectId,jdbcType=BIGINT},
+      <if test="requirementId != null" >
+        requirement_id = #{requirementId,jdbcType=BIGINT},
       </if>
       <if test="projectName != null" >
         project_name = #{projectName,jdbcType=VARCHAR},
+      </if>
+      <if test="projectId != null" >
+        project_id = #{projectId,jdbcType=BIGINT},
       </if>
       <if test="fromBug != null" >
         from_bug = #{fromBug,jdbcType=BIGINT},
@@ -376,7 +376,7 @@
         assigned_by = #{assignedBy,jdbcType=BIGINT},
       </if>
       <if test="assignedByName != null" >
-        assigned_by_name = #{assignedByName,jdbcType=BIGINT},
+        assigned_by_name = #{assignedByName,jdbcType=VARCHAR},
       </if>
       <if test="assignedDate != null" >
         assigned_date = #{assignedDate,jdbcType=TIMESTAMP},
@@ -432,10 +432,10 @@
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.selfboot.chandao.domain.CdTask" >
     update cd_task
     set parent = #{parent,jdbcType=BIGINT},
-      requirement_id = #{requirementId,jdbcType=BIGINT},
       requirement_name = #{requirementName,jdbcType=VARCHAR},
-      project_id = #{projectId,jdbcType=BIGINT},
+      requirement_id = #{requirementId,jdbcType=BIGINT},
       project_name = #{projectName,jdbcType=VARCHAR},
+      project_id = #{projectId,jdbcType=BIGINT},
       from_bug = #{fromBug,jdbcType=BIGINT},
       name = #{name,jdbcType=VARCHAR},
       type = #{type,jdbcType=INTEGER},
@@ -447,7 +447,7 @@
       opened_name = #{openedName,jdbcType=VARCHAR},
       opened_date = #{openedDate,jdbcType=TIMESTAMP},
       assigned_by = #{assignedBy,jdbcType=BIGINT},
-      assigned_by_name = #{assignedByName,jdbcType=BIGINT},
+      assigned_by_name = #{assignedByName,jdbcType=VARCHAR},
       assigned_date = #{assignedDate,jdbcType=TIMESTAMP},
       finished_by = #{finishedBy,jdbcType=BIGINT},
       finished_name = #{finishedName,jdbcType=VARCHAR},
@@ -469,10 +469,10 @@
   <update id="updateByPrimaryKey" parameterType="com.selfboot.chandao.domain.CdTask" >
     update cd_task
     set parent = #{parent,jdbcType=BIGINT},
-      requirement_id = #{requirementId,jdbcType=BIGINT},
       requirement_name = #{requirementName,jdbcType=VARCHAR},
-      project_id = #{projectId,jdbcType=BIGINT},
+      requirement_id = #{requirementId,jdbcType=BIGINT},
       project_name = #{projectName,jdbcType=VARCHAR},
+      project_id = #{projectId,jdbcType=BIGINT},
       from_bug = #{fromBug,jdbcType=BIGINT},
       name = #{name,jdbcType=VARCHAR},
       type = #{type,jdbcType=INTEGER},
@@ -484,7 +484,7 @@
       opened_name = #{openedName,jdbcType=VARCHAR},
       opened_date = #{openedDate,jdbcType=TIMESTAMP},
       assigned_by = #{assignedBy,jdbcType=BIGINT},
-      assigned_by_name = #{assignedByName,jdbcType=BIGINT},
+      assigned_by_name = #{assignedByName,jdbcType=VARCHAR},
       assigned_date = #{assignedDate,jdbcType=TIMESTAMP},
       finished_by = #{finishedBy,jdbcType=BIGINT},
       finished_name = #{finishedName,jdbcType=VARCHAR},

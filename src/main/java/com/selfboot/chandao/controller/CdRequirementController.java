@@ -5,6 +5,7 @@ import com.selfboot.chandao.common.ResponseResult;
 import com.selfboot.chandao.common.ResponseStatus;
 import com.selfboot.chandao.common.ServiceResult;
 import com.selfboot.chandao.domain.CdRequirement;
+import com.selfboot.chandao.domain.CdTestTask;
 import com.selfboot.chandao.domain.CdUser;
 import com.selfboot.chandao.service.CdRequirementService;
 import com.selfboot.chandao.util.DateUtil;
@@ -33,6 +34,7 @@ public class CdRequirementController extends BaseController<CdRequirement, CdReq
         if (!StringUtils.isBlank(id)) {
             cdRequirement.setId(Long.parseLong(id));
         }
+        cdRequirement.setDeleted(1);
         return getRecords(cdRequirement, offset, limit);
     }
 
@@ -44,7 +46,7 @@ public class CdRequirementController extends BaseController<CdRequirement, CdReq
             result.setMessage("项目id不能为空");
             return result;
         }
-
+        cdRequirement.setDeleted(1);
         ServiceResult serviceResult = targetService.queryList(cdRequirement);
         if (serviceResult.isSuccess()) {
             result.setResult((List<CdRequirement>) serviceResult.getResult());
@@ -87,6 +89,42 @@ public class CdRequirementController extends BaseController<CdRequirement, CdReq
             result.setMessage((String) serviceResult.getErrorMessage().get(0));
         }
 
+        return result;
+    }
+
+    @PostMapping("delete")
+    public ResponseResult<String> delete(HttpServletRequest request,@RequestBody CdRequirement cdRequirement) {
+        ResponseResult<String> result = new ResponseResult<>();
+
+        if (cdRequirement.getId() == null) {
+            result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+            result.setMessage("请选择要删除的需求");
+            return result;
+        }
+
+        CdTestTask testTask = new CdTestTask();
+        testTask.setId(cdRequirement.getId());
+        ServiceResult serviceResult = targetService.queryOne(cdRequirement);
+        if (serviceResult.isSuccess()) {
+            cdRequirement = (CdRequirement) serviceResult.getResult();
+            if (cdRequirement != null) {
+                cdRequirement.setDeleted(CdTestTask.DEL);
+                cdRequirement.setUpdate(true);
+
+                serviceResult = targetService.save(Collections.singletonList(cdRequirement));
+                if (serviceResult.isSuccess()) {
+                    result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.OK);
+                    return result;
+                }
+                result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+            } else {
+                result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+                result.setMessage("测试任务不存在");
+            }
+        } else {
+            result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+            result.setMessage((String) serviceResult.getErrorMessage().get(0));
+        }
         return result;
     }
 }

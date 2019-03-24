@@ -2,20 +2,25 @@ package com.selfboot.chandao.domain;
 
 import com.selfboot.chandao.persist.BaseEntity;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 public class CdTestTask extends BaseEntity {
 
     /**  */
+    @NotBlank(message = "测试任务名称不能为空")
     private String name;
 
     /**  */
+    @NotNull(message = "项目不能为空")
     private Long projectId;
 
     /** 项目标题 */
     private String projectName;
 
     /**  */
+    @NotNull(message = "需求不能为空")
     private Long requirementId;
 
     /** 需求名称 */
@@ -25,9 +30,11 @@ public class CdTestTask extends BaseEntity {
     private String owner;
 
     /**  */
+    @NotNull(message = "开始时间不能为空")
     private Date begin;
 
     /**  */
+    @NotNull(message = "结束时间不能为空")
     private Date end;
 
     /**  */

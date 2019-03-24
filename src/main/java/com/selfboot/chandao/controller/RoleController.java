@@ -25,6 +25,7 @@ public class RoleController extends BaseController<CdURole, RoleService> {
         if (!StringUtils.isBlank(id)) {
             cdURole.setId(Long.parseLong(id));
         }
+        cdURole.setDeleted(1);
         return getRecords(cdURole,offset,limit);
     }
 

@@ -62,7 +62,7 @@ public class CdTask extends BaseEntity {
     private Long assignedBy;
 
     /** 指派人姓名 */
-    private Long assignedByName;
+    private String assignedByName;
 
     /** 指派时间 */
     private Date assignedDate;
@@ -261,11 +261,11 @@ public class CdTask extends BaseEntity {
         this.assignedBy = assignedBy;
     }
 
-    public Long getAssignedByName() {
+    public String getAssignedByName() {
         return assignedByName;
     }
 
-    public void setAssignedByName(Long assignedByName) {
+    public void setAssignedByName(String assignedByName) {
         this.assignedByName = assignedByName;
     }
 

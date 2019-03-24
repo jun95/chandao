@@ -2,7 +2,7 @@
 <script>
     // 查询参数
     search_id = null;
-    project_name_like = null;
+    title_like = null;
     status_like = null;
 
     $(function(){
@@ -11,7 +11,7 @@
         searchActionInit();
         insertActionInit();
 
-        change('project_type');
+        //change('project_type');
     });
 
     // 日期选择器初始化
@@ -34,60 +34,55 @@
 	function userOperationRecordTableInit(){
 	    $('#userOperationRecordTable').bootstrapTable({
 	        columns:[{
-	            field : 'name',
-	            title : '任务名称'
+	            field : 'title',
+	            title : 'BUG名称'
 	        },{
 	            field : 'projectName',
 	            title : '关联项目'
 	        },{
-                field : 'requirementName',
-                title : '关联需求'
-            },{
                 field : 'pri',
                 title : '优先级'
             },{
-                field : 'estimate',
-                title : '预计耗时(小时)'
+                field : 'severity',
+                title : '严重性'
             },{
-                field : 'consumed',
-                title : '实际耗时(小时)'
+                field : 'activatedCount',
+                title : '激活次数',
+                formatter: function (value, row, index) {
+                    if (row.activatedCount == null) {
+                        return 0;
+                    }
+                    return row.activatedCount;
+                }
             },{
                 field : 'status',
                 title : '状态',
                 formatter: function (value, row, index) {
                     var s = row.status;
-                    if (s == 'wait') {
-                        return '待开始';
-                    } else if (s == 'done') {
+                    if (s == 'active') {
+                        return '被激活';
+                    } else if (s == 'closed') {
                         return '已关闭';
-                    } else if (s == 'doing') {
-                        return '进行中';
-                    }else if (s == 'finished') {
-                        return '已完成';
+                    } else if (s == 'resolved') {
+                        return '已解决';
                     }
                 }
             },{
                 field : 'openedName',
-                title : '创建人'
+                title : '激活人'
             },{
                 field : 'assignedByName',
                 title : '指派给'
             },{
-                field : 'finishedName',
-                title : '完成人'
+                field : 'resolvedName',
+                title : '解决者'
+            },{
+                field : 'resolution',
+                title : '解决方式'
             },{
                 field : 'closedName',
                 title : '关闭人'
-            },/*{
-                field : 'createDate',
-                title : '创建时间',
-                formatter: function (value, row, index) {
-                    if (row.createDate != null) {
-                        return new Date(row.createDate).format('yyyy-MM-dd hh:mm:ss');
-                    }
-                    return null;
-                }
-            },*/{
+            },{
                 field : 'operate',
                 title : '操作',
                 events:{     //为按钮添加事件
@@ -96,6 +91,9 @@
                     },
                     "click #tostart":function(e,value,row,index){
                         toStart(row.id,row.status);
+                    },
+                    "click #del":function(e,value,row,index){
+
                     }
                 },
                 formatter: operateFormatter //自定义方法，添加操作按钮
@@ -152,11 +150,15 @@
         if (desc != null) {
             return [
                 '<a class="btn btn-default" href="#" id="tostart">'+ desc +'</a>',
-                '<a class="btn btn-default" href="#" id="edit">编辑</a>'
+                '<a class="btn btn-default" href="#" id="edit">编辑</a>',
+                '<a class="btn btn-default" href="#" id="showDetail">查看</a>',
+                '<a class="btn btn-default" href="#" id="del">删除</a>'
             ].join('');
         }
         return [
-                 '<a class="btn btn-default" href="#" id="edit">编辑</a>'
+                 '<a class="btn btn-default" href="#" id="edit">编辑</a>',
+                 '<a class="btn btn-default" href="#" id="showDetail">查看</a>',
+                 '<a class="btn btn-default" href="#" id="del">删除</a>'
              ].join('');
     }
 
@@ -173,7 +175,7 @@
 			limit : params.limit,
 			offset : params.offset,
 			id : search_id,
-            projectNameLike : project_name_like,
+            titleLike : title_like,
             status : status_like
 		};
 		return temp;
@@ -183,7 +185,7 @@
     function searchActionInit(){
         $('#search_button').click(function(){
             search_id = $('#id').val();
-            project_name_like = $('#projectNameLike').val();
+            title_like = $('#projectNameLike').val();
             status_like = $('#status').val() == 'all' ? '' : $('#status').val();
             tableRefresh();
         })
@@ -192,9 +194,9 @@
     function addMember(){
 
         var entity = {};
-        entity.name = $('#name').val();
-        entity.description = $('#description').val();
-        entity.estimate = $('#estimate').val();
+        entity.title = $('#title').val();
+        entity.steps = $('#steps').val();
+        entity.keywords = $('#keywords').val();
 
         var pri_type = $('#pri_level');
         entity.pri = parseInt(pri_type.val());
@@ -203,15 +205,11 @@
         entity.projectName = select.find("option:selected").text();
         entity.projectId = parseInt(select.val());
 
-        select = $('#req_type');
-        entity.requirementName = select.find("option:selected").text();
-        entity.requirementId = parseInt(select.val());
-
         <!--loding-->
         var load = layer.load();
         $.ajax({
             type: "POST",
-            url: "/task/addTask",
+            url: "/bug/addBug",
             headers: {
                 "content-Type": "application/json"
             },
@@ -236,43 +234,12 @@
         $('#insert_button').click(function(){
             initProject();
 
-            $('#name').val('');
-            $('#estimate').val('');
+            $('#title').val('');
+            $('#keywords').val('');
             //$('#pri_level').val('');
-            $('#description').val('');
+            $('#steps').val('');
             $('#addmember').modal();
         });
-    }
-
-    function initReq(projectId) {
-        $.ajax({
-            type: "POST",
-            url: "/require/getRequireTotalRecordByProjectId",
-            headers: {
-                "content-Type": "application/json"
-            },
-            data : JSON.stringify({projectId : projectId}),
-            success: function (data) {
-                if (data.code == 200) {
-                    fillingReq(data.result,'req_type');
-                } else {
-                    layer.msg(data.message);
-                }
-            },
-            error: function (data) {
-                layer.msg(data.responseText);
-            }
-        });
-    }
-
-    function fillingReq(result,selectId) {
-        var select = $('#' + selectId);
-        var options = '';
-        //options += '<option value="">' + '' + '</option>';
-        for (var i = 0; i < result.length; i++) {
-            options += '<option value="' + result[i].id + '">' + result[i].title + '</option>';
-        }
-        select.html(options);
     }
 
     function initProject() {
@@ -285,13 +252,6 @@
             success: function (data) {
                 if (data.code == 200) {
                     filling(data.result,'project_type');
-
-                    //获取项目id,设置需求
-                    var select = $('#project_type');
-                    var projectId = (select.val() != null && select.val() != '') ? parseInt(select.val()) : 0;
-                    if (projectId != 0) {
-                        initReq(projectId);
-                    }
                 } else {
                     layer.msg(data.message);
                 }
@@ -312,18 +272,18 @@
         select.html(options);
     }
 
-    function change(selectId) {
+    /*function change(selectId) {
         var select = $('#' + selectId);
         select.change(function () {
 
             alert($(this).children("option:selected").val());
         });
-    }
+    }*/
 </script>
 
 <div class="panel panel-default">
     <ol class="breadcrumb">
-        <li>测试任务管理</li>
+        <li>BUG管理</li>
     </ol>
     <div class="panel-body">
         <div class="row">
@@ -331,8 +291,8 @@
                 <form action="" class="form-inline">
                 <div class="form-group">
 
-                    <label class="form-label">任务名称：</label>
-                    <input type="text" id="projectNameLike" class="form-control" placeholder="任务名称" style="width:50%">
+                    <label class="form-label">BUG名称：</label>
+                    <input type="text" id="titleLike" class="form-control" placeholder="BUG名称" style="width:50%">
 
                 </div>
 
@@ -345,9 +305,9 @@
                         <label class="form-label">状态：</label>
                         <select name="" id="status" class="form-control">
                             <option value="all">所有状态</option>
-                            <option value="wait">待开始</option>
-                            <option value="doing">进行中</option>
-                            <option value="done">已关闭</option>
+                            <option value="active">被激活</option>
+                            <option value="resolved">已解决</option>
+                            <option value="done">closed</option>
                         </select>
                     </div>
 
@@ -375,13 +335,13 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="addroleLabel">创建任务</h4>
+                    <h4 class="modal-title" id="addroleLabel">创建BUG</h4>
                 </div>
                 <div class="modal-body">
                     <form id="boxRoleForm">
                         <div class="form-group">
-                            <label class="control-label">任务名称:</label>
-                            <input type="text" class="form-control" name="name" id="name" placeholder="请输入任务名称"/>
+                            <label class="control-label">BUG标题:</label>
+                            <input type="text" class="form-control" name="title" id="title" placeholder="请输入BUG标题"/>
                         </div>
                         <div class="form-group">
                             <label class="control-label">优先级:</label>
@@ -391,23 +351,26 @@
                                 <option value="3">三级</option>
                             </select>
                         </div>
+                        <!--<div class="form-group">
+                            <label class="control-label">严重性:</label>
+                            <select name="" id="severity_level" class="form-control">
+                                <option value="1">一级</option>
+                                <option value="2">二级</option>
+                                <option value="3">三级</option>
+                            </select>
+                        </div>-->
+                        <div class="form-group">
+                            <label class="control-label">关键词:</label>
+                            <input type="text" class="form-control" name="keywords" id="keywords" placeholder="请输入关键词"/>
+                        </div>
                         <div class="form-group">
                             <label class="control-label">关联项目:</label>
                             <select name="" id="project_type" class="form-control">
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="control-label">关联需求:</label>
-                            <select name="" id="req_type" class="form-control">
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label">预计耗时(小时为单位):</label>
-                            <input type="text" class="form-control" name="estimate" id="estimate" placeholder="预计耗时"/>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label">任务描述:</label>
-                            <input type="text" class="form-control" id="description" name="description"  placeholder="请输入项目描述">
+                            <label class="control-label">重现步骤:</label>
+                            <input type="text" class="form-control" id="steps" name="steps"  placeholder="请输入重现步骤">
                         </div>
                     </form>
                 </div>

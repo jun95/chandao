@@ -267,7 +267,7 @@
                 title : '关联时间',
                 formatter : function (value, row, index) {
                     if (row.createTime != null) {
-                        return formatDate(row.createTime);
+                        return new Date(row.createTime).format("yyyy-MM-dd hh:mm:ss");
                     }
                     return null;
                 }
@@ -322,7 +322,7 @@
                 title : '上次登录时间',
                 formatter : function (value, row, index) {
                     if (row.lastLoginTime != null) {
-                        return formatDate(row.lastLoginTime);
+                        return new Date(row.lastLoginTime).format("yyyy-MM-dd hh:mm:ss");
                     }
                     return null;
                 }

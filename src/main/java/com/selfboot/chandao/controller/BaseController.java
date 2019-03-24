@@ -26,7 +26,7 @@ public class BaseController<T extends BaseEntity,S extends BootStrapService<T>> 
     protected <V extends BaseEntity> Map<String,Object> getRecords(BootStrapService<V> service,V v,
                                                                    Integer offset,
                                                                    Integer limit,
-                                                                   DataCallback<List<V>> callback) {
+                                                                   DataCallback<V> callback) {
         Map<String,Object> responseContent = new HashMap<>();
         long total = 0;
         List<CdUser> rows = null;
@@ -64,7 +64,7 @@ public class BaseController<T extends BaseEntity,S extends BootStrapService<T>> 
 
     protected Map<String,Object> getRecords(T t,
                                             Integer offset,
-                                            Integer limit, DataCallback<List<T>> callback) {
+                                            Integer limit, DataCallback<T> callback) {
 
         return getRecords(targetService,t,offset,limit,callback);
     }
