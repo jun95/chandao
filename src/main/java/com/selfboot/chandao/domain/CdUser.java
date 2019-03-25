@@ -45,6 +45,16 @@ public class CdUser extends BaseEntity implements Serializable {
 
     private String accountLike;
 
+    private Long groupId;
+
+    public Long getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
+    }
+
     public String getNicknameLike() {
         return nicknameLike;
     }

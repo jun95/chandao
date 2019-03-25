@@ -65,6 +65,22 @@
     <include refid="where_fragment"/>
   </select>
 
+  <select id="selectListByProject" resultMap="ResultMapWithBLOBs">
+    SELECT
+    <include refid="Base_Column_List"/>
+    ,
+    <include refid="Blob_Column_List" />
+    FROM cd_requirement
+    <include refid="where_fragment"/>
+    AND project_id in (
+    SELECT
+    project.id
+    FROM cd_project project
+    WHERE (project.create_by = #{userId,jdbcType=BIGINT} OR (SELECT COUNT(1) FROM cd_usergroup u_group
+    WHERE u_group.user_id = #{userId,jdbcType=BIGINT} and u_group.group_id = project.group_id) > 0 )
+    )
+  </select>
+
   <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
@@ -206,6 +222,62 @@
       </if>
     </trim>
   </insert>
+
+  <update id="updateByProjectId" parameterType="com.selfboot.chandao.domain.CdRequirement" >
+    update cd_requirement
+    <set >
+      <if test="projectName != null" >
+        project_name = #{projectName,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="begin != null" >
+        begin = #{begin,jdbcType=DATE},
+      </if>
+      <if test="end != null" >
+        end = #{end,jdbcType=DATE},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="createBy != null" >
+        create_by = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createName != null" >
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="closedBy != null" >
+        closed_by = #{closedBy,jdbcType=BIGINT},
+      </if>
+      <if test="closedName != null" >
+        closed_name = #{closedName,jdbcType=VARCHAR},
+      </if>
+      <if test="closedDate != null" >
+        closed_date = #{closedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="canceledBy != null" >
+        canceled_by = #{canceledBy,jdbcType=BIGINT},
+      </if>
+      <if test="canceledName != null" >
+        canceled_name = #{canceledName,jdbcType=VARCHAR},
+      </if>
+      <if test="canceledDate != null" >
+        canceled_date = #{canceledDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleted != null" >
+        deleted = #{deleted,jdbcType=INTEGER},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where project_id = #{projectId,jdbcType=BIGINT}
+  </update>
+
   <update id="updateByPrimaryKeySelective" parameterType="com.selfboot.chandao.domain.CdRequirement" >
     update cd_requirement
     <set >

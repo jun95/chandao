@@ -1,11 +1,15 @@
 package com.selfboot.chandao.controller;
 
-import com.selfboot.chandao.common.*;
+import com.selfboot.chandao.common.ProjectStatusEnum;
+import com.selfboot.chandao.common.ResponseResult;
 import com.selfboot.chandao.common.ResponseStatus;
+import com.selfboot.chandao.common.ServiceResult;
 import com.selfboot.chandao.domain.CdActionLog;
-import com.selfboot.chandao.domain.CdTask;
 import com.selfboot.chandao.domain.CdTestTask;
 import com.selfboot.chandao.domain.CdUser;
+import com.selfboot.chandao.listener.DataCallback;
+import com.selfboot.chandao.persist.CrudService;
+import com.selfboot.chandao.persist.DataCallbackParam;
 import com.selfboot.chandao.service.CdActionLogService;
 import com.selfboot.chandao.service.CdTestTaskService;
 import com.selfboot.chandao.util.ActionLogHelper;
@@ -18,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,14 +36,20 @@ public class CdTestTaskController extends BaseController<CdTestTask,CdTestTaskSe
     private CdActionLogService cdActionLogService;
 
     @GetMapping("getTestTaskRecords")
-    public Map<String,Object> getTestTaskRecords(CdTestTask cdTestTask, @RequestParam(value = "id",required = false) String id,
+    public Map<String,Object> getTestTaskRecords(HttpServletRequest request,CdTestTask cdTestTask,
+                                                 @RequestParam(value = "id",required = false) String id,
                                              @RequestParam(value = "offset",required = false) Integer offset,
                                              @RequestParam(value = "limit" ,required = false) Integer limit) {
         if (!StringUtils.isBlank(id)) {
             cdTestTask.setId(Long.parseLong(id));
         }
         cdTestTask.setDeleted(1);
-        return getRecords(cdTestTask, offset, limit);
+        return getRecords(cdTestTask, offset, limit, new DataCallback<CdTestTask>() {
+            @Override
+            public List<CdTestTask> onPushData(CrudService crudService, DataCallbackParam<CdTestTask> params) {
+                return targetService.selectListByProject(params.getEntity(),UserUtil.getUser(request).getId());
+            }
+        });
     }
 
     @PostMapping("addTestTask")

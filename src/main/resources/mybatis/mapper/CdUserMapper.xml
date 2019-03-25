@@ -44,6 +44,14 @@
         </if>
     </sql>
 
+    <select id="getListByGroupId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM cd_user
+        <include refid="where_fragment"/>
+        AND id not IN (SELECT user_id FROM cd_usergroup WHERE group_id = #{entity.groupId,jdbcType=BIGINT})
+    </select>
+
     <select id="selectListByCondition" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>

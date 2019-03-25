@@ -34,7 +34,7 @@ public class BaseController<T extends BaseEntity,S extends BootStrapService<T>> 
         if (callback == null) {
             queryResult = service.selectRecord(v,offset,limit);
         } else {
-            service.selectRecord(v,offset,limit,callback);
+            queryResult = service.selectRecord(v,offset,limit,callback);
         }
 
         logger.info("查询出的结果为：{}", JSON.toJSONString(queryResult));

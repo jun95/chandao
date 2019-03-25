@@ -1,18 +1,13 @@
 package com.selfboot.chandao.service.impl;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.selfboot.chandao.common.ServiceResult;
 import com.selfboot.chandao.dao.CdUserDAO;
 import com.selfboot.chandao.domain.CdUser;
 import com.selfboot.chandao.persist.BootStrapServiceImpl;
-import com.selfboot.chandao.persist.CrudService;
 import com.selfboot.chandao.service.CdUserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.List;
 
 /**
  * Created by 87570 on 2019/3/18.
@@ -32,6 +27,12 @@ public class CdUserServiceImpl extends BootStrapServiceImpl<CdUser,CdUserDAO> im
         entity.setPassword(password);
 
         return super.queryOne(entity);
+    }
+
+    @Override
+    public List<CdUser> getListByGroupId(CdUser user) {
+
+        return targetDAO.getListByGroupId(user);
     }
 
     /*@Override

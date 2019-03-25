@@ -47,6 +47,15 @@
     </if>
   </sql>
 
+  <select id="selectListByGroup" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM cd_project
+    <include refid="where_fragment"/>
+    AND (create_by = #{userId,jdbcType=BIGINT} OR (SELECT COUNT(1) FROM cd_usergroup
+    WHERE cd_usergroup.user_id = #{userId,jdbcType=BIGINT} and cd_usergroup.group_id = cd_project.group_id) > 0 )
+  </select>
+
   <select id="selectListByCondition" resultMap="BaseResultMap">
     SELECT
     <include refid="Base_Column_List"/>

@@ -5,6 +5,9 @@ import com.selfboot.chandao.common.ResponseStatus;
 import com.selfboot.chandao.domain.CdActionLog;
 import com.selfboot.chandao.domain.CdTask;
 import com.selfboot.chandao.domain.CdUser;
+import com.selfboot.chandao.listener.DataCallback;
+import com.selfboot.chandao.persist.CrudService;
+import com.selfboot.chandao.persist.DataCallbackParam;
 import com.selfboot.chandao.service.CdActionLogService;
 import com.selfboot.chandao.service.CdTaskService;
 import com.selfboot.chandao.util.ActionLogHelper;
@@ -17,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,14 +34,20 @@ public class CdTaskController extends BaseController<CdTask, CdTaskService> {
     private CdActionLogService cdActionLogService;
 
     @GetMapping("getTaskRecords")
-    public Map<String,Object> getTaskRecords(CdTask cdTask, @RequestParam(value = "id",required = false) String id,
+    public Map<String,Object> getTaskRecords(HttpServletRequest request,CdTask cdTask,
+                                             @RequestParam(value = "id",required = false) String id,
                                              @RequestParam(value = "offset",required = false) Integer offset,
                                              @RequestParam(value = "limit" ,required = false) Integer limit) {
         if (!StringUtils.isBlank(id)) {
             cdTask.setId(Long.parseLong(id));
         }
         cdTask.setDeleted(1);
-        return getRecords(cdTask, offset, limit);
+        return getRecords(cdTask, offset, limit, new DataCallback<CdTask>() {
+            @Override
+            public List<CdTask> onPushData(CrudService crudService, DataCallbackParam<CdTask> params) {
+                return targetService.selectListByProject(params.getEntity(),UserUtil.getUser(request).getId());
+            }
+        });
     }
 
 

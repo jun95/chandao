@@ -134,6 +134,7 @@
 	function allot(projectId,groupId) {
         $('#group_id').val(groupId);
         $('#addGroupMember').modal();
+        tableRefresh('groupMemberOperationRecordTable');
     }
 
 	function showDetail(projectId) {
@@ -186,7 +187,7 @@
                 layer.close(load);
                 if (data.code == 200) {
                     layer.msg("状态变更成功");
-                    tableRefresh();
+                    tableRefresh('userOperationRecordTable');
                 } else {
                     layer.msg(data.message);
                 }
@@ -227,8 +228,8 @@
     }
 
 	// 表格刷新
-	function tableRefresh() {
-		$('#userOperationRecordTable').bootstrapTable('refresh', {
+	function tableRefresh(id) {
+		$('#' + id).bootstrapTable('refresh', {
 			query : {}
 		});
 	}
@@ -251,7 +252,7 @@
             search_id = $('#id').val();
             project_name_like = $('#projectNameLike').val();
             status_like = $('#status').val() == 'all' ? '' : $('#status').val();
-            tableRefresh();
+            tableRefresh('userOperationRecordTable');
         })
     }
 
@@ -281,7 +282,7 @@
                 if (data.code == 200) {
                     layer.msg("添加成功");
                     $('#addmember').modal('hide');
-                    tableRefresh();
+                    tableRefresh('userOperationRecordTable');
                 } else {
                     layer.msg(data.message);
                 }
@@ -362,6 +363,7 @@
                             <option value="all">所有状态</option>
                             <option value="wait">待开始</option>
                             <option value="doing">进行中</option>
+                            <option value="finished">已完成</option>
                             <option value="done">已关闭</option>
                         </select>
                     </div>
@@ -543,7 +545,7 @@
             }],
             url : '/user/getUserRecords',
             method : 'GET',
-            //queryParams : queryParams,
+            queryParams : showMemberQueryParams,
             sidePagination : "server",
             dataType : 'json',
             pagination : true,

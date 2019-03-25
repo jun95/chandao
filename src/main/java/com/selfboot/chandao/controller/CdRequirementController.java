@@ -7,6 +7,9 @@ import com.selfboot.chandao.common.ServiceResult;
 import com.selfboot.chandao.domain.CdRequirement;
 import com.selfboot.chandao.domain.CdTestTask;
 import com.selfboot.chandao.domain.CdUser;
+import com.selfboot.chandao.listener.DataCallback;
+import com.selfboot.chandao.persist.CrudService;
+import com.selfboot.chandao.persist.DataCallbackParam;
 import com.selfboot.chandao.service.CdRequirementService;
 import com.selfboot.chandao.util.DateUtil;
 import com.selfboot.chandao.util.UserUtil;
@@ -28,14 +31,20 @@ import java.util.Map;
 public class CdRequirementController extends BaseController<CdRequirement, CdRequirementService> {
 
     @GetMapping("getRequireRecords")
-    public Map<String,Object> getUserRecords(CdRequirement cdRequirement, @RequestParam(value = "id",required = false) String id,
+    public Map<String,Object> getUserRecords(HttpServletRequest request,CdRequirement cdRequirement,
+                                             @RequestParam(value = "id",required = false) String id,
                                              @RequestParam(value = "offset",required = false) Integer offset,
                                              @RequestParam(value = "limit" ,required = false) Integer limit) {
         if (!StringUtils.isBlank(id)) {
             cdRequirement.setId(Long.parseLong(id));
         }
         cdRequirement.setDeleted(1);
-        return getRecords(cdRequirement, offset, limit);
+        return getRecords(cdRequirement, offset, limit, new DataCallback<CdRequirement>() {
+            @Override
+            public List<CdRequirement> onPushData(CrudService crudService, DataCallbackParam<CdRequirement> params) {
+                return targetService.selectListByProject(params.getEntity(),UserUtil.getUser(request).getId());
+            }
+        });
     }
 
     @PostMapping("getRequireTotalRecordByProjectId")

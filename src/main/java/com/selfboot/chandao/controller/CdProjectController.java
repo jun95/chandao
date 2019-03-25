@@ -5,12 +5,18 @@ import com.selfboot.chandao.common.ResponseResult;
 import com.selfboot.chandao.common.ResponseStatus;
 import com.selfboot.chandao.common.ServiceResult;
 import com.selfboot.chandao.domain.CdProject;
+import com.selfboot.chandao.domain.CdRequirement;
 import com.selfboot.chandao.domain.CdUser;
+import com.selfboot.chandao.listener.DataCallback;
+import com.selfboot.chandao.persist.CrudService;
+import com.selfboot.chandao.persist.DataCallbackParam;
 import com.selfboot.chandao.service.CdProjectService;
+import com.selfboot.chandao.service.CdRequirementService;
 import com.selfboot.chandao.util.DateUtil;
 import com.selfboot.chandao.util.UserUtil;
 import com.selfboot.chandao.vo.ProjectVO;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,16 +33,24 @@ import java.util.Map;
 @RequestMapping("project")
 public class CdProjectController extends BaseController<CdProject, CdProjectService> {
 
+    @Autowired
+    private CdRequirementService cdRequirementService;
 
     @GetMapping("getProjectRecords")
-    public Map<String,Object> getUserRecords(CdProject cdProject, @RequestParam(value = "id",required = false) String id,
+    public Map<String,Object> getUserRecords(HttpServletRequest request,CdProject cdProject,
+                                             @RequestParam(value = "id",required = false) String id,
                                              @RequestParam(value = "offset",required = false) Integer offset,
                                              @RequestParam(value = "limit" ,required = false) Integer limit) {
         if (!StringUtils.isBlank(id)) {
             cdProject.setId(Long.parseLong(id));
         }
         cdProject.setDeleted(1);
-        return getRecords(cdProject, offset, limit);
+        return getRecords(cdProject, offset, limit, new DataCallback<CdProject>() {
+            @Override
+            public List<CdProject> onPushData(CrudService crudService, DataCallbackParam<CdProject> params) {
+                return targetService.selectListByGroup(params.getEntity(),UserUtil.getUser(request).getId());
+            }
+        });
     }
 
     @PostMapping("getProjectTotalRecord")
@@ -63,6 +77,9 @@ public class CdProjectController extends BaseController<CdProject, CdProjectServ
                 cdProject.setUpdate(true);
 
                 serviceResult = targetService.save(Collections.singletonList(cdProject));
+
+                updateRequirement(cdProject);
+
                 if (serviceResult.isSuccess()) {
                     result.setResponseStatus(ResponseStatus.OK);
                     return result;
@@ -77,6 +94,15 @@ public class CdProjectController extends BaseController<CdProject, CdProjectServ
             result.setMessage((String) serviceResult.getErrorMessage().get(0));
         }
         return result;
+    }
+
+    private void updateRequirement(CdProject cdProject) {
+        CdRequirement cdRequirement = new CdRequirement();
+        cdRequirement.setUpdate(true);
+        cdRequirement.setProjectId(cdProject.getId());
+        cdRequirement.setStatus(cdProject.getStatus());
+
+        cdRequirementService.updateByProjectId(cdRequirement);
     }
 
 

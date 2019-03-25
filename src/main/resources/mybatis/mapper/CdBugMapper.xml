@@ -84,6 +84,22 @@
     <include refid="where_fragment"/>
   </select>
 
+  <select id="selectListByProject" resultMap="ResultMapWithBLOBs">
+    SELECT
+    <include refid="Base_Column_List"/>
+    ,
+    <include refid="Blob_Column_List" />
+    FROM cd_bug
+    <include refid="where_fragment"/>
+    AND project_id in (
+    SELECT
+    project.id
+    FROM cd_project project
+    WHERE (project.create_by = #{userId,jdbcType=BIGINT} OR (SELECT COUNT(1) FROM cd_usergroup u_group
+    WHERE u_group.user_id = #{userId,jdbcType=BIGINT} and u_group.group_id = project.group_id) > 0 )
+    )
+  </select>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
     select 
     <include refid="Base_Column_List" />

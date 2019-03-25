@@ -4,6 +4,9 @@ import com.selfboot.chandao.common.ResponseResult;
 import com.selfboot.chandao.common.ResponseStatus;
 import com.selfboot.chandao.common.ServiceResult;
 import com.selfboot.chandao.domain.CdUser;
+import com.selfboot.chandao.listener.DataCallback;
+import com.selfboot.chandao.persist.CrudService;
+import com.selfboot.chandao.persist.DataCallbackParam;
 import com.selfboot.chandao.service.CdUserService;
 import com.selfboot.chandao.util.UserUtil;
 import com.selfboot.chandao.vo.UserInfoVO;
@@ -44,11 +47,22 @@ public class UserController extends BaseController<CdUser, CdUserService> {
     public Map<String,Object> getUserRecords(CdUser cdUser,@RequestParam(value = "id",required = false) String id,
                                              @RequestParam(value = "offset",required = false) Integer offset,
                                              @RequestParam(value = "limit" ,required = false) Integer limit) {
+        cdUser.setDeleted(1);
         if (!StringUtils.isBlank(id)) {
             cdUser.setId(Long.parseLong(id));
         }
-        cdUser.setDeleted(1);
-        return getRecords(cdUser, offset, limit);
+
+        if (cdUser.getGroupId() == null) {
+            return getRecords(cdUser, offset, limit);
+        } else {
+            return getRecords(cdUser, offset, limit, new DataCallback<CdUser>() {
+                @Override
+                public List<CdUser> onPushData(CrudService crudService, DataCallbackParam<CdUser> params) {
+                    CdUserService cdUserService = (CdUserService) crudService;
+                    return cdUserService.getListByGroupId(params.getEntity());
+                }
+            });
+        }
     }
 
     @PostMapping("addMember")

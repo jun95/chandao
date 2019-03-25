@@ -16,4 +16,6 @@ public interface CdProjectService extends BootStrapService<CdProject> {
      * @return
      */
     List<CdProject> selectUnCloseProject(CdProject cdProject);
+
+    List<CdProject> selectListByGroup(CdProject entity, Long userId);
 }

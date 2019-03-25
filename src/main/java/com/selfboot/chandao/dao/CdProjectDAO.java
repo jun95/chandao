@@ -14,4 +14,6 @@ import java.util.List;
 public interface CdProjectDAO extends CrudDAO<CdProject> {
 
     List<CdProject> selectUnCloseProject(@Param("entity") CdProject cdProject);
+
+    List<CdProject> selectListByGroup(@Param("entity") CdProject cdProject,@Param("userId") Long userId);
 }

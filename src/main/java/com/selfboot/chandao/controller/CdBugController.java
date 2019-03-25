@@ -6,6 +6,9 @@ import com.selfboot.chandao.domain.CdActionLog;
 import com.selfboot.chandao.domain.CdBug;
 import com.selfboot.chandao.domain.CdTestTask;
 import com.selfboot.chandao.domain.CdUser;
+import com.selfboot.chandao.listener.DataCallback;
+import com.selfboot.chandao.persist.CrudService;
+import com.selfboot.chandao.persist.DataCallbackParam;
 import com.selfboot.chandao.service.CdActionLogService;
 import com.selfboot.chandao.service.CdBugService;
 import com.selfboot.chandao.util.ActionLogHelper;
@@ -18,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,14 +35,20 @@ public class CdBugController extends BaseController<CdBug,CdBugService> {
     private CdActionLogService cdActionLogService;
 
     @GetMapping("getBugRecords")
-    public Map<String,Object> getBugRecords(CdBug cdBug, @RequestParam(value = "id",required = false) String id,
+    public Map<String,Object> getBugRecords(HttpServletRequest request,CdBug cdBug,
+                                            @RequestParam(value = "id",required = false) String id,
                                                  @RequestParam(value = "offset",required = false) Integer offset,
                                                  @RequestParam(value = "limit" ,required = false) Integer limit) {
         if (!StringUtils.isBlank(id)) {
             cdBug.setId(Long.parseLong(id));
         }
         cdBug.setDeleted(1);
-        return getRecords(cdBug, offset, limit);
+        return getRecords(cdBug, offset, limit, new DataCallback<CdBug>() {
+            @Override
+            public List<CdBug> onPushData(CrudService crudService, DataCallbackParam<CdBug> params) {
+                return targetService.selectListByProject(params.getEntity(),UserUtil.getUser(request).getId());
+            }
+        });
     }
 
     @PostMapping("addBug")

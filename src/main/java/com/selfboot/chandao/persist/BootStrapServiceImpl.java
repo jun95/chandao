@@ -77,6 +77,8 @@ public class BootStrapServiceImpl<T extends BaseEntity,D extends CrudDAO<T>> ext
         total = isPagination ? new PageInfo<>(userRecordDOS).getTotal() :
                 CollectionUtils.isEmpty(userRecordDOS) ? 0 : userRecordDOS.size();
 
+        //userRecordDOS = userRecordDOS == null ? new ArrayList<T>() : userRecordDOS;
+
         resultSet.put("data", userRecordDOS);
         resultSet.put("total", total);
         return resultSet;

@@ -42,6 +42,7 @@
                 events:{     //为按钮添加事件
                     "click #addGroupMember":function(e,value,row,index){
                         $('#group_id').val(row.id);
+                        tableRefresh('groupMemberOperationRecordTable');
                         $('#addMember').modal();
                     },
                     "click #showGroupMember":function(e,value,row,index){
@@ -329,7 +330,7 @@
             }],
             url : '/user/getUserRecords',
             method : 'GET',
-            //queryParams : queryParams,
+            queryParams : showMemberQueryParams,
             sidePagination : "server",
             dataType : 'json',
             pagination : true,
