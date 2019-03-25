@@ -161,6 +161,7 @@ public class CdProjectController extends BaseController<CdProject, CdProjectServ
             if (project != null) {
                 cdProject.setUpdate(true);
                 targetService.save(Collections.singletonList(cdProject));
+                result.setResponseStatus(ResponseStatus.OK);
             } else {
                 result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
                 result.setMessage("项目不存在");
