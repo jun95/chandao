@@ -113,9 +113,30 @@ public class CdTask extends BaseEntity {
     @NotBlank(message = "任务描述不能为空")
     private String description;
 
+    /** 状态描述 */
+    private String statusDesc;
+
     private String projectNameLike;
 
     private String requireNameLike;
+
+    private String taskNameLike;
+
+    public String getTaskNameLike() {
+        return taskNameLike;
+    }
+
+    public void setTaskNameLike(String taskNameLike) {
+        this.taskNameLike = taskNameLike;
+    }
+
+    public String getStatusDesc() {
+        return statusDesc;
+    }
+
+    public void setStatusDesc(String statusDesc) {
+        this.statusDesc = statusDesc;
+    }
 
     public String getProjectNameLike() {
         return projectNameLike;

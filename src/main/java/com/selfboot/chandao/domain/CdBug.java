@@ -2,11 +2,14 @@ package com.selfboot.chandao.domain;
 
 import com.selfboot.chandao.persist.BaseEntity;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 public class CdBug extends BaseEntity {
 
     /**  */
+    @NotNull(message = "项目不能为空")
     private Long projectId;
 
     /** 项目标题 */
@@ -16,15 +19,18 @@ public class CdBug extends BaseEntity {
     private Long taskId;
 
     /**  */
+    @NotBlank(message = "BUG标题不能为空")
     private String title;
 
     /** 关键词 */
+    @NotBlank(message = "关键词不能为空")
     private String keywords;
 
     /** 严重性 */
     private Byte severity;
 
     /** 优先级 */
+    @NotNull(message = "优先级不能为空")
     private Byte pri;
 
     /**  */
@@ -49,7 +55,7 @@ public class CdBug extends BaseEntity {
     private Long assignedBy;
 
     /**  */
-    private Long assignedByName;
+    private String assignedByName;
 
     /**  */
     private Date assignedDate;
@@ -97,9 +103,20 @@ public class CdBug extends BaseEntity {
     private Integer deleted;
 
     /** 重现步骤 */
+    @NotBlank(message = "重现步骤不能为空")
     private String steps;
 
     private String titleLike;
+
+    private String statusDesc;
+
+    public String getStatusDesc() {
+        return statusDesc;
+    }
+
+    public void setStatusDesc(String statusDesc) {
+        this.statusDesc = statusDesc;
+    }
 
     public String getTitleLike() {
         return titleLike;
@@ -221,11 +238,11 @@ public class CdBug extends BaseEntity {
         this.assignedBy = assignedBy;
     }
 
-    public Long getAssignedByName() {
+    public String getAssignedByName() {
         return assignedByName;
     }
 
-    public void setAssignedByName(Long assignedByName) {
+    public void setAssignedByName(String assignedByName) {
         this.assignedByName = assignedByName;
     }
 

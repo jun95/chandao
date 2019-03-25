@@ -110,7 +110,7 @@ CREATE TABLE IF NOT EXISTS `cd_requirement` (
 
 CREATE TABLE IF NOT EXISTS `cd_task` (
   `id` bigint(20) NOT NULL auto_increment,
-  `parent` bigint(20) NOT NULL DEFAULT '0' COMMENT '父任务id',
+  `parent` bigint(20) NULL DEFAULT '0' COMMENT '父任务id',
   `requirement_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '需求id',
   `requirement_name` varchar(90) NOT NULL COMMENT '需求名称',
   `project_id` bigint(20) NOT NULL default '0' COMMENT '项目id',
@@ -179,10 +179,10 @@ CREATE TABLE IF NOT EXISTS `cd_bug` (
   `id` bigint(20) NOT NULL auto_increment,
   `project_id` bigint(20) NOT NULL default '0',
   `project_name` varchar(90) NOT NULL COMMENT '项目标题',
-  `task_id` bigint(20) NOT NULL default '0',
+  `task_id` bigint(20) NULL default '0',
   `title` varchar(255) NULL,
   `keywords` varchar(255) NOT NULL COMMENT '关键词',
-  `severity` tinyint(4) NOT NULL default '0' COMMENT '严重性',
+  `severity` tinyint(4) NULL default '0' COMMENT '严重性',
   `pri` tinyint(3) NOT NULL COMMENT '优先级',
   `steps` text NOT NULL COMMENT '重现步骤',
   `status` enum('active','resolved','closed') NOT NULL default 'active',

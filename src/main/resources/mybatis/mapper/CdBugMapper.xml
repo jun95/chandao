@@ -17,7 +17,7 @@
     <result column="opened_name" jdbcType="VARCHAR" property="openedName" />
     <result column="opened_date" jdbcType="TIMESTAMP" property="openedDate" />
     <result column="assigned_by" jdbcType="BIGINT" property="assignedBy" />
-    <result column="assigned_by_name" jdbcType="BIGINT" property="assignedByName" />
+    <result column="assigned_by_name" jdbcType="VARCHAR" property="assignedByName" />
     <result column="assigned_date" jdbcType="TIMESTAMP" property="assignedDate" />
     <result column="resolved_by" jdbcType="BIGINT" property="resolvedBy" />
     <result column="resolved_name" jdbcType="VARCHAR" property="resolvedName" />
@@ -113,7 +113,7 @@
       #{severity,jdbcType=TINYINT}, #{pri,jdbcType=TINYINT}, #{status,jdbcType=CHAR}, 
       #{activatedCount,jdbcType=SMALLINT}, #{activatedDate,jdbcType=TIMESTAMP}, #{openedBy,jdbcType=BIGINT}, 
       #{openedName,jdbcType=VARCHAR}, #{openedDate,jdbcType=TIMESTAMP}, #{assignedBy,jdbcType=BIGINT}, 
-      #{assignedByName,jdbcType=BIGINT}, #{assignedDate,jdbcType=TIMESTAMP}, #{resolvedBy,jdbcType=BIGINT}, 
+      #{assignedByName,jdbcType=VARCHAR}, #{assignedDate,jdbcType=TIMESTAMP}, #{resolvedBy,jdbcType=BIGINT}, 
       #{resolvedName,jdbcType=VARCHAR}, #{resolution,jdbcType=VARCHAR}, #{resolvedDate,jdbcType=TIMESTAMP}, 
       #{closedBy,jdbcType=BIGINT}, #{closedName,jdbcType=VARCHAR}, #{closedDate,jdbcType=TIMESTAMP}, 
       #{duplicateBug,jdbcType=INTEGER}, #{linkBug,jdbcType=VARCHAR}, #{testtaskId,jdbcType=BIGINT}, 
@@ -267,7 +267,7 @@
         #{assignedBy,jdbcType=BIGINT},
       </if>
       <if test="assignedByName != null">
-        #{assignedByName,jdbcType=BIGINT},
+        #{assignedByName,jdbcType=VARCHAR},
       </if>
       <if test="assignedDate != null">
         #{assignedDate,jdbcType=TIMESTAMP},
@@ -365,7 +365,7 @@
         assigned_by = #{assignedBy,jdbcType=BIGINT},
       </if>
       <if test="assignedByName != null">
-        assigned_by_name = #{assignedByName,jdbcType=BIGINT},
+        assigned_by_name = #{assignedByName,jdbcType=VARCHAR},
       </if>
       <if test="assignedDate != null">
         assigned_date = #{assignedDate,jdbcType=TIMESTAMP},
@@ -434,7 +434,7 @@
       opened_name = #{openedName,jdbcType=VARCHAR},
       opened_date = #{openedDate,jdbcType=TIMESTAMP},
       assigned_by = #{assignedBy,jdbcType=BIGINT},
-      assigned_by_name = #{assignedByName,jdbcType=BIGINT},
+      assigned_by_name = #{assignedByName,jdbcType=VARCHAR},
       assigned_date = #{assignedDate,jdbcType=TIMESTAMP},
       resolved_by = #{resolvedBy,jdbcType=BIGINT},
       resolved_name = #{resolvedName,jdbcType=VARCHAR},
@@ -469,7 +469,7 @@
       opened_name = #{openedName,jdbcType=VARCHAR},
       opened_date = #{openedDate,jdbcType=TIMESTAMP},
       assigned_by = #{assignedBy,jdbcType=BIGINT},
-      assigned_by_name = #{assignedByName,jdbcType=BIGINT},
+      assigned_by_name = #{assignedByName,jdbcType=VARCHAR},
       assigned_date = #{assignedDate,jdbcType=TIMESTAMP},
       resolved_by = #{resolvedBy,jdbcType=BIGINT},
       resolved_name = #{resolvedName,jdbcType=VARCHAR},

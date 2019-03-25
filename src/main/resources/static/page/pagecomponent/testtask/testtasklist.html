@@ -71,7 +71,7 @@
                     if (s == 'wait') {
                         return '待开始';
                     } else if (s == 'done') {
-                        return '已关闭';
+                        return '已完成';
                     } else if (s == 'doing') {
                         return '进行中';
                     }
@@ -88,21 +88,18 @@
             },{
                 field : 'closedName',
                 title : '关闭人'
-            },/*{
-                field : 'createDate',
-                title : '创建时间',
-                formatter: function (value, row, index) {
-                    if (row.createDate != null) {
-                        return new Date(row.createDate).format('yyyy-MM-dd hh:mm:ss');
-                    }
-                    return null;
-                }
-            },*/{
+            },{
                 field : 'operate',
                 title : '操作',
                 events:{     //为按钮添加事件
                     "click #tostart":function(e,value,row,index){
-                        toStart(row.id,row.status);
+                        toUpdateStatus(row.id,row.status,'doing','开始');
+                    },
+                    "click #assignedBy":function(e,value,row,index){
+                        assignedBy(row.projectId,row.id);
+                    },
+                    "click #done":function(e,value,row,index){
+                        toUpdateStatus(row.id,row.status,'done','完成');
                     },
                     "click #del":function(e,value,row,index){
                         del(row.id);
@@ -140,6 +137,16 @@
             content: 'pagecomponent/testtask/testtaskedit.html'
         });
     }*/
+
+    function assignedBy(projectId,id) {
+        $('#project_id').val(projectId);
+        $('#taskId').val(id);
+
+        $('#showMember').modal();
+        $('#showMemberOperationRecordTable').bootstrapTable('refresh', {
+            query : {}
+        });
+    }
 
 	function showDetail(testtaskId) {
 
@@ -185,14 +192,11 @@
         });
     }
 
-	function toStart(testtaskId,status) {
-        var s = status == 'wait' ? 'doing' : status == 'doing' ? 'done' : null;
-        if (s == null) {
-            return;
-        }
+    function toUpdateStatus(testtaskId,status,expectStatus,statusDesc) {
         var entity = {};
         entity.id = testtaskId;
-        entity.status = s;
+        entity.status = expectStatus;
+        entity.statusDesc = statusDesc;
 
         <!--loding-->
         var load = layer.load();
@@ -220,20 +224,20 @@
 
 	function operateFormatter(value, row, index) {
         var s = row.status;
-        var desc = s == 'wait' ? '开始' : s == 'doing' ? '关闭' : null;
-        if (desc != null) {
-            return [
-                '<a class="btn btn-default" href="#" id="tostart">'+ desc +'</a>',
-                '<a class="btn btn-default" href="#" id="look">查看</a>',
-                '<a class="btn btn-default" href="#" id="assignedBy">指派</a>',
-                '<a class="btn btn-default" href="#" id="del">删除</a>'
-            ].join('');
+
+        var arr = new Array();
+        if (s == 'wait') {
+            arr.push('<a class="btn btn-default" href="#" id="tostart">开始</a>');
+            arr.push('<a class="btn btn-default" href="#" id="assignedBy">指派</a>');
+        } else if (s == 'doing') {
+            arr.push('<a class="btn btn-default" href="#" id="done">完成</a>');
+            arr.push('<a class="btn btn-default" href="#" id="assignedBy">指派</a>');
         }
-        return [
-                 '<a class="btn btn-default" href="#" id="look">查看</a>',
-                 '<a class="btn btn-default" href="#" id="assignedBy">指派</a>',
-                 '<a class="btn btn-default" href="#" id="del">删除</a>'
-             ].join('');
+
+        arr.push('<a class="btn btn-default" href="#" id="look">查看</a>');
+        arr.push('<a class="btn btn-default" href="#" id="del">删除</a>');
+
+        return arr.join('');
     }
 
 	// 表格刷新
@@ -401,6 +405,8 @@
     </ol>
     <div class="panel-body">
         <input type="hidden" id="detail_id">
+        <input type="hidden" id="project_id">
+        <input type="hidden" id="taskId">
         <div class="row">
             <div class="col-md-3">
                 <form action="" class="form-inline">
@@ -422,7 +428,7 @@
                             <option value="all">所有状态</option>
                             <option value="wait">待开始</option>
                             <option value="doing">进行中</option>
-                            <option value="done">已关闭</option>
+                            <option value="done">已完成</option>
                         </select>
                     </div>
 
@@ -489,3 +495,113 @@
             </div>
         </div>
     </div>
+
+<div class="modal fade" id="showMember" tabindex="-1" role="dialog" aria-labelledby="assignedBymemberLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="assignedBymemberLabel">指派给</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped" id="showMemberOperationRecordTable"></table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" onclick="addAssignedBy();" class="btn btn-primary">指派</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(function(){
+        showMemberOperationRecordTableInit();
+    })
+
+    function addAssignedBy() {
+        var rows = $("#showMemberOperationRecordTable").bootstrapTable('getSelections');
+        //console.log(rows);
+        if (rows.length == 0) {// rows 主要是为了判断是否选中，下面的else内容才是主要
+            layer.msg("请先选择要指派的人!");
+            return;
+        } else if (rows.length > 1) {
+            layer.msg("只能选一个人进行指派!");
+            return;
+        } else {
+            var entity = {};
+            $(rows).each(function () {
+                entity.assignedBy = this.userId;
+                entity.id = parseInt($('#taskId').val());
+                entity.assignedByName = this.account;
+
+            });
+            console.log(entity);
+
+            <!--loding-->
+            var load = layer.load();
+            $.ajax({
+                type: "POST",
+                url: "/testtask/assigned",
+                headers: {
+                    "content-Type": "application/json"
+                },
+                data: JSON.stringify(entity),
+                success: function (data) {
+                    layer.close(load);
+                    if (data.code == 200) {
+                        layer.msg("指派成功");
+                        $('#showMember').modal('hide');
+                        tableRefresh();
+                    } else {
+                        layer.msg(data.message);
+                    }
+                },
+                error: function (data) {
+                    layer.msg(data.responseText);
+                }
+            });
+        }
+    }
+
+    function showMemberOperationRecordTableInit(){
+        $('#showMemberOperationRecordTable').bootstrapTable({
+            columns:[{
+                checkbox:true
+            },{
+                field : 'account',
+                title : '组用户账号'
+            },{
+                field : 'createTime',
+                title : '关联时间',
+                formatter : function (value, row, index) {
+                    if (row.createTime != null) {
+                        return new Date(row.createTime).format("yyyy-MM-dd hh:mm:ss");
+                    }
+                    return null;
+                }
+            }],
+            url : '/group/getGroupMemberRecords',
+            method : 'GET',
+            queryParams : showMemberQueryParams,
+            sidePagination : "server",
+            dataType : 'json',
+            pagination : true,
+            pageNumber : 1,
+            pageSize : 10,
+            pageList : [ 5, 10, 25, 50, 100 ],
+            clickToSelect : false
+        });
+    }
+
+    // 分页查询参数
+    function showMemberQueryParams(params) {
+        var temp = {
+            limit : params.limit,
+            offset : params.offset,
+            projectId : $('#project_id').val()
+        };
+        return temp;
+    }
+</script>

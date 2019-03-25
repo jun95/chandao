@@ -2,7 +2,7 @@
 <script>
     // 查询参数
     search_id = null;
-    project_name_like = null;
+    task_name_like = null;
     status_like = null;
 
     $(function(){
@@ -59,16 +59,20 @@
                     if (s == 'wait') {
                         return '待开始';
                     } else if (s == 'done') {
-                        return '已关闭';
+                        return '已完成';
                     } else if (s == 'doing') {
                         return '进行中';
-                    }else if (s == 'finished') {
-                        return '已完成';
+                    } else if (s == 'pause') {
+                        return '已暂停';
+                    } else if (s == 'cancel') {
+                        return '已取消';
+                    } else if (s == 'closed') {
+                        return '已关闭';
                     }
                 }
             },{
                 field : 'openedName',
-                title : '创建人'
+                title : '激活人'
             },{
                 field : 'assignedByName',
                 title : '指派给'
@@ -78,16 +82,7 @@
             },{
                 field : 'closedName',
                 title : '关闭人'
-            },/*{
-                field : 'createDate',
-                title : '创建时间',
-                formatter: function (value, row, index) {
-                    if (row.createDate != null) {
-                        return new Date(row.createDate).format('yyyy-MM-dd hh:mm:ss');
-                    }
-                    return null;
-                }
-            },*/{
+            },{
                 field : 'operate',
                 title : '操作',
                 events:{     //为按钮添加事件
@@ -95,7 +90,22 @@
                         assignedBy(row.projectId,row.id);
                     },
                     "click #tostart":function(e,value,row,index){
-                        toStart(row.id,row.status);
+                        toUpdateStatus(row.id,row.status,'doing','开始');
+                    },
+                    "click #openBy":function(e,value,row,index){
+                        toUpdateStatus(row.id,row.status,'doing','开始');
+                    },
+                    "click #pause":function(e,value,row,index){
+                        toUpdateStatus(row.id,row.status,'pause','暂停');
+                    },
+                    "click #cancel":function(e,value,row,index){
+                        toUpdateStatus(row.id,row.status,'cancel','取消');
+                    },
+                    "click #closed":function(e,value,row,index){
+                        toUpdateStatus(row.id,row.status,'closed','关闭');
+                    },
+                    "click #done":function(e,value,row,index){
+                        toUpdateStatus(row.id,row.status,'done','完成');
                     }
                 },
                 formatter: operateFormatter //自定义方法，添加操作按钮
@@ -123,20 +133,17 @@
         });
     }
 
-	function toStart(projectId,status) {
-        var s = status == 'wait' ? 'doing' : status == 'doing' ? 'done' : null;
-        if (s == null) {
-            return;
-        }
+	function toUpdateStatus(taskId,status,expectStatus,statusDesc) {
         var entity = {};
-        entity.id = projectId;
-        entity.status = s;
+        entity.id = taskId;
+        entity.status = expectStatus;
+        entity.statusDesc = statusDesc;
 
         <!--loding-->
         var load = layer.load();
         $.ajax({
             type: "POST",
-            url: "/project/updateStatus",
+            url: "/task/updateStatus",
             headers: {
                 "content-Type": "application/json"
             },
@@ -158,18 +165,30 @@
 
 	function operateFormatter(value, row, index) {
         var s = row.status;
-        var desc = s == 'doing' ? '完成' : s == 'finished' ? '关闭' : null;
-        if (desc != null) {
-            return [
-                '<a class="btn btn-default" href="#" id="tostart">'+ desc +'</a>',
-                '<a class="btn btn-default" href="#" id="assignedBy">指派</a>',
-                '<a class="btn btn-default" href="#" id="openBy">激活</a>'
-            ].join('');
+
+        var arr = new Array();
+        if (s == 'wait') {
+            arr.push('<a class="btn btn-default" href="#" id="tostart">开始</a>');
+            arr.push('<a class="btn btn-default" href="#" id="pause">暂停</a>');
+            arr.push('<a class="btn btn-default" href="#" id="cancel">取消</a>');
+            arr.push('<a class="btn btn-default" href="#" id="assignedBy">指派</a>');
+        } else if (s == 'pause') {
+            arr.push('<a class="btn btn-default" href="#" id="tostart">开始</a>');
+            arr.push('<a class="btn btn-default" href="#" id="cancel">取消</a>');
+        } else if (s == 'cancel') {
+            arr.push('<a class="btn btn-default" href="#" id="openBy">激活</a>');
+        } else if (s == 'doing') {
+            arr.push('<a class="btn btn-default" href="#" id="done">完成</a>');
+            arr.push('<a class="btn btn-default" href="#" id="cancel">取消</a>');
+            arr.push('<a class="btn btn-default" href="#" id="pause">暂停</a>');
+            arr.push('<a class="btn btn-default" href="#" id="assignedBy">指派</a>');
+        } else if (s == 'done') {
+            arr.push('<a class="btn btn-default" href="#" id="closed">关闭</a>');
+        } else if (s == 'closed') {
+            arr.push('<a class="btn btn-default" href="#" id="openBy">激活</a>');
         }
-        return [
-                 '<a class="btn btn-default" href="#" id="assignedBy">指派</a>',
-                 '<a class="btn btn-default" href="#" id="openBy">激活</a>'
-             ].join('');
+
+        return arr.join('');
     }
 
 	// 表格刷新
@@ -185,7 +204,7 @@
 			limit : params.limit,
 			offset : params.offset,
 			id : search_id,
-            projectNameLike : project_name_like,
+            taskNameLike : task_name_like,
             status : status_like
 		};
 		return temp;
@@ -195,7 +214,7 @@
     function searchActionInit(){
         $('#search_button').click(function(){
             search_id = $('#id').val();
-            project_name_like = $('#projectNameLike').val();
+            task_name_like = $('#taskNameLike').val();
             status_like = $('#status').val() == 'all' ? '' : $('#status').val();
             tableRefresh();
         })
@@ -346,7 +365,7 @@
                 <div class="form-group">
 
                     <label class="form-label">任务名称：</label>
-                    <input type="text" id="projectNameLike" class="form-control" placeholder="任务名称" style="width:50%">
+                    <input type="text" id="taskNameLike" class="form-control" placeholder="任务名称" style="width:50%">
 
                 </div>
 
@@ -361,7 +380,10 @@
                             <option value="all">所有状态</option>
                             <option value="wait">待开始</option>
                             <option value="doing">进行中</option>
-                            <option value="done">已关闭</option>
+                            <option value="done">已完成</option>
+                            <option value="pause">已暂停</option>
+                            <option value="cancel">已取消</option>
+                            <option value="closed">已关闭</option>
                         </select>
                     </div>
 

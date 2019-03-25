@@ -23,7 +23,7 @@
     <result column="closed_date" property="closedDate" jdbcType="TIMESTAMP" />
     <result column="closed_reason" property="closedReason" jdbcType="VARCHAR" />
     <result column="assigned_by" property="assignedBy" jdbcType="BIGINT" />
-    <result column="assigned_by_name" property="assignedByName" jdbcType="BIGINT" />
+    <result column="assigned_by_name" property="assignedByName" jdbcType="VARCHAR" />
     <result column="assigned_date" property="assignedDate" jdbcType="TIMESTAMP" />
     <result column="deleted" property="deleted" jdbcType="INTEGER" />
   </resultMap>
@@ -43,14 +43,14 @@
   <sql id="where_fragment">
     WHERE 1 = 1
     <if test="entity != null">
+      <if test="entity.testTaskNameLike != null and entity.testTaskNameLike != '' ">
+        AND name like CONCAT('%',#{entity.testTaskNameLike,jdbcType=CHAR},'%')
+      </if>
       <if test="entity.projectNameLike != null and entity.projectNameLike != '' ">
         AND project_name like CONCAT('%',#{entity.projectNameLike,jdbcType=CHAR},'%')
       </if>
       <if test="entity.requireNameLike != null and entity.requireNameLike != '' ">
         AND requirement_name like CONCAT('%',#{entity.requireNameLike,jdbcType=CHAR},'%')
-      </if>
-      <if test="entity.testTaskNameLike != null and entity.testTaskNameLike != '' ">
-        AND name like CONCAT('%',#{entity.testTaskNameLike,jdbcType=CHAR},'%')
       </if>
       <if test="entity.status != null and entity.status != '' ">
         AND status = #{entity.status,jdbcType=INTEGER}
@@ -104,7 +104,7 @@
       #{openedBy,jdbcType=BIGINT}, #{openedName,jdbcType=VARCHAR}, #{openedDate,jdbcType=TIMESTAMP}, 
       #{finishedBy,jdbcType=BIGINT}, #{finishedName,jdbcType=VARCHAR}, #{finishedDate,jdbcType=TIMESTAMP}, 
       #{closedBy,jdbcType=BIGINT}, #{closedName,jdbcType=VARCHAR}, #{closedDate,jdbcType=TIMESTAMP}, 
-      #{closedReason,jdbcType=VARCHAR}, #{assignedBy,jdbcType=BIGINT}, #{assignedByName,jdbcType=BIGINT}, 
+      #{closedReason,jdbcType=VARCHAR}, #{assignedBy,jdbcType=BIGINT}, #{assignedByName,jdbcType=VARCHAR},
       #{assignedDate,jdbcType=TIMESTAMP}, #{deleted,jdbcType=INTEGER}, #{description,jdbcType=LONGVARCHAR}
       )
   </insert>
@@ -252,7 +252,7 @@
         #{assignedBy,jdbcType=BIGINT},
       </if>
       <if test="assignedByName != null" >
-        #{assignedByName,jdbcType=BIGINT},
+        #{assignedByName,jdbcType=VARCHAR},
       </if>
       <if test="assignedDate != null" >
         #{assignedDate,jdbcType=TIMESTAMP},
@@ -329,7 +329,7 @@
         assigned_by = #{assignedBy,jdbcType=BIGINT},
       </if>
       <if test="assignedByName != null" >
-        assigned_by_name = #{assignedByName,jdbcType=BIGINT},
+        assigned_by_name = #{assignedByName,jdbcType=VARCHAR},
       </if>
       <if test="assignedDate != null" >
         assigned_date = #{assignedDate,jdbcType=TIMESTAMP},
@@ -365,7 +365,7 @@
       closed_date = #{closedDate,jdbcType=TIMESTAMP},
       closed_reason = #{closedReason,jdbcType=VARCHAR},
       assigned_by = #{assignedBy,jdbcType=BIGINT},
-      assigned_by_name = #{assignedByName,jdbcType=BIGINT},
+      assigned_by_name = #{assignedByName,jdbcType=VARCHAR},
       assigned_date = #{assignedDate,jdbcType=TIMESTAMP},
       deleted = #{deleted,jdbcType=INTEGER},
       description = #{description,jdbcType=LONGVARCHAR}
@@ -393,7 +393,7 @@
       closed_date = #{closedDate,jdbcType=TIMESTAMP},
       closed_reason = #{closedReason,jdbcType=VARCHAR},
       assigned_by = #{assignedBy,jdbcType=BIGINT},
-      assigned_by_name = #{assignedByName,jdbcType=BIGINT},
+      assigned_by_name = #{assignedByName,jdbcType=VARCHAR},
       assigned_date = #{assignedDate,jdbcType=TIMESTAMP},
       deleted = #{deleted,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}

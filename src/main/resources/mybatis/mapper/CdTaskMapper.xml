@@ -54,7 +54,10 @@
     WHERE 1 = 1
     <if test="entity != null">
       <if test="entity.projectNameLike != null and entity.projectNameLike != '' ">
-        AND name like CONCAT('%',#{entity.projectNameLike,jdbcType=CHAR},'%')
+        AND project_name like CONCAT('%',#{entity.projectNameLike,jdbcType=CHAR},'%')
+      </if>
+      <if test="entity.taskNameLike != null and entity.taskNameLike != '' ">
+        AND name like CONCAT('%',#{entity.taskNameLike,jdbcType=CHAR},'%')
       </if>
       <if test="entity.status != null and entity.status != '' ">
         AND status = #{entity.status,jdbcType=INTEGER}

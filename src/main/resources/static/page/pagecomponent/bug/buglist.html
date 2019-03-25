@@ -93,7 +93,19 @@
                         toStart(row.id,row.status);
                     },
                     "click #del":function(e,value,row,index){
-
+                        del(row.id);
+                    },
+                    "click #assignedBy":function(e,value,row,index){
+                        assignedBy(row.projectId,row.id);
+                    },
+                    "click #resolved":function(e,value,row,index){
+                        toUpdateStatus(row.id,row.status,'resolved','解决');
+                    },
+                    "click #closed":function(e,value,row,index){
+                        toUpdateStatus(row.id,row.status,'closed','关闭');
+                    },
+                    "click #active":function(e,value,row,index){
+                        toUpdateStatus(row.id,row.status,'active','激活');
                     }
                 },
                 formatter: operateFormatter //自定义方法，添加操作按钮
@@ -110,6 +122,75 @@
             clickToSelect : false
 	    });
 	}
+
+    function toUpdateStatus(bugId,status,expectStatus,statusDesc) {
+        var entity = {};
+        entity.id = bugId;
+        entity.status = expectStatus;
+        entity.statusDesc = statusDesc;
+
+        <!--loding-->
+        var load = layer.load();
+        $.ajax({
+            type: "POST",
+            url: "/bug/updateStatus",
+            headers: {
+                "content-Type": "application/json"
+            },
+            data: JSON.stringify(entity),
+            success: function (data) {
+                layer.close(load);
+                if (data.code == 200) {
+                    layer.msg("状态变更成功");
+                    tableRefresh();
+                } else {
+                    layer.msg(data.message);
+                }
+            },
+            error: function (data) {
+                layer.msg(data.responseText);
+            }
+        });
+    }
+
+    function assignedBy(projectId,id) {
+        $('#project_id').val(projectId);
+        $('#bugId').val(id);
+
+        $('#showMember').modal();
+        $('#showMemberOperationRecordTable').bootstrapTable('refresh', {
+            query : {}
+        });
+    }
+
+    function del(bugId) {
+
+        var entity = {};
+        entity.id = bugId;
+
+        <!--loding-->
+        var load = layer.load();
+        $.ajax({
+            type: "POST",
+            url: "/bug/delete",
+            headers: {
+                "content-Type": "application/json"
+            },
+            data: JSON.stringify(entity),
+            success: function (data) {
+                layer.close(load);
+                if (data.code == 200) {
+                    layer.msg("删除成功");
+                    tableRefresh();
+                } else {
+                    layer.msg(data.message);
+                }
+            },
+            error: function (data) {
+                layer.msg(data.responseText);
+            }
+        });
+    }
 
 	function toStart(projectId,status) {
         var s = status == 'wait' ? 'doing' : status == 'doing' ? 'done' : null;
@@ -146,20 +227,21 @@
 
 	function operateFormatter(value, row, index) {
         var s = row.status;
-        var desc = s == 'wait' ? '开始' : s == 'doing' ? '关闭' : null;
-        if (desc != null) {
-            return [
-                '<a class="btn btn-default" href="#" id="tostart">'+ desc +'</a>',
-                '<a class="btn btn-default" href="#" id="edit">编辑</a>',
-                '<a class="btn btn-default" href="#" id="showDetail">查看</a>',
-                '<a class="btn btn-default" href="#" id="del">删除</a>'
-            ].join('');
+
+        var arr = new Array();
+        if (s == 'active') {
+            arr.push('<a class="btn btn-default" href="#" id="assignedBy">指派</a>');
+            arr.push('<a class="btn btn-default" href="#" id="resolved">解决</a>');
+        } else if (s == 'resolved') {
+            arr.push('<a class="btn btn-default" href="#" id="closed">关闭</a>');
+        } else if (s == 'closed') {
+            arr.push('<a class="btn btn-default" href="#" id="active">激活</a>');
         }
-        return [
-                 '<a class="btn btn-default" href="#" id="edit">编辑</a>',
-                 '<a class="btn btn-default" href="#" id="showDetail">查看</a>',
-                 '<a class="btn btn-default" href="#" id="del">删除</a>'
-             ].join('');
+
+        arr.push('<a class="btn btn-default" href="#" id="look">查看</a>');
+        arr.push('<a class="btn btn-default" href="#" id="del">删除</a>');
+
+        return arr.join('');
     }
 
 	// 表格刷新
@@ -286,6 +368,8 @@
         <li>BUG管理</li>
     </ol>
     <div class="panel-body">
+        <input type="hidden" id="project_id">
+        <input type="hidden" id="bugId">
         <div class="row">
             <div class="col-md-3">
                 <form action="" class="form-inline">
@@ -307,7 +391,7 @@
                             <option value="all">所有状态</option>
                             <option value="active">被激活</option>
                             <option value="resolved">已解决</option>
-                            <option value="done">closed</option>
+                            <option value="closed">已关闭</option>
                         </select>
                     </div>
 
@@ -381,3 +465,113 @@
             </div>
         </div>
     </div>
+
+<div class="modal fade" id="showMember" tabindex="-1" role="dialog" aria-labelledby="assignedBymemberLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="assignedBymemberLabel">指派给</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped" id="showMemberOperationRecordTable"></table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" onclick="addAssignedBy();" class="btn btn-primary">指派</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(function(){
+        showMemberOperationRecordTableInit();
+    })
+
+    function addAssignedBy() {
+        var rows = $("#showMemberOperationRecordTable").bootstrapTable('getSelections');
+        //console.log(rows);
+        if (rows.length == 0) {// rows 主要是为了判断是否选中，下面的else内容才是主要
+            layer.msg("请先选择要指派的人!");
+            return;
+        } else if (rows.length > 1) {
+            layer.msg("只能选一个人进行指派!");
+            return;
+        } else {
+            var entity = {};
+            $(rows).each(function () {
+                entity.assignedBy = this.userId;
+                entity.id = parseInt($('#bugId').val());
+                entity.assignedByName = this.account;
+
+            });
+            console.log(entity);
+
+            <!--loding-->
+            var load = layer.load();
+            $.ajax({
+                type: "POST",
+                url: "/bug/assigned",
+                headers: {
+                    "content-Type": "application/json"
+                },
+                data: JSON.stringify(entity),
+                success: function (data) {
+                    layer.close(load);
+                    if (data.code == 200) {
+                        layer.msg("指派成功");
+                        $('#showMember').modal('hide');
+                        tableRefresh();
+                    } else {
+                        layer.msg(data.message);
+                    }
+                },
+                error: function (data) {
+                    layer.msg(data.responseText);
+                }
+            });
+        }
+    }
+
+    function showMemberOperationRecordTableInit(){
+        $('#showMemberOperationRecordTable').bootstrapTable({
+            columns:[{
+                checkbox:true
+            },{
+                field : 'account',
+                title : '组用户账号'
+            },{
+                field : 'createTime',
+                title : '关联时间',
+                formatter : function (value, row, index) {
+                    if (row.createTime != null) {
+                        return new Date(row.createTime).format("yyyy-MM-dd hh:mm:ss");
+                    }
+                    return null;
+                }
+            }],
+            url : '/group/getGroupMemberRecords',
+            method : 'GET',
+            queryParams : showMemberQueryParams,
+            sidePagination : "server",
+            dataType : 'json',
+            pagination : true,
+            pageNumber : 1,
+            pageSize : 10,
+            pageList : [ 5, 10, 25, 50, 100 ],
+            clickToSelect : false
+        });
+    }
+
+    // 分页查询参数
+    function showMemberQueryParams(params) {
+        var temp = {
+            limit : params.limit,
+            offset : params.offset,
+            projectId : $('#project_id').val()
+        };
+        return temp;
+    }
+</script>

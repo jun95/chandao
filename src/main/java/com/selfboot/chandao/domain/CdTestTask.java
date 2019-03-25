@@ -74,7 +74,7 @@ public class CdTestTask extends BaseEntity {
     private Long assignedBy;
 
     /**  */
-    private Long assignedByName;
+    private String assignedByName;
 
     /**  */
     private Date assignedDate;
@@ -90,6 +90,16 @@ public class CdTestTask extends BaseEntity {
     private String requireNameLike;
 
     private String testTaskNameLike;
+
+    private String statusDesc;
+
+    public String getStatusDesc() {
+        return statusDesc;
+    }
+
+    public void setStatusDesc(String statusDesc) {
+        this.statusDesc = statusDesc;
+    }
 
     public String getProjectNameLike() {
         return projectNameLike;
@@ -275,11 +285,11 @@ public class CdTestTask extends BaseEntity {
         this.assignedBy = assignedBy;
     }
 
-    public Long getAssignedByName() {
+    public String getAssignedByName() {
         return assignedByName;
     }
 
-    public void setAssignedByName(Long assignedByName) {
+    public void setAssignedByName(String assignedByName) {
         this.assignedByName = assignedByName;
     }
 
