@@ -1,18 +1,19 @@
-CREATE TABLE IF NOT EXISTS `cd_user` (
-  `id` bigint(20) NOT NULL auto_increment,
-  `account` char(30) NOT NULL default '' COMMENT '账号',
-  `password` char(32) NOT NULL default '' COMMENT '密码',
-  `realname` varchar(100) NULL default '' COMMENT '真实姓名',
-  `nickname` char(60) NULL default '' COMMENT '昵称',
-  `mobile` char(11) NULL default '' COMMENT '手机号',
-  `gender` int(1) NULL default 1 COMMENT '性别,1:男；2：女',
+CREATE TABLE `cd_user` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `account` char(30) NOT NULL DEFAULT '' COMMENT '账号',
+  `password` char(32) NOT NULL DEFAULT '' COMMENT '密码',
+  `type` int(1) NOT NULL DEFAULT '2' COMMENT '1:管理员；2：普通用户',
+  `realname` varchar(100) DEFAULT '' COMMENT '真实姓名',
+  `nickname` char(60) DEFAULT '' COMMENT '昵称',
+  `mobile` char(11) DEFAULT '' COMMENT '手机号',
+  `gender` int(1) DEFAULT '1' COMMENT '性别,1:男；2：女',
   `last_login_time` datetime DEFAULT NULL COMMENT '最后登录时间',
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime DEFAULT NULL COMMENT '创建时间',
   `update_id` bigint(20) DEFAULT NULL COMMENT '更新人id',
-  `deleted` int(1) NOT NULL default 1 COMMENT '删除标记',
-  PRIMARY KEY  (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='用户表';
+  `deleted` int(1) NOT NULL DEFAULT '1' COMMENT '删除标记',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='用户表';
 
 CREATE TABLE `cd_user_role` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
@@ -24,14 +25,18 @@ PRIMARY KEY (`id`)
 CREATE TABLE `cd_u_role` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(32) DEFAULT NULL COMMENT '角色名称',
-  `type` int(2) DEFAULT NULL COMMENT '角色类型',
+  `role_desc` varchar(255) DEFAULT NULL COMMENT '角色描述',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户角色表';
 
 CREATE TABLE `cd_u_permission` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `url` varchar(256) DEFAULT NULL COMMENT 'url地址',
-  `name` varchar(64) DEFAULT NULL COMMENT 'url描述',
+  `parent_id` bigint(20) DEFAULT NULL COMMENT '父权限',
+  `url` varchar(255) DEFAULT NULL COMMENT '权限url',
+  `name` varchar(255) DEFAULT NULL COMMENT '权限名称',
+  `type` int(1) DEFAULT NULL COMMENT '权限类型,1:菜单;2：按钮',
+  `sort` int(11) DEFAULT NULL COMMENT '排序',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户权限表';
 

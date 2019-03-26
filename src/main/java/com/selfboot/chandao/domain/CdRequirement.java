@@ -3,11 +3,13 @@ package com.selfboot.chandao.domain;
 import com.selfboot.chandao.persist.BaseEntity;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 public class CdRequirement extends BaseEntity {
 
     /** 项目id */
+    @NotNull(message = "所在项目不能为空")
     private Long projectId;
 
     /** 项目标题 */
@@ -18,9 +20,11 @@ public class CdRequirement extends BaseEntity {
     private String title;
 
     /** 需求开始时间 */
+    @NotNull(message = "开始时间不能为空")
     private Date begin;
 
     /** 需求结束时间 */
+    @NotNull(message = "结束时间不能为空")
     private Date end;
 
     /** 状态；有done、doing、wait */

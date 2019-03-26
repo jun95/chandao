@@ -44,12 +44,17 @@ public class UserController extends BaseController<CdUser, CdUserService> {
     }
 
     @GetMapping("getUserRecords")
-    public Map<String,Object> getUserRecords(CdUser cdUser,@RequestParam(value = "id",required = false) String id,
+    public Map<String,Object> getUserRecords(HttpServletRequest request,CdUser cdUser,
+                                             @RequestParam(value = "id",required = false) String id,
                                              @RequestParam(value = "offset",required = false) Integer offset,
                                              @RequestParam(value = "limit" ,required = false) Integer limit) {
         cdUser.setDeleted(1);
         if (!StringUtils.isBlank(id)) {
             cdUser.setId(Long.parseLong(id));
+        }
+        CdUser user = UserUtil.getUser(request);
+        if (user.getType() != 1) { //是普通用户
+            cdUser.setType(0);
         }
 
         if (cdUser.getGroupId() == null) {
@@ -78,6 +83,7 @@ public class UserController extends BaseController<CdUser, CdUserService> {
 
         cdUser.setPassword("b7797cce01b4b131b433b6acf4add449");
         cdUser.setDeleted(1);
+        cdUser.setType(2); //默认是普通用户
         ServiceResult serviceResult = targetService.save(Collections.singletonList(cdUser));
         if (serviceResult.isSuccess()) {
             result.setResponseStatus(ResponseStatus.OK);

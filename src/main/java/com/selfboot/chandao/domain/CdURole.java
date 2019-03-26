@@ -2,29 +2,19 @@ package com.selfboot.chandao.domain;
 
 import com.selfboot.chandao.persist.BaseEntity;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
+import java.util.Date;
 
-public class CdURole extends BaseEntity implements Serializable{
+public class CdURole extends BaseEntity {
 
-    /** ��ɫ���� */
-    @NotBlank
+
+    /** 角色名称 */
     private String name;
 
-    private String nameLike;
+    /** 角色描述 */
+    private String roleDesc;
 
-    /** ��ɫ���� */
-    @NotNull
-    private Integer type;
-
-    public String getNameLike() {
-        return nameLike;
-    }
-
-    public void setNameLike(String nameLike) {
-        this.nameLike = nameLike;
-    }
+    /** 创建时间 */
+    private Date createTime;
 
     public String getName() {
         return name;
@@ -34,11 +24,19 @@ public class CdURole extends BaseEntity implements Serializable{
         this.name = name == null ? null : name.trim();
     }
 
-    public Integer getType() {
-        return type;
+    public String getRoleDesc() {
+        return roleDesc;
     }
 
-    public void setType(Integer type) {
-        this.type = type;
+    public void setRoleDesc(String roleDesc) {
+        this.roleDesc = roleDesc == null ? null : roleDesc.trim();
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 }

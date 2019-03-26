@@ -97,6 +97,7 @@
                 if (data.code == 200) {
                     layer.msg("成功");
                     window.location.href="/page/mainPage.html";
+                    //sessionStorage.setItem('testKey',data);
                 } else {
                     layer.msg(data.message);
                 }

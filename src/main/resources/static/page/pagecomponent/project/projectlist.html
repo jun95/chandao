@@ -10,6 +10,11 @@
         userOperationRecordTableInit();
         searchActionInit();
         insertActionInit();
+
+        /*$.each($('[permissionName]'),function(v){
+            console.log($(this).attr('permissionName'))
+        })*/
+        //console.log(sessionStorage.getItem('testKey'))
     });
 
     // 日期选择器初始化
@@ -348,6 +353,7 @@
                 <div class="form-group">
 
                     <label class="form-label">项目名：</label>
+                    <!--<input type="text" permissionName="sys" id="projectNameLike" class="form-control" placeholder="项目名" style="width:50%">-->
                     <input type="text" id="projectNameLike" class="form-control" placeholder="项目名" style="width:50%">
 
                 </div>

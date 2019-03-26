@@ -4,16 +4,20 @@ import com.selfboot.chandao.common.ProjectStatusEnum;
 import com.selfboot.chandao.common.ResponseResult;
 import com.selfboot.chandao.common.ResponseStatus;
 import com.selfboot.chandao.common.ServiceResult;
+import com.selfboot.chandao.domain.CdProject;
 import com.selfboot.chandao.domain.CdRequirement;
 import com.selfboot.chandao.domain.CdTestTask;
 import com.selfboot.chandao.domain.CdUser;
+import com.selfboot.chandao.exception.GlobalException;
 import com.selfboot.chandao.listener.DataCallback;
 import com.selfboot.chandao.persist.CrudService;
 import com.selfboot.chandao.persist.DataCallbackParam;
+import com.selfboot.chandao.service.CdProjectService;
 import com.selfboot.chandao.service.CdRequirementService;
 import com.selfboot.chandao.util.DateUtil;
 import com.selfboot.chandao.util.UserUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +33,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("require")
 public class CdRequirementController extends BaseController<CdRequirement, CdRequirementService> {
+
+    @Autowired
+    private CdProjectService cdProjectService;
 
     @GetMapping("getRequireRecords")
     public Map<String,Object> getUserRecords(HttpServletRequest request,CdRequirement cdRequirement,
@@ -69,7 +76,7 @@ public class CdRequirementController extends BaseController<CdRequirement, CdReq
     }
 
     @PostMapping("addRequire")
-    public ResponseResult<String> addRequire(HttpServletRequest request, @RequestBody @Valid CdRequirement cdRequirement) {
+    public ResponseResult<String> addRequire(HttpServletRequest request, @RequestBody @Valid CdRequirement cdRequirement) throws GlobalException {
         ResponseResult<String> result = new ResponseResult<>();
 
         Date begin = cdRequirement.getBegin();
@@ -81,6 +88,23 @@ public class CdRequirementController extends BaseController<CdRequirement, CdReq
             result.setResponseStatus(ResponseStatus.ERROR);
             result.setMessage("开始日期需小于结束日期");
             return result;
+        }
+
+        Long projectId = cdRequirement.getProjectId();
+        CdProject entity = new CdProject();
+        entity.setId(projectId);
+        ServiceResult serviceResult1 = cdProjectService.queryOne(entity);
+        if (serviceResult1.isSuccess()) {
+            entity = (CdProject) serviceResult1.getResult();
+            ProjectStatusEnum status = ProjectStatusEnum.getStatus(entity.getStatus());
+            if (status != ProjectStatusEnum.WAIT) {
+                throw new GlobalException("只有当项目待开始时才允许增加需求");
+            }
+            if (!checkTimeScope(entity,begin.getTime(),end.getTime())) {  //不在项目时间范围内
+                throw new GlobalException("需求的时间范围需在项目的时间范围内");
+            }
+        } else {
+            throw new GlobalException("项目不存在");
         }
 
         CdUser user = UserUtil.getUser(request);
@@ -99,6 +123,22 @@ public class CdRequirementController extends BaseController<CdRequirement, CdReq
         }
 
         return result;
+    }
+
+    /**
+     * 是否在项目时间范围内
+     * @param entity
+     * @param start
+     * @param end
+     */
+    private boolean checkTimeScope(CdProject entity, long start, long end) {
+        long compareStart = entity.getBegin().getTime();
+        long compareEnd = entity.getEnd().getTime();
+
+        if (compareEnd > start && compareStart < end) {  //说明有重叠
+            return true;
+        }
+        return false;
     }
 
     @PostMapping("delete")

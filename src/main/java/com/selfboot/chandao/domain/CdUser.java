@@ -16,6 +16,9 @@ public class CdUser extends BaseEntity implements Serializable {
     /** 密码 */
     private String password;
 
+    /** 1:管理员；2：普通用户 */
+    private Integer type;
+
     /** 真实姓名 */
     private String realname;
 
@@ -46,6 +49,14 @@ public class CdUser extends BaseEntity implements Serializable {
     private String accountLike;
 
     private Long groupId;
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
 
     public Long getGroupId() {
         return groupId;

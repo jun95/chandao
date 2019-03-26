@@ -8,24 +8,27 @@ import com.selfboot.chandao.domain.CdUser;
 import com.selfboot.chandao.util.HttpUtil;
 import com.selfboot.chandao.util.UserUtil;
 import org.apache.shiro.web.filter.AccessControlFilter;
+import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.Set;
 
 /**
+ * AccessControlFilter
  * Created by 87570 on 2019/3/18.
  */
-public class LoginFilter extends AccessControlFilter {
+public class LoginFilter extends FormAuthenticationFilter {
 
     @Resource
     private FilterURL filterURL;
 
     @Override
-    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object o) throws Exception {
+    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object o) {
 
         CdUser token = UserUtil.getUser(request);
 
@@ -41,7 +44,11 @@ public class LoginFilter extends AccessControlFilter {
                 ResponseResult<String> result = new ResponseResult<>(ResponseStatus.ERROR);
                 result.setMessage("当前用户没有登录");
                 //HttpUtil.writeJson(response,"当前用户没有登录!");
-                HttpUtil.writeJson(response, JSON.toJSONString(result));
+                try {
+                    HttpUtil.writeJson(response, JSON.toJSONString(result));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 return Boolean.FALSE;
             }
         }
