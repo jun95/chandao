@@ -15,6 +15,21 @@
     from cd_u_role_permission
     where id = #{id,jdbcType=BIGINT}
   </select>
+
+  <delete id="deleteByCondition">
+    delete from cd_u_role_permission
+    <include refid="del_fragment"/>
+  </delete>
+
+  <sql id="del_fragment">
+    where 1 = 1
+    <if test="entity != null">
+      <if test="entity.rid != null">
+        rid = #{entity.rid,jdbcType=BIGINT}
+      </if>
+    </if>
+  </sql>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from cd_u_role_permission
     where id = #{id,jdbcType=BIGINT}

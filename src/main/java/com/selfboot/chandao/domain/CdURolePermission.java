@@ -2,16 +2,30 @@ package com.selfboot.chandao.domain;
 
 import com.selfboot.chandao.persist.BaseEntity;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 public class CdURolePermission extends BaseEntity implements Serializable{
 
-    /** ½ÇÉ«ID */
+    /** ï¿½ï¿½É«ID */
+    @NotNull
     private Long rid;
 
-    /** È¨ÏŞID */
+    /** È¨ï¿½ï¿½ID */
+    @NotNull
     private Long pid;
+    /**
+     * æƒé™idé›†
+     */
+    private String resourcesId;
 
+    public String getResourcesId() {
+        return resourcesId;
+    }
+
+    public void setResourcesId(String resourcesId) {
+        this.resourcesId = resourcesId;
+    }
 
     public Long getRid() {
         return rid;

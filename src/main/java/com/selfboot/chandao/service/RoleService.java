@@ -1,6 +1,7 @@
 package com.selfboot.chandao.service;
 
 import com.selfboot.chandao.domain.CdURole;
+import com.selfboot.chandao.domain.CdURolePermission;
 import com.selfboot.chandao.persist.BootStrapService;
 
 /**
@@ -9,4 +10,5 @@ import com.selfboot.chandao.persist.BootStrapService;
 public interface RoleService extends BootStrapService<CdURole> {
 
 
+    void allotPermission(CdURolePermission rolePermission);
 }

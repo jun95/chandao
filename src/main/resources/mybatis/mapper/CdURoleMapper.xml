@@ -17,6 +17,9 @@
       <if test="entity.id != null">
         AND id = #{entity.id,jdbcType=BIGINT}
       </if>
+      <if test="entity.nameLike != null and entity.nameLike != '' ">
+        AND name like CONCAT('%',#{entity.nameLike,jdbcType=CHAR},'%')
+      </if>
     </if>
   </sql>
 
