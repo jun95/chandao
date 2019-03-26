@@ -12,6 +12,40 @@
   <sql id="Base_Column_List" >
     id, parent_id, url, name, type, sort
   </sql>
+
+  <sql id="where_fragment">
+    WHERE 1 = 1
+    <if test="entity != null">
+      <if test="entity.nameLike != null and entity.nameLike != '' ">
+        AND name like CONCAT('%',#{entity.nameLike,jdbcType=CHAR},'%')
+      </if>
+      <if test="entity.id != null">
+        AND id = #{entity.id,jdbcType=BIGINT}
+      </if>
+      <if test="entity.type != null">
+        AND type = #{entity.type,jdbcType=INTEGER}
+      </if>
+    </if>
+  </sql>
+
+  <select id="selectListByCondition" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM cd_u_permission
+    <include refid="where_fragment"/>
+  </select>
+
+  <select id="selectSort" resultType="int">
+    SELECT MAX(sort) FROM cd_u_permission
+    WHERE parent_id = #{entity.parentId,jdbcType=BIGINT} AND type = #{entity.type,jdbcType=INTEGER} GROUP BY type
+  </select>
+
+  <delete id="deletePermission">
+    DELETE FROM cd_u_permission WHERE id IN (
+    SELECT a.id FROM (SELECT child.id FROM cd_u_permission child WHERE child.parent_id = #{id,jdbcType=BIGINT}) a
+    ) OR id = #{id,jdbcType=BIGINT}
+  </delete>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />

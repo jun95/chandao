@@ -27,7 +27,7 @@ public class RoleController extends BaseController<CdURole, RoleService> {
         if (!StringUtils.isBlank(id)) {
             cdURole.setId(Long.parseLong(id));
         }
-        cdURole.setDeleted(1);
+        //cdURole.setDeleted(1);
         return getRecords(cdURole,offset,limit);
     }
 
@@ -52,7 +52,7 @@ public class RoleController extends BaseController<CdURole, RoleService> {
      * @return
      */
     @PostMapping("allotPermission")
-    public ResponseResult<String> allotPermission(@RequestBody @Valid CdURolePermission rolePermission) {
+    public ResponseResult<String> allotPermission(@RequestBody CdURolePermission rolePermission) {
         ResponseResult<String> result = new ResponseResult<>();
         targetService.allotPermission(rolePermission);
         return result;

@@ -1,7 +1,7 @@
 <script>
     // 查询参数
     search_id = null;
-    search_role = null;
+    search_permission = null;
 
     $(function(){
         //datePickerInit();
@@ -16,24 +16,34 @@
                 checkbox: true
             },{
                 field : 'id',
-                title : '角色ID'
+                title : '权限ID'
             },{
                 field : 'name',
-                title : '角色名称'
+                title : '权限名称'
             },{
-                field : 'roleDesc',
-                title : '角色描述'
+                field : 'type',
+                title : '权限类型',
+                formatter: function (value,row,index) {
+                    if (row.type == 1) {
+                        return '菜单';
+                    } else if (row.type == 2) {
+                        return '按钮';
+                    }
+                }
+            },{
+                field : 'sort',
+                title : '排序'
             },{
                 field : 'operate',
                 title : '操作',
                 events:{     //为按钮添加事件
-                    "click #allot":function(e,value,row,index){
-                        allot(row.id);
+                    "click #del":function(e,value,row,index){
+                        del(row.id);
                     }
                 },
                 formatter: operateFormatter //自定义方法，添加操作按钮
             }],
-            url : '/role/getRoleRecords',
+            url : '/permission/getPermissionRecords',
             method : 'GET',
             queryParams : queryParams,
             sidePagination : "server",
@@ -46,7 +56,7 @@
         });
     }
 
-    function allot(id) {
+    function del(id) {
         var entity = {};
         entity.id = id;
 
@@ -54,7 +64,7 @@
         var load = layer.load();
         $.ajax({
             type: "POST",
-            url: "/role/allotPermission",
+            url: "/permission/delete",
             headers: {
                 "content-Type": "application/json"
             },
@@ -75,9 +85,10 @@
     }
 
     function operateFormatter(value, row, index) {
-        
         return [
-            '<a class="btn btn-default" href="#" id="allot">分配权限</a>'
+            /*'<a class="btn active disabled" href="#">编辑</a>',*/
+            '<a class="btn btn-default" href="#" id="del">删除</a>'
+            /*'<a class="btn active" href="#">准入</a>'*/
         ].join('');
     }
 
@@ -94,8 +105,8 @@
             limit : params.limit,
             offset : params.offset,
             id : search_id,
-            nameLike : search_role
-        };
+            nameLike : search_permission
+        }
         return temp;
     }
 
@@ -103,24 +114,32 @@
     function searchActionInit(){
         $('#search_button').click(function(){
             search_id = $('#id').val();
-            search_role = $('#nameLike').val();
+            search_permission = $('#nameLike').val();
             tableRefresh();
         })
     }
 
-    function addRole(){
-        var name = $('#name').val(),
-            roleDesc = $('#roleDesc').val();
+    function addPermission(){
+        var entity = {};
+
+        entity.name = $('#name').val();
+        entity.url = $('#url').val();
+
+        var select = $('#parent');
+        entity.parentId = parseInt(select.val());
+
+        var type = $('#per_type');
+        entity.type = parseInt(type.val());
         
         <!--loding-->
         var load = layer.load();
         $.ajax({
             type: "POST",
-            url: "/role/addRole",
+            url: "/permission/addPermission",
             headers: {
                 "content-Type": "application/json"
             },
-            data: JSON.stringify({name: name, roleDesc: roleDesc}),
+            data: JSON.stringify(entity),
             success: function (data) {
                 layer.close(load);
                 if (data.code == 200) {
@@ -139,16 +158,49 @@
 
     function insertActionInit() {
         $('#insert_button').click(function(){
+
+            initPermission();
+
             $('#name').val('');
-            $('#roleDesc').val('');
+            $('#url').val('');
             $('#addRole').modal();
         });
     }
+
+    function initPermission() {
+        $.ajax({
+            type: "POST",
+            url: "/permission/getPermissionTotalRecord",
+            headers: {
+                "content-Type": "application/json"
+            },
+            success: function (data) {
+                if (data.code == 200) {
+                    fillingPermission(data.result);
+                } else {
+                    layer.msg(data.message);
+                }
+            },
+            error: function (data) {
+                layer.msg(data.responseText);
+            }
+        });
+    }
+
+    function fillingPermission(result) {
+        var select = $('#parent');
+        var options = '';
+        for (var i = 0; i < result.length; i++) {
+            options += '<option value="' + result[i].id + '">' + result[i].name + '</option>';
+        }
+        select.html(options);
+    }
+
 </script>
 
 <div class="panel panel-default">
     <ol class="breadcrumb">
-        <li>角色管理</li>
+        <li>权限管理</li>
     </ol>
     <div class="panel-body">
         <div class="row">
@@ -156,8 +208,8 @@
                 <form action="" class="form-inline">
                     <div class="form-group">
 
-                        <label class="form-label">角色名称：</label>
-                        <input type="text" id="nameLike" class="form-control" placeholder="角色名称" style="width:50%">
+                        <label class="form-label">权限名称：</label>
+                        <input type="text" id="nameLike" class="form-control" placeholder="权限名称" style="width:50%">
 
                     </div>
 
@@ -186,23 +238,39 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="addroleLabel">添加角色</h4>
+                <h4 class="modal-title" id="addroleLabel">添加权限</h4>
             </div>
             <div class="modal-body">
                 <form id="boxRoleForm">
                     <div class="form-group">
-                        <label class="control-label">角色名称:</label>
-                        <input type="text" class="form-control" name="name" id="name" placeholder="角色名称"/>
+                        <label class="control-label">权限名称:</label>
+                        <input type="text" class="form-control" name="name" id="name" placeholder="权限名称"/>
                     </div>
                     <div class="form-group">
-                        <label class="control-label">角色描述:</label>
-                        <input type="text" class="form-control" id="roleDesc" name="roleDesc"  placeholder="角色类型">
+                        <label class="control-label">父权限名称:</label>
+                        <select name="" id="parent" class="form-control">
+                        </select>
                     </div>
+                    <div class="form-group">
+                        <label class="control-label">权限链接:</label>
+                        <input type="text" class="form-control" name="url" id="url" placeholder="权限链接"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">权限类型:</label>
+                        <select name="" id="per_type" class="form-control">
+                            <option value="1">菜单</option>
+                            <option value="2">按钮</option>
+                        </select>
+                    </div>
+                    <!--<div class="form-group">
+                        <label class="control-label">排序:</label>
+                        <input type="text" class="form-control" name="sort" id="sort" placeholder="排序"/>
+                    </div>-->
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" onclick="addRole();" class="btn btn-primary" data-dismiss="modal">新增</button>
+                <button type="button" onclick="addPermission();" class="btn btn-primary" data-dismiss="modal">新增</button>
             </div>
         </div>
     </div>
