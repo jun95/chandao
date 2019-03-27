@@ -15,4 +15,6 @@ public interface CdUPermissionDAO extends CrudDAO<CdUPermission> {
     void deletePermission(@Param("id") Long id);
 
     List<CdUPermission> queryResourcesListWithSelected(@Param("rid") Integer rid);
+
+    List<CdUPermission> getMenu(@Param("userId") Long userId,@Param("type") Integer type);
 }

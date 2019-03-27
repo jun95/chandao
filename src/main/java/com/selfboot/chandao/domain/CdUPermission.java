@@ -4,6 +4,7 @@ import com.selfboot.chandao.persist.BaseEntity;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 public class CdUPermission extends BaseEntity {
 
@@ -29,6 +30,16 @@ public class CdUPermission extends BaseEntity {
     private String nameLike;
 
     private String checked;//是否选中
+
+    private List<CdUPermission> children;
+
+    public List<CdUPermission> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<CdUPermission> children) {
+        this.children = children;
+    }
 
     public String getChecked() {
         return checked;

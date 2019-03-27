@@ -1,11 +1,14 @@
 package com.selfboot.chandao.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.selfboot.chandao.common.*;
+import com.selfboot.chandao.common.Constant;
+import com.selfboot.chandao.common.ResponseResult;
 import com.selfboot.chandao.common.ResponseStatus;
 import com.selfboot.chandao.core.token.TokenManager;
+import com.selfboot.chandao.domain.CdUPermission;
 import com.selfboot.chandao.domain.CdUser;
 import com.selfboot.chandao.service.CdUserService;
+import com.selfboot.chandao.service.PermissionService;
 import com.selfboot.chandao.util.CookieManager;
 import com.selfboot.chandao.util.MD5Util;
 import com.selfboot.chandao.vo.LoginVO;
@@ -20,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * Created by hwj on 2019/3/15.
@@ -32,11 +36,16 @@ public class LoginController {
     @Resource
     private CdUserService cdUserService;
 
+    @Resource
+    private PermissionService permissionService;
+
 
     @PostMapping(value = "login")
     @ResponseBody
-    public ResponseResult<String> login(HttpServletResponse response, HttpServletRequest request,@RequestBody @Valid LoginVO loginVO) {
-        ResponseResult<String> result = new ResponseResult<>();
+    public ResponseResult<List<CdUPermission>> login(HttpServletResponse response,
+                                                     HttpServletRequest request,
+                                                     @RequestBody @Valid LoginVO loginVO) {
+        ResponseResult<List<CdUPermission>> result = new ResponseResult<>();
         logger.info("登录信息为：{}", JSON.toJSONString(loginVO));
 
         try {
@@ -52,6 +61,9 @@ public class LoginController {
             HttpSession session = request.getSession();
             session.setAttribute(Constant.USER_INFO,JSON.toJSONString(entity));
             CookieManager.addCookie(response, Constant.USER_TOKEN,session.getId(),30*60);
+
+            //设置菜单权限
+            result.setResult(permissionService.loadMenu(entity.getId()));
 
         } catch (DisabledAccountException e) {
             result.setResponseStatus(ResponseStatus.ERROR);

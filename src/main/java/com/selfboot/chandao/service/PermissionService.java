@@ -15,4 +15,6 @@ public interface PermissionService extends BootStrapService<CdUPermission> {
     void deletePermission(Long id);
 
     List<CdUPermission> queryResourcesListWithSelected(Integer rid);
+
+    List<CdUPermission> loadMenu(Long userId);
 }

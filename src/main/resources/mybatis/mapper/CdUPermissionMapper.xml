@@ -52,8 +52,21 @@
 		FROM cd_u_role_permission rr WHERE rr.pid = re.id AND rr.rid=#{rid})
 		THEN 'true' ELSE 'false' END) AS checked
 		FROM cd_u_permission re
-		WHERE re.parent_id !=0
+		/*WHERE re.parent_id !=0*/
 		ORDER BY re.sort ASC
+  </select>
+
+  <select id="getMenu" resultMap="BaseResultMap">
+    SELECT re.id,re.name,re.parent_id,re.url,re.sort
+        FROM cd_u_permission re LEFT JOIN cd_u_role_permission rr
+        ON re.id = rr.pid
+        LEFT JOIN cd_user_role ur
+        ON rr.rid =ur.rid
+        WHERE ur.uid=#{userId}
+         <if test="type != null">
+           AND re.type= 1
+         </if>
+        ORDER BY re.parent_id,re.sort ASC;
   </select>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >

@@ -78,12 +78,10 @@
             <!--  此处加载左侧导航栏 -->
             <!-- 左侧导航栏  -->
             <div class="panel-group" id="accordion">
-                <div class="panel panel-default panel-style">
+                <!--<div class="panel panel-default panel-style">
                     <a href="#collapse1" data-toggle="collapse" data-parent="#accordion">
                         <div class="panel-heading">
                             <h4 class="panel-title">
-                                <!--<a href="#collapse1" data-toggle="collapse" data-parent="#accordion"-->
-                                <!--class="parentMenuTitle collapseHead">成员管理</a>-->
                                 成员管理
                                 <div class="pull-right">
                                     <span class="caret"></span>
@@ -115,7 +113,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="panel panel-default">
+                <div class="panel panel-default panel-style">
                     <div class="panel-heading">
                         <h4 class="panel-title">
                             <a href="#collapse2" data-toggle="collapse" data-parent="#accordion"
@@ -132,10 +130,6 @@
                                         <a href="javascript:void(0)" class="menu_item"
                                            name="pagecomponent/project/projectlist.html">项目流程管理</a>
                                     </li>
-                                    <!--<li class="list-group-item">
-                                        <a href="javascript:void(0)" class="menu_item"
-                                           name="pagecomponent/stock-outManagement.jsp">人员分配</a>
-                                    </li>-->
                                 </ul>
                         </div>
                     </div>
@@ -237,7 +231,8 @@
                             </ul>
                         </div>
                     </div>
-                </div>
+                </div>-->
+
             </div>
         </div>
 
@@ -314,6 +309,7 @@
 
 <script type="text/javascript" src="js/jquery.ztree.core.js"></script>
 <script type="text/javascript" src="js/jquery.ztree.excheck.js"></script>
+<script type="text/javascript" src="js/common.js"></script>
 
 
 <script>
@@ -340,6 +336,8 @@
         });
 
         $(function() {
+            initMenu(sessionStorage.getItem('menu'),'accordion');
+            menuClickAction();
             signOut();
         });
 

@@ -32,3 +32,42 @@ Date.prototype.format = function (format) {
 };
 
 
+function initMenu(menuInfo,id) {
+    menuInfo = JSON.parse(menuInfo);
+    console.log(menuInfo);
+    if (menuInfo == null || menuInfo.length == 0) {
+        return;
+    }
+
+    var htm = '';
+    for (var i = 0; i < menuInfo.length; i++) {
+        htm+= '<div class="panel panel-default panel-style">';
+        htm+= '<a href="#collapse' + (i+1) + '" data-toggle="collapse" data-parent="#accordion">';
+        htm+= '<div class="panel-heading">';
+        htm+= '<h4 class="panel-title">';
+        htm+= menuInfo[i].name;
+        htm+= '<div class="pull-right"><span class="caret"></span></div>';
+        htm+= '</h4>';
+        htm+= '</div>';
+        htm+= '</a>';
+
+        htm+= '<div id="collapse' + (i+1) +'" class="panel-collapse collapse collapseBody">';
+        htm+= '<div class="panel-body">';
+        htm+= '<ul class="list-group">';
+
+        for (var j = 0; j < menuInfo[i].children.length; j++) {
+            htm+= '<li class="list-group-item">';
+            htm+= '<a href="javascript:void(0)"  class="menu_item" name="'+ menuInfo[i].children[j].url + '">'
+                + menuInfo[i].children[j].name +'</a>';
+            htm+= '</li>';
+        }
+
+        htm+= '</ul>';
+        htm+= '</div>';
+        htm+= '</div>';
+        htm+= '</div>';
+    }
+    $('#' + id).html(htm);
+}
+
+

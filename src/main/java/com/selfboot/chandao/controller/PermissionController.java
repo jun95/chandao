@@ -4,8 +4,10 @@ import com.selfboot.chandao.common.ResponseResult;
 import com.selfboot.chandao.common.ResponseStatus;
 import com.selfboot.chandao.common.ServiceResult;
 import com.selfboot.chandao.domain.CdUPermission;
+import com.selfboot.chandao.domain.CdUser;
 import com.selfboot.chandao.exception.GlobalException;
 import com.selfboot.chandao.service.PermissionService;
+import com.selfboot.chandao.util.UserUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -96,6 +98,15 @@ public class PermissionController extends BaseController<CdUPermission,Permissio
 
         List<CdUPermission> resources = targetService.queryResourcesListWithSelected(rid);
         result.setResult(resources);
+        return result;
+    }
+
+    @PostMapping("loadMenu")
+    public ResponseResult<List<CdUPermission>> loadMenu(HttpServletRequest request) {
+        ResponseResult<List<CdUPermission>> result = new ResponseResult<>(ResponseStatus.OK);
+        CdUser user = UserUtil.getUser(request);
+
+        List<CdUPermission> list = targetService.loadMenu(user.getId());
         return result;
     }
 }

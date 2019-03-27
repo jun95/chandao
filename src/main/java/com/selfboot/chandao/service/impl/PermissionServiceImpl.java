@@ -4,6 +4,7 @@ import com.selfboot.chandao.dao.CdUPermissionDAO;
 import com.selfboot.chandao.domain.CdUPermission;
 import com.selfboot.chandao.persist.BootStrapServiceImpl;
 import com.selfboot.chandao.service.PermissionService;
+import com.selfboot.chandao.util.MenuUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,5 +30,10 @@ public class PermissionServiceImpl extends BootStrapServiceImpl<CdUPermission,Cd
     @Override
     public List<CdUPermission> queryResourcesListWithSelected(Integer rid) {
         return targetDAO.queryResourcesListWithSelected(rid);
+    }
+
+    @Override
+    public List<CdUPermission> loadMenu(Long userId) {
+        return MenuUtil.getMenu(targetDAO.getMenu(userId,1));
     }
 }
