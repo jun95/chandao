@@ -28,6 +28,16 @@ public class CdUPermission extends BaseEntity {
 
     private String nameLike;
 
+    private String checked;//是否选中
+
+    public String getChecked() {
+        return checked;
+    }
+
+    public void setChecked(String checked) {
+        this.checked = checked;
+    }
+
     public String getNameLike() {
         return nameLike;
     }

@@ -8,11 +8,10 @@ import java.io.Serializable;
 public class CdURolePermission extends BaseEntity implements Serializable{
 
     /** ��ɫID */
-    @NotNull
+    @NotNull(message = "角色不能为空")
     private Long rid;
 
     /** Ȩ��ID */
-    @NotNull
     private Long pid;
     /**
      * 权限id集

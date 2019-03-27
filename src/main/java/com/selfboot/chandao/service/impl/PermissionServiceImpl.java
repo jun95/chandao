@@ -6,6 +6,8 @@ import com.selfboot.chandao.persist.BootStrapServiceImpl;
 import com.selfboot.chandao.service.PermissionService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Created by 87570 on 2019/3/18.
  */
@@ -22,5 +24,10 @@ public class PermissionServiceImpl extends BootStrapServiceImpl<CdUPermission,Cd
     @Override
     public void deletePermission(Long id) {
         targetDAO.deletePermission(id);
+    }
+
+    @Override
+    public List<CdUPermission> queryResourcesListWithSelected(Integer rid) {
+        return targetDAO.queryResourcesListWithSelected(rid);
     }
 }

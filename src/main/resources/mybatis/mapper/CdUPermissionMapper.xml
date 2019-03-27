@@ -46,6 +46,16 @@
     ) OR id = #{id,jdbcType=BIGINT}
   </delete>
 
+  <select id="queryResourcesListWithSelected" resultMap="BaseResultMap">
+	SELECT re.id,re.name,re.parent_id,re.type,
+		(CASE WHEN EXISTS(SELECT 1
+		FROM cd_u_role_permission rr WHERE rr.pid = re.id AND rr.rid=#{rid})
+		THEN 'true' ELSE 'false' END) AS checked
+		FROM cd_u_permission re
+		WHERE re.parent_id !=0
+		ORDER BY re.sort ASC
+  </select>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />

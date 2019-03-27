@@ -45,31 +45,71 @@
             clickToSelect : false
         });
     }
-
-    function allot(id) {
-        var entity = {};
-        entity.id = id;
-
-        <!--loding-->
-        var load = layer.load();
-        $.ajax({
-            type: "POST",
-            url: "/role/allotPermission",
-            headers: {
-                "content-Type": "application/json"
+    var roleId;
+    function allot(rid) {
+        /*var rid = $(".checkchild:checked").val();
+        if ($(".checkchild:checked").length < 1)
+        {
+            layer.msg('请选择一条数据');
+            return;
+        }
+        if ($(".checkchild:checked").length > 1)
+        {
+            layer.msg('一次只能修改一条数据');
+            return;
+        }*/
+        roleId = rid;
+        var setting = {
+            check: {
+                enable: true,
+                chkboxType:  { "Y" : "p", "N" : "s" }
             },
-            data: JSON.stringify(entity),
-            success: function (data) {
-                layer.close(load);
-                if (data.code == 200) {
-                    layer.msg("删除成功");
-                    tableRefresh();
-                } else {
-                    layer.msg(data.message);
+            data: {
+                simpleData: {
+                    enable: true,
+                    idKey: "id",
+                    pIdKey: "parentId"
                 }
-            },
-            error: function (data) {
-                layer.msg(data.responseText);
+            }
+        };
+
+        $.ajax({
+            async:false,
+            type : "POST",
+            data:{rid:rid},
+            url: "/permission/resourcesWithSelected",
+            dataType:'json',
+            success: function(data){
+
+                $.fn.zTree.init($("#treeDemo"), setting, data.result);
+                var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+                zTree.expandAll(true);
+                $('#selectResources').modal();
+            }
+        });
+    }
+
+    //保存权限的选择
+    function saveRoleResources() {
+        var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
+            checkNode= zTree.getCheckedNodes(true);
+        var ids = new Array();
+        for(var i=0;i<checkNode.length;i++){
+            ids.push(checkNode[i].id);
+        }
+        $.ajax({
+            async:false,
+            type : "POST",
+            data:{rid:roleId,resourcesId:ids.join(",")},
+            url: "/role/allotPermission",
+            success: function(data){
+                if(data.code==200){
+                    layer.msg('保存成功');
+                    $('#selectResources').modal('hide');
+                }else{
+                    layer.msg('保存失败');
+                    $('#selectResources').modal('hide');
+                }
             }
         });
     }
@@ -203,6 +243,26 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
                 <button type="button" onclick="addRole();" class="btn btn-primary" data-dismiss="modal">新增</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bs-example-modal-sm"  id="selectResources" tabindex="-1" role="dialog" aria-labelledby="selectRoleLabel">
+    <div class="modal-dialog modal-sm" role="document" style="height: 600px; "  >
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="selectRoleLabel">分配权限</h4>
+            </div>
+            <div class="modal-body">
+                <form id="boxRoleForm2" >
+                    <ul id="treeDemo" class="ztree"></ul>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" onclick="saveRoleResources();" class="btn btn-primary">分配</button>
             </div>
         </div>
     </div>

@@ -1,6 +1,7 @@
 package com.selfboot.chandao.controller;
 
 import com.selfboot.chandao.common.ResponseResult;
+import com.selfboot.chandao.common.ResponseStatus;
 import com.selfboot.chandao.common.ServiceResult;
 import com.selfboot.chandao.domain.CdURole;
 import com.selfboot.chandao.domain.CdURolePermission;
@@ -52,8 +53,8 @@ public class RoleController extends BaseController<CdURole, RoleService> {
      * @return
      */
     @PostMapping("allotPermission")
-    public ResponseResult<String> allotPermission(@RequestBody CdURolePermission rolePermission) {
-        ResponseResult<String> result = new ResponseResult<>();
+    public ResponseResult<String> allotPermission(CdURolePermission rolePermission) {
+        ResponseResult<String> result = new ResponseResult<>(ResponseStatus.OK);
         targetService.allotPermission(rolePermission);
         return result;
     }

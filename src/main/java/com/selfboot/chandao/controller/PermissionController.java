@@ -89,4 +89,13 @@ public class PermissionController extends BaseController<CdUPermission,Permissio
         targetService.deletePermission(cdUPermission.getId());
         return result;
     }
+
+    @PostMapping("resourcesWithSelected")
+    public ResponseResult<List<CdUPermission>> resourcesWithSelected(Integer rid) {
+        ResponseResult<List<CdUPermission>> result = new ResponseResult<>(ResponseStatus.OK);
+
+        List<CdUPermission> resources = targetService.queryResourcesListWithSelected(rid);
+        result.setResult(resources);
+        return result;
+    }
 }
