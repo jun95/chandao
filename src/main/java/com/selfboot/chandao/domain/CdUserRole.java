@@ -6,12 +6,23 @@ import java.io.Serializable;
 
 public class CdUserRole extends BaseEntity implements Serializable {
 
-    /** 用户ID */
+    /** 锟矫伙拷ID */
     private Long uid;
 
-    /** 角色ID */
+    /** 锟斤拷色ID */
     private Long rid;
+    /**
+     * 瑙掕壊闆嗗悎
+     */
+    private String roleId;
 
+    public String getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
+    }
 
     public Long getUid() {
         return uid;

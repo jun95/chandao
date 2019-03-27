@@ -4,15 +4,18 @@ import com.selfboot.chandao.common.ResponseResult;
 import com.selfboot.chandao.common.ResponseStatus;
 import com.selfboot.chandao.common.ServiceResult;
 import com.selfboot.chandao.domain.CdUser;
+import com.selfboot.chandao.domain.CdUserRole;
 import com.selfboot.chandao.listener.DataCallback;
 import com.selfboot.chandao.persist.CrudService;
 import com.selfboot.chandao.persist.DataCallbackParam;
 import com.selfboot.chandao.service.CdUserService;
+import com.selfboot.chandao.service.RoleService;
 import com.selfboot.chandao.util.UserUtil;
 import com.selfboot.chandao.vo.UserInfoVO;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +33,9 @@ import java.util.*;
 public class UserController extends BaseController<CdUser, CdUserService> {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
+
+    @Autowired
+    private RoleService roleService;
 
     @RequestMapping("getUserInfo")
     public ResponseResult<UserInfoVO> getUserName(HttpServletRequest request) {
@@ -121,6 +127,31 @@ public class UserController extends BaseController<CdUser, CdUserService> {
             result.setMessage((String) serviceResult.getErrorMessage().get(0));
         }
 
+        return result;
+    }
+
+    /**
+     * 保存用户角色
+     * @param userRole 用户角色
+     *  	  此处获取的参数的角色id是以 “,” 分隔的字符串
+     * @return
+     */
+    @RequestMapping("/saveUserRoles")
+    public ResponseResult<String> saveUserRoles(CdUserRole userRole){
+        ResponseResult<String> result = new ResponseResult<>();
+        if(org.springframework.util.StringUtils.isEmpty(userRole.getUid())) {
+            result.setResponseStatus(ResponseStatus.ERROR);
+            result.setMessage("请选择一个用户");
+            return result;
+        }
+
+        try {
+            roleService.addUserRole(userRole);
+            result.setResponseStatus(ResponseStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.setResponseStatus(ResponseStatus.ERROR);
+        }
         return result;
     }
 }

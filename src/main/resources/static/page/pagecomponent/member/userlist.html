@@ -10,16 +10,14 @@
         searchActionInit();
         insertActionInit();
         delActionInit();
-        $('#userOperationRecordTable').bootstrapTable('hideColumn', 'id');
+        allotRole();
+        //$('#userOperationRecordTable').bootstrapTable('hideColumn', 'id');
     });
 
 	function userOperationRecordTableInit(){
 	    $('#userOperationRecordTable').bootstrapTable({
 	        columns:[{
                 checkbox: true
-            },{
-                field : 'id',
-                title : '用户ID'
             },{
 	            field : 'account',
 	            title : '用户名'
@@ -133,6 +131,66 @@
                 layer.msg(data.responseText);
             }
         });
+    }
+
+    function allotRole() {
+        $('#allot_button').click(function(){
+            var rows = $("#userOperationRecordTable").bootstrapTable('getSelections');
+            console.log(rows);
+            if (rows.length < 1)
+            {
+                layer.msg('请选择一条数据');
+                return;
+            }
+            if (rows.length > 1)
+            {
+                layer.msg('一次只能给一条数据设置角色');
+                return;
+            }
+            var id = rows[0].id;
+            $.ajax({
+                async:false,
+                type : "POST",
+                data:{uid:id},
+                url: '/role/rolesWithSelected',
+                dataType:'json',
+                success: function(data){
+                    var result = data.result;
+                    $("#boxRoleForm2").empty();
+                    var htm = "<input type='hidden' name='uid' value='"+id+"'>";
+                    for(var i=0;i<result.length;i++){
+                        htm += "<div class='checkbox'><label><input type='checkbox' name='roleId' value='"+result[i].id+"'";
+                        if(result[i].selected==1){
+                            htm += " checked='checked'";
+                        }
+                        htm +="/>"+result[i].roleDesc+"</label></div>";
+                    }
+                    $("#boxRoleForm2").append(htm);
+                }
+            });
+
+            $('#selectRole').modal();
+        });
+    }
+
+    //保存角色的选择
+    function saveUserRoles() {
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url:'/user/saveUserRoles',
+            data:$('#boxRoleForm2').serialize(), // 你的formid
+            async: false,
+            success: function(data) {
+                if(data.code==200){
+                    layer.msg('保存成功');
+                    $('#selectRole').modal('hide');
+                }else{
+                    layer.msg('保存失败');
+                    $('#selectRole').modal('hide');
+                }
+            }
+        })
     }
 
     function insertActionInit() {
@@ -268,3 +326,26 @@
             </div>
         </div>
     </div>
+
+<div class="modal fade bs-example-modal-sm"  id="selectRole" tabindex="-1" role="dialog" aria-labelledby="selectRoleLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="selectRoleLabel">分配角色</h4>
+            </div>
+            <div class="modal-body">
+                <form id="boxRoleForm2" >
+                    <!--<div class='checkbox'>
+                    <label><input type='checkbox' id=''/>First One</label>
+                </div>
+                    -->
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" onclick="saveUserRoles();" class="btn btn-primary">分配</button>
+            </div>
+        </div>
+    </div>
+</div>

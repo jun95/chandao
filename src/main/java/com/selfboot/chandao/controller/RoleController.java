@@ -3,6 +3,7 @@ package com.selfboot.chandao.controller;
 import com.selfboot.chandao.common.ResponseResult;
 import com.selfboot.chandao.common.ResponseStatus;
 import com.selfboot.chandao.common.ServiceResult;
+import com.selfboot.chandao.domain.CdUPermission;
 import com.selfboot.chandao.domain.CdURole;
 import com.selfboot.chandao.domain.CdURolePermission;
 import com.selfboot.chandao.service.RoleService;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -56,6 +58,15 @@ public class RoleController extends BaseController<CdURole, RoleService> {
     public ResponseResult<String> allotPermission(CdURolePermission rolePermission) {
         ResponseResult<String> result = new ResponseResult<>(ResponseStatus.OK);
         targetService.allotPermission(rolePermission);
+        return result;
+    }
+
+    @RequestMapping("rolesWithSelected")
+    public ResponseResult<List<CdURole>> rolesWithSelected(Integer uid){
+        ResponseResult<List<CdURole>> result = new ResponseResult<>(ResponseStatus.OK);
+
+        List<CdURole> resources = targetService.queryRoleListWithSelected(uid);
+        result.setResult(resources);
         return result;
     }
 }

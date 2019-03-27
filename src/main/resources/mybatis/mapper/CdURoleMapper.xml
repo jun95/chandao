@@ -30,6 +30,12 @@
     <include refid="where_fragment"/>
   </select>
 
+  <select id="queryRoleListWithSelected" resultMap="BaseResultMap">
+    SELECT r.id,r.role_desc,
+    (CASE WHEN (SELECT ur.rid FROM cd_user_role ur WHERE ur.uid= #{userId} AND ur.rid = r.id) THEN 1 ELSE 0 END) AS selected
+    FROM cd_u_role r
+  </select>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />

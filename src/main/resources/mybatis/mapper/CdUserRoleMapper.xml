@@ -9,6 +9,12 @@
   <sql id="Base_Column_List" >
     id, uid, rid
   </sql>
+
+  <delete id="deleteByCondition">
+    delete from cd_user_role
+    where uid = #{entity.uid,jdbcType=BIGINT}
+  </delete>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
