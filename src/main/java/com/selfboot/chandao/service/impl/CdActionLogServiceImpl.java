@@ -14,4 +14,8 @@ public class CdActionLogServiceImpl extends BootStrapServiceImpl<CdActionLog,CdA
         implements CdActionLogService {
 
 
+    @Override
+    public CdActionLog selectLatestRecord(CdActionLog cdActionLog) {
+        return targetDAO.selectLatestRecord(cdActionLog);
+    }
 }

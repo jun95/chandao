@@ -36,6 +36,12 @@
       <if test="entity.projectId != null">
         AND project_id = #{entity.projectId,jdbcType=BIGINT}
       </if>
+      <if test="entity.objectId != null">
+        AND object_id = #{entity.objectId,jdbcType=BIGINT}
+      </if>
+      <if test="entity.objectType != null and entity.objectType != '' ">
+        AND object_type = #{entity.objectType,jdbcType=BIGINT}
+      </if>
     </if>
   </sql>
 
@@ -45,6 +51,12 @@
     ,
     <include refid="Blob_Column_List" />
     FROM cd_action_log
+    <include refid="where_fragment"/>
+  </select>
+
+  <select id="selectLatestRecord" resultMap="BaseResultMap">
+    SELECT max(id) as id,object_type, object_id, project_id, action, status, previous_owner, assigned_by,
+    account, date from cd_action_log
     <include refid="where_fragment"/>
   </select>
 

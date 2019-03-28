@@ -8,4 +8,5 @@ import com.selfboot.chandao.persist.BootStrapService;
  */
 public interface CdActionLogService extends BootStrapService<CdActionLog> {
 
+    CdActionLog selectLatestRecord(CdActionLog cdActionLog);
 }

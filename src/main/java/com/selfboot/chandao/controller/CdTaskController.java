@@ -203,6 +203,15 @@ public class CdTaskController extends BaseController<CdTask, CdTaskService> {
         serviceResult = targetService.save(Collections.singletonList(cdTask));
         if (serviceResult.isSuccess()) {
 
+            if (query.getAssignedBy() == null) {
+                CdActionLog cdActionLog = new CdActionLog();
+                cdActionLog.setObjectType("task");
+                cdActionLog.setObjectId(query.getId());
+
+                cdActionLog = cdActionLogService.selectLatestRecord(cdActionLog);
+                query.setAssignedBy(cdActionLog.getAssignedBy());
+            }
+
             CdActionLog cdActionLog = ActionLogHelper.buildTaskLog(cdTask.getAssignedByName(), query,
                     "指派", cdTask.getAssignedBy());
             cdActionLogService.save(Collections.singletonList(cdActionLog));
