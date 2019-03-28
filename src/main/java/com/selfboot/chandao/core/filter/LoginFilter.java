@@ -9,6 +9,8 @@ import com.selfboot.chandao.util.HttpUtil;
 import com.selfboot.chandao.util.UserUtil;
 import org.apache.shiro.web.filter.AccessControlFilter;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
@@ -24,11 +26,17 @@ import java.util.Set;
  */
 public class LoginFilter extends FormAuthenticationFilter {
 
+    private Logger logger = LoggerFactory.getLogger(getClass());
+
     @Resource
     private FilterURL filterURL;
 
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object o) {
+        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+        String requestURI = httpServletRequest.getRequestURI();
+
+        logger.info("拦截URL：" + requestURI);
 
         CdUser token = UserUtil.getUser(request);
 
@@ -37,8 +45,6 @@ public class LoginFilter extends FormAuthenticationFilter {
         }
 
         if (HttpUtil.isAjax(request)) {
-            HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-            String requestURI = httpServletRequest.getRequestURI();
 
             if (!checkIsAccess(requestURI)) {
                 ResponseResult<String> result = new ResponseResult<>(ResponseStatus.ERROR);

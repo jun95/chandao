@@ -20,6 +20,7 @@ public class DateUtil {
     public static final String HM_COLON = "HH:mm";
     public static final String YMDHMS = "yyyyMMddHHmmss";
     public static final long DAY = 24 * 60 * 60 * 1000L;
+    public static final long MIN = 60 * 60 * 1000L;
 
     private static final Map<String, DateFormat> DFS = new HashMap<String, DateFormat>();
 
@@ -94,6 +95,17 @@ public class DateUtil {
         return (int) (diff / DAY);
     }
 
+    /**
+     * 返回两个日期间的差异小时数
+     * @param date1 参照日期
+     * @param date2 比较日期
+     * @return 参照日期与比较日期之间的小时数差异，正数表示参照日期在比较日期之后，0表示两个日期同天，负数表示参照日期在比较日期之前
+     */
+    public static int minDiff(Date date1, Date date2) {
+        long diff = date1.getTime() - date2.getTime();
+        return (int) (diff / MIN);
+    }
+
     public static String getCurrentDate(String pattern) {
         if (StringUtils.isBlank(pattern)) {
             return format(new Date(), YYDDMMHHMMSS);
@@ -127,5 +139,11 @@ public class DateUtil {
         c.set(Calendar.SECOND, 0);
         Date date = c.getTime(); // 结果
         return date;
+    }
+
+    public static void main(String[] args) {
+        Date now = DateUtil.parse(DateUtil.format(new Date(), DateUtil.YMD_DASH), DateUtil.YMD_DASH);
+        int minDiff = DateUtil.minDiff(now, parseReturnTime("2019-03-27",YMD_DASH));
+        System.out.println(minDiff);
     }
 }

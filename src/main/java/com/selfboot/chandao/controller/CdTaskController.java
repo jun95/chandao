@@ -3,14 +3,17 @@ package com.selfboot.chandao.controller;
 import com.selfboot.chandao.common.*;
 import com.selfboot.chandao.common.ResponseStatus;
 import com.selfboot.chandao.domain.CdActionLog;
+import com.selfboot.chandao.domain.CdRequirement;
 import com.selfboot.chandao.domain.CdTask;
 import com.selfboot.chandao.domain.CdUser;
 import com.selfboot.chandao.listener.DataCallback;
 import com.selfboot.chandao.persist.CrudService;
 import com.selfboot.chandao.persist.DataCallbackParam;
 import com.selfboot.chandao.service.CdActionLogService;
+import com.selfboot.chandao.service.CdRequirementService;
 import com.selfboot.chandao.service.CdTaskService;
 import com.selfboot.chandao.util.ActionLogHelper;
+import com.selfboot.chandao.util.DateUtil;
 import com.selfboot.chandao.util.UserUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +35,9 @@ public class CdTaskController extends BaseController<CdTask, CdTaskService> {
 
     @Autowired
     private CdActionLogService cdActionLogService;
+
+    @Autowired
+    private CdRequirementService cdRequirementService;
 
     @GetMapping("getTaskRecords")
     public Map<String,Object> getTaskRecords(HttpServletRequest request,CdTask cdTask,
@@ -94,7 +100,7 @@ public class CdTaskController extends BaseController<CdTask, CdTaskService> {
                 cdTask.setLastEditedDate(new Date());
 
                 TaskStatusEnum status = TaskStatusEnum.getStatus(cdTask.getStatus());
-                buildFinalTask(cdTask,status,user);
+                buildFinalTask(cdTask,status,user,query.getRequirementId());
 
                 CdActionLog cdActionLog = ActionLogHelper.buildTaskLog(user.getAccount(), query,
                         cdTask.getStatusDesc(), user.getId());
@@ -117,7 +123,7 @@ public class CdTaskController extends BaseController<CdTask, CdTaskService> {
         return result;
     }
 
-    private void buildFinalTask(CdTask task, TaskStatusEnum status, CdUser user) {
+    private void buildFinalTask(CdTask task, TaskStatusEnum status, CdUser user, Long requirementId) {
         switch (status) {
             case DONE:
                 task.setFinishedBy(user.getId());
@@ -130,6 +136,15 @@ public class CdTaskController extends BaseController<CdTask, CdTaskService> {
                 task.setCanceledDate(new Date());
                 break;
             case CLOSED:
+                //设置实际耗时
+                CdRequirement entity = new CdRequirement();
+                entity.setId(requirementId);
+                entity = (CdRequirement) cdRequirementService.queryOne(entity).getResult();
+
+                Date now = DateUtil.parse(DateUtil.format(new Date(), DateUtil.YMD_DASH), DateUtil.YMD_DASH);
+                int minDiff = DateUtil.minDiff(now, entity.getBegin());
+                task.setConsumed((float) minDiff);
+
                 task.setClosedBy(user.getId());
                 task.setClosedName(user.getAccount());
                 task.setClosedDate(new Date());

@@ -8,6 +8,8 @@ import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -19,6 +21,8 @@ public class SimpleRealm extends AuthorizingRealm {
 
     @Resource
     private CdUserService cdUserService;
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     public SimpleRealm() {
         super();
@@ -35,7 +39,13 @@ public class SimpleRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authcToken) throws AuthenticationException {
         ShiroToken token = (ShiroToken) authcToken;
+
+        long start = System.currentTimeMillis();
         ServiceResult<CdUser> result = cdUserService.login(token.getUsername(),token.getPwd());
+
+        long end = System.currentTimeMillis();
+
+        logger.info("登录耗时：" + (end - start) + "ms");
         CdUser user = result.getResult();
         if(null == user){
             throw new AccountException("帐号或密码不正确！");
