@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.selfboot.chandao.dao.StatisticsDAO" >
+
+  <select id="selectProjectAnalysisResult" resultType="com.selfboot.chandao.vo.ProjectProgressVO">
+    SELECT (select count(1) from cd_requirement WHERE project_id = #{entity.id}) AS totalReqNum,
+    (select count(1) from cd_requirement WHERE project_id = #{entity.id} AND `status` = 'done') AS finishReqNum,
+    (select count(1) from cd_task WHERE project_id = #{entity.id}) AS totalTaskNum,
+    (select count(1) from cd_task WHERE project_id = #{entity.id} AND `status` = 'done') AS finishTaskNum,
+    (select count(1) from cd_task WHERE project_id = #{entity.id} AND `status` = 'closed') AS closedTaskNum FROM dual
+  </select>
+
+</mapper>

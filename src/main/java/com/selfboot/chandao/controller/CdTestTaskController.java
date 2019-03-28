@@ -194,6 +194,7 @@ public class CdTestTaskController extends BaseController<CdTestTask,CdTestTaskSe
 
                 serviceResult = targetService.save(Collections.singletonList(cdTestTask));
                 if (serviceResult.isSuccess()) {
+
                     result.setResponseStatus(ResponseStatus.OK);
                     return result;
                 }
@@ -256,6 +257,15 @@ public class CdTestTaskController extends BaseController<CdTestTask,CdTestTaskSe
 
         serviceResult = targetService.save(Collections.singletonList(cdTestTask));
         if (serviceResult.isSuccess()) {
+
+            if (query.getAssignedBy() == null) {
+                CdActionLog cdActionLog = new CdActionLog();
+                cdActionLog.setObjectType("testtask");
+                cdActionLog.setObjectId(query.getId());
+
+                cdActionLog = cdActionLogService.selectLatestRecord(cdActionLog);
+                query.setAssignedBy(cdActionLog.getAssignedBy());
+            }
 
             CdActionLog cdActionLog = ActionLogHelper.buildTestTaskLog(cdTestTask.getAssignedByName(), query,
                     "指派", cdTestTask.getAssignedBy());

@@ -205,6 +205,15 @@ public class CdBugController extends BaseController<CdBug,CdBugService> {
         serviceResult = targetService.save(Collections.singletonList(cdBug));
         if (serviceResult.isSuccess()) {
 
+            if (query.getAssignedBy() == null) {
+                CdActionLog cdActionLog = new CdActionLog();
+                cdActionLog.setObjectType("bug");
+                cdActionLog.setObjectId(query.getId());
+
+                cdActionLog = cdActionLogService.selectLatestRecord(cdActionLog);
+                query.setAssignedBy(cdActionLog.getAssignedBy());
+            }
+
             CdActionLog cdActionLog = ActionLogHelper.buildBugLog(cdBug.getAssignedByName(), query,
                     "指派", cdBug.getAssignedBy());
             cdActionLogService.save(Collections.singletonList(cdActionLog));

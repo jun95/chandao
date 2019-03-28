@@ -4,7 +4,6 @@ import com.selfboot.chandao.config.constant.FilterURL;
 import com.selfboot.chandao.util.HttpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -17,7 +16,7 @@ import java.util.Set;
 /**
  * Created by hwj on 2019/3/14.
  */
-@Component
+//@Component
 public class LoginInterceptor extends HandlerInterceptorAdapter {
 
     private static Logger logger = LoggerFactory.getLogger(LoginInterceptor.class);

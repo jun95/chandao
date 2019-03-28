@@ -33,10 +33,10 @@ public class UserUtil {
             }
         }
 
-        logger.info("从cookie中获取的token信息为：" + JSON.toJSONString(token));
+        //logger.info("从cookie中获取的token信息为：" + JSON.toJSONString(token));
         if (token == null) {
             token = TokenManager.getToken();
-            logger.info("从shiro中获取的token信息为：" + JSON.toJSONString(token));
+            //logger.info("从shiro中获取的token信息为：" + JSON.toJSONString(token));
         }
         /*if (token == null) {
             HttpServletRequest httpServletRequest = (HttpServletRequest) request;
