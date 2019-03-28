@@ -106,6 +106,9 @@
                     },
                     "click #look":function(e,value,row,index){
                         showDetail(row.id);
+                    },
+                    "click #edit":function(e,value,row,index){
+                        edit(row.id);
                     }
                 },
                 formatter: operateFormatter //自定义方法，添加操作按钮
@@ -123,20 +126,6 @@
 	    });
 	}
 
-    /*function edit(testtaskId) {
-
-        $('#detail_id').val(testtaskId);
-
-        layer.open({
-            type: 2,
-            shade: 0.2,
-            title:'编辑信息',
-            skin: 'layui-layer-blue',
-            maxmin: false,
-            area: ['40%', '90%'],
-            content: 'pagecomponent/testtask/testtaskedit.html'
-        });
-    }*/
 
     function assignedBy(projectId,id) {
         $('#project_id').val(projectId);
@@ -148,9 +137,9 @@
         });
     }
 
-	function showDetail(testtaskId) {
+    function showDetail(testtaskId) {
 
-	    $('#detail_id').val(testtaskId);
+        $('#detail_id').val(testtaskId);
 
         layer.open({
             type: 2,
@@ -160,6 +149,21 @@
             maxmin: false,
             area: ['40%', '90%'],
             content: 'pagecomponent/testtask/testtasklook.html'
+        });
+    }
+
+    var index = null;
+    function edit(testtaskId) {
+        $('#detail_id').val(testtaskId);
+
+        index = layer.open({
+            type: 2,
+            shade: 0.2,
+            title:'编辑信息',
+            skin: 'layui-layer-blue',
+            maxmin: false,
+            area: ['40%', '90%'],
+            content: 'pagecomponent/testtask/testtaskedit.html'
         });
     }
 
@@ -235,6 +239,7 @@
         }
 
         arr.push('<a class="btn btn-default" href="#" id="look">查看</a>');
+        arr.push('<a class="btn btn-default" href="#" id="edit">编辑</a>');
         arr.push('<a class="btn btn-default" href="#" id="del">删除</a>');
 
         return arr.join('');

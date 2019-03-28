@@ -6,6 +6,7 @@ import com.selfboot.chandao.domain.CdActionLog;
 import com.selfboot.chandao.domain.CdRequirement;
 import com.selfboot.chandao.domain.CdTask;
 import com.selfboot.chandao.domain.CdUser;
+import com.selfboot.chandao.domain.*;
 import com.selfboot.chandao.listener.DataCallback;
 import com.selfboot.chandao.persist.CrudService;
 import com.selfboot.chandao.persist.DataCallbackParam;
@@ -211,6 +212,65 @@ public class CdTaskController extends BaseController<CdTask, CdTaskService> {
             result.setMessage((String) serviceResult.getErrorMessage().get(0));
         }
 
+        return result;
+    }
+
+    @PostMapping("showDetail")
+    public ResponseResult<CdTask> showDetail(HttpServletRequest request, @RequestBody CdTask cdTask) {
+        ResponseResult<CdTask> result = new ResponseResult<>();
+
+        if (cdTask.getId() == null) {
+            result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+            result.setMessage("请选择要查看的项目");
+            return result;
+        }
+
+        CdTask task = new CdTask();
+        task.setId(cdTask.getId());
+        ServiceResult serviceResult = targetService.queryOne(task);
+        if (serviceResult.isSuccess()) {
+            cdTask = (CdTask) serviceResult.getResult();
+            if (cdTask != null) {
+                result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.OK);
+                result.setResult(cdTask);
+            } else {
+                result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+                result.setMessage("项目不存在");
+            }
+        } else {
+            result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+            result.setMessage((String) serviceResult.getErrorMessage().get(0));
+        }
+        return result;
+    }
+
+    @PostMapping("edit")
+    public ResponseResult<CdTask> edit(HttpServletRequest request, @RequestBody CdTask cdTask) {
+        ResponseResult<CdTask> result = new ResponseResult<>();
+
+        if (cdTask.getId() == null) {
+            result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+            result.setMessage("请选择要编辑的任务");
+            return result;
+        }
+
+        CdTask task = new CdTask();
+        task.setId(cdTask.getId());
+        ServiceResult serviceResult = targetService.queryOne(task);
+        if (serviceResult.isSuccess()) {
+            task = (CdTask) serviceResult.getResult();
+            if (task != null) {
+                cdTask.setUpdate(true);
+                targetService.save(Collections.singletonList(cdTask));
+                result.setResponseStatus(ResponseStatus.OK);
+            } else {
+                result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+                result.setMessage("项目不存在");
+            }
+        } else {
+            result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+            result.setMessage((String) serviceResult.getErrorMessage().get(0));
+        }
         return result;
     }
 }

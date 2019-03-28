@@ -1,0 +1,179 @@
+<link rel="stylesheet" type="text/css"
+      href="/page/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css"
+      href="/page/bootstrap/css/bootstrap-table.css">
+<link rel="stylesheet" type="text/css"
+      href="/page/bootstrap/css/jquery-ui.css">
+
+<script type="text/javascript"
+        src="/page/js/jquery.min.js"></script>
+<script type="text/javascript"
+        src="/page/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript"
+        src="/page/js/jquery-ui.min.js"></script>
+<script type="text/javascript"
+        src="/page/js/bootstrap-table.min.js"></script>
+<script type="text/javascript"
+        src="/page/js/bootstrap-table-zh-CN.min.js"></script>
+<script type="text/javascript" src="/page/layer/layer.js"></script>
+<script type="text/javascript" src="/page/js/common.js"></script>
+
+<script>
+
+    $(function(){
+        showDetail();
+    });
+
+    function showDetail() {
+        var taskId = parent.$('#taskId').val();
+
+        var entity = {};
+        entity.id = taskId;
+
+        <!--loding-->
+        var load = layer.load();
+        $.ajax({
+            type: "POST",
+            url: "/task/showDetail",
+            headers: {
+                "content-Type": "application/json"
+            },
+            data: JSON.stringify(entity),
+            success: function (data) {
+                layer.close(load);
+                if (data.code == 200) {
+                    fillingDetailByResult(data.result);
+                } else {
+                    layer.msg(data.message);
+                }
+            },
+            error: function (data) {
+                layer.msg(data.responseText);
+            }
+        });
+    }
+
+    function fillingDetailByResult(result) {
+        setById('name',result.name);
+        setById('projectName',result.projectName);
+        setById('requirementName',result.requirementName);
+        setById('pri',result.pri);
+        setById('estimate',result.estimate);
+        setById('consumed',result.consumed);
+        setById('openedName',result.openedName);
+        setById('assignedByName',result.assignedByName);
+        setById('finishedName',result.finishedName);
+        setById('closedName',result.closedName);
+        setById('status',getStatusDesc(result.status));
+        setById('description',result.description);
+    }
+
+    function getStatusDesc(s) {
+        if (s == 'wait') {
+            return '待开始';
+        } else if (s == 'done') {
+            return '已完成';
+        } else if (s == 'doing') {
+            return '进行中';
+        } else if (s == 'pause') {
+            return '已暂停';
+        } else if (s == 'cancel') {
+            return '已取消';
+        } else if (s == 'closed') {
+            return '已关闭';
+        }
+    }
+
+    function setById(id,value) {
+        $('#' + id).val(value);
+    }
+</script>
+
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-3">
+                <label class="form-label">任务名称：</label>
+                <input type="text" id="name" class="form-control" disabled="disabled">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <label class="form-label">关联项目：</label>
+                <input type="text" id="projectName" class="form-control" disabled="disabled">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <label class="form-label">关联需求：</label>
+                <input type="text" id="requirementName" class="form-control" disabled="disabled">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <label class="form-label">优先级：</label>
+                <input type="text" id="pri" class="form-control" disabled="disabled">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <label class="form-label">预计耗时：</label>
+                <input type="text" id="estimate" class="form-control" disabled="disabled">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <label class="form-label">实际耗时：</label>
+                <input type="text" id="consumed" class="form-control" disabled="disabled">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <label class="form-label">激活人：</label>
+                <input type="text" id="openedName" class="form-control" disabled="disabled">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <label class="form-label">指派给：</label>
+                <input type="text" id="assignedByName" class="form-control" disabled="disabled">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <label class="form-label">完成人：</label>
+                <input type="text" id="finishedName" class="form-control" disabled="disabled">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <label class="form-label">关闭人：</label>
+                <input type="text" id="closedName" class="form-control" disabled="disabled">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <label class="form-label">状态：</label>
+                <input type="text" id="status" class="form-control" disabled="disabled">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <label class="form-label">任务描述：</label>
+                <input type="text" id="description" class="form-control" disabled="disabled">
+            </div>
+        </div>
+
+    </div>
+</div>

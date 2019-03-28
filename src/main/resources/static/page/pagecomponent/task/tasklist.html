@@ -86,6 +86,12 @@
                 field : 'operate',
                 title : '操作',
                 events:{     //为按钮添加事件
+                    "click #showDetail":function(e,value,row,index){
+                        showDetail(row.id);
+                    },
+                    "click #edit":function(e,value,row,index){
+                        edit(row.id);
+                    },
                     "click #assignedBy":function(e,value,row,index){
                         assignedBy(row.projectId,row.id);
                     },
@@ -122,6 +128,35 @@
             clickToSelect : false
 	    });
 	}
+
+    function showDetail(taskId) {
+        $('#taskId').val(taskId);
+
+        layer.open({
+            type: 2,
+            shade: 0.2,
+            title:'详细信息',
+            skin: 'layui-layer-blue',
+            maxmin: false,
+            area: ['40%', '90%'],
+            content: 'pagecomponent/task/tasklook.html'
+        });
+    }
+
+    var index = null;
+    function edit(taskId) {
+        $('#taskId').val(taskId);
+
+        index = layer.open({
+            type: 2,
+            shade: 0.2,
+            title:'编辑信息',
+            skin: 'layui-layer-blue',
+            maxmin: false,
+            area: ['40%', '90%'],
+            content: 'pagecomponent/task/taskedit.html'
+        });
+    }
 
 	function assignedBy(projectId,id) {
         $('#project_id').val(projectId);
@@ -187,7 +222,8 @@
         } else if (s == 'closed') {
             arr.push('<a class="btn btn-default" href="#" id="openBy">激活</a>');
         }
-
+        arr.push('<a class="btn btn-default" href="#" id="showDetail">查看</a>');
+        arr.push('<a class="btn btn-default" href="#" id="edit">编辑</a>');
         return arr.join('');
     }
 

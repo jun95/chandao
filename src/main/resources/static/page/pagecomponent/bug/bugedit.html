@@ -38,22 +38,19 @@
         save();
     });
 
-
     function save() {
         $('#save_button').click(function(){
             var entity = {};
-            entity.id = parent.$('#detail_id').val();
-            entity.name = $('#name').val();
-            entity.projectName = $('#projectName').val();
-            entity.begin = $('#begin').val();
-            entity.end = $('#pri').val();
-            entity.description = $('#description').val();
+            entity.id = parent.$('#bugId').val();
+            entity.title = $('#title').val();
+            entity.pri = $('#pri').val();
+            entity.steps = $('#steps').val();
 
             <!--loding-->
             //var load = layer.load();
             $.ajax({
                 type: "POST",
-                url: "/testtask/edit",
+                url: "/bug/edit",
                 headers: {
                     "content-Type": "application/json"
                 },
@@ -95,15 +92,16 @@
     }
 
     function showDetail() {
-        var testtaskId = parent.$('#detail_id').val();
+        var bugId = parent.$('#bugId').val();
+
         var entity = {};
-        entity.id = testtaskId;
+        entity.id = bugId;
 
         <!--loding-->
         var load = layer.load();
         $.ajax({
             type: "POST",
-            url: "/testtask/showDetail",
+            url: "/bug/showDetail",
             headers: {
                 "content-Type": "application/json"
             },
@@ -123,15 +121,19 @@
     }
 
     function fillingDetailByResult(result) {
-        setById('id',result.id)
-        setById('name',result.name);
+        setById('title',result.title);
         setById('projectName',result.projectName);
-        setById('requirementName',result.requirementName);
-        setById('begin',new Date(result.begin).format("yyyy-MM-dd"));
-        setById('end',new Date(result.end).format("yyyy-MM-dd"));
-        setById('status',getStatusDesc(result.status));
+        setById('severity',result.severity);
+        setById('pri',result.pri);
+        setById('steps',result.steps);
+        setById('activatedCount',result.activatedCount);
+        setById('openedName',result.openedName);
+        setById('openedDate',new Date(result.openedDate).format("yyyy-MM-dd"));
         setById('assignedByName',result.assignedByName);
-        setById('description',result.description);
+        setById('resolvedName',result.resolvedName);
+        setById('closedName',result.closedName);
+        setById('closedDate',result.closedDate);
+        setById('status',getStatusDesc(result.status));
     }
 
     function getStatusDesc(s) {
@@ -153,63 +155,98 @@
     <div class="panel-body">
         <div class="row">
             <div class="col-md-3">
-                <label class="form-label">测试任务名称：</label>
-                <input type="text" id="name" class="form-control" disabled = "disabled">
+                <label class="form-label">BUG名称：</label>
+                <input type="text" id="title" class="form-control">
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-3">
-                <label class="form-label">关联项目：</label>
-                <input type="text" id="projectName" class="form-control" disabled = "disabled">
+                <label class="form-label">项目名：</label>
+                <input type="text" id="projectName" class="form-control" disabled="disabled">
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-3">
-                <label class="form-label">关联需求：</label>
-                <input type="text" id="requirementName" class="form-control" disabled = "disabled">
+                <label class="form-label">严重性：</label>
+                <input type="text" id="severity" class="form-control" disabled="disabled">
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-3">
-                <label class="form-label">开始时间：</label>
-                <input class="form_date form-control" value="" id="begin" name="begin">
-                <!--<input type="text" id="begin" class="form-control" >-->
+                <label class="form-label">优先级：</label>
+                <select name="" id="pri" class="form-control">
+                    <option value="1">一级</option>
+                    <option value="2">二级</option>
+                    <option value="3">三级</option>
+                </select>
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-3">
-                <label class="form-label">结束时间：</label>
-                <input class="form_date form-control" value="" id="end" name="end">
-                <!--<input type="text" id="end" class="form-control" >-->
+                <label class="form-label">重现步骤：</label>
+                <input type="text" id="steps" class="form-control">
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-3">
-                <label class="form-label">状态：</label>
-                <input type="text" id="status" class="form-control" disabled = "disabled">
+                <label class="form-label">激活次数：</label>
+                <input type="text" id="activatedCount" class="form-control" disabled="disabled">
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-3">
-                <label class="form-label">测试任务描述：</label>
-                <input type="text" id="description" class="form-control" >
+                <label class="form-label">激活人：</label>
+                <input type="text" id="openedName" class="form-control" disabled="disabled">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <label class="form-label">激活时间：</label>
+                <input type="text" id="openedDate" class="form-control" disabled="disabled">
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-3">
                 <label class="form-label">指派给：</label>
-                <input type="text" id="assignedByName" class="form-control" disabled = "disabled">
+                <input type="text" id="assignedByName" class="form-control" disabled="disabled">
             </div>
         </div>
 
+        <div class="row">
+            <div class="col-md-3">
+                <label class="form-label">解决者：</label>
+                <input type="text" id="resolvedName" class="form-control" disabled="disabled">
+            </div>
+        </div>
 
+        <div class="row">
+            <div class="col-md-3">
+                <label class="form-label">关闭人：</label>
+                <input type="text" id="closedName" class="form-control" disabled="disabled">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <label class="form-label">关闭日期：</label>
+                <input type="text" id="closedDate" class="form-control" disabled="disabled">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <label class="form-label">状态：</label>
+                <input type="text" id="status" class="form-control" disabled="disabled">
+            </div>
+        </div>
         <div class="col-md-3" style="margin-top:15px;">
             <button id="save_button" class="btn  btn-success" style="display: block;margin: 0 auto">保存</button>
             <!--<button id="del_button" class="btn  btn-danger">禁用</button>-->

@@ -74,6 +74,8 @@
   <select id="selectListByCondition" resultMap="ResultMapWithBLOBs">
     SELECT
     <include refid="Base_Column_List"/>
+    ,
+    <include refid="Blob_Column_List"/>
     FROM cd_task
     <include refid="where_fragment"/>
   </select>

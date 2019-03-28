@@ -5,6 +5,7 @@ import com.selfboot.chandao.common.ResponseResult;
 import com.selfboot.chandao.common.ResponseStatus;
 import com.selfboot.chandao.common.ServiceResult;
 import com.selfboot.chandao.domain.CdActionLog;
+import com.selfboot.chandao.domain.CdTask;
 import com.selfboot.chandao.domain.CdTestTask;
 import com.selfboot.chandao.domain.CdUser;
 import com.selfboot.chandao.listener.DataCallback;
@@ -134,6 +135,36 @@ public class CdTestTaskController extends BaseController<CdTestTask,CdTestTaskSe
             } else {
                 result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
                 result.setMessage("测试任务不存在");
+            }
+        } else {
+            result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+            result.setMessage((String) serviceResult.getErrorMessage().get(0));
+        }
+        return result;
+    }
+
+    @PostMapping("edit")
+    public ResponseResult<CdTask> edit(HttpServletRequest request, @RequestBody CdTestTask cdTestTask) {
+        ResponseResult<CdTask> result = new ResponseResult<>();
+
+        if (cdTestTask.getId() == null) {
+            result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+            result.setMessage("请选择要编辑的任务");
+            return result;
+        }
+
+        CdTestTask testTask = new CdTestTask();
+        testTask.setId(cdTestTask.getId());
+        ServiceResult serviceResult = targetService.queryOne(testTask);
+        if (serviceResult.isSuccess()) {
+            testTask = (CdTestTask) serviceResult.getResult();
+            if (testTask != null) {
+                cdTestTask.setUpdate(true);
+                targetService.save(Collections.singletonList(cdTestTask));
+                result.setResponseStatus(ResponseStatus.OK);
+            } else {
+                result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+                result.setMessage("项目不存在");
             }
         } else {
             result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);

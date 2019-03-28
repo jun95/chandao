@@ -176,4 +176,63 @@ public class CdRequirementController extends BaseController<CdRequirement, CdReq
         }
         return result;
     }
+
+    @PostMapping("showDetail")
+    public ResponseResult<CdRequirement> showDetail(HttpServletRequest request, @RequestBody CdRequirement cdRequirement) {
+        ResponseResult<CdRequirement> result = new ResponseResult<>();
+
+        if (cdRequirement.getId() == null) {
+            result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+            result.setMessage("请选择要查看的项目");
+            return result;
+        }
+
+        CdRequirement requirement = new CdRequirement();
+        requirement.setId(cdRequirement.getId());
+        ServiceResult serviceResult = targetService.queryOne(requirement);
+        if (serviceResult.isSuccess()) {
+            cdRequirement = (CdRequirement) serviceResult.getResult();
+            if (cdRequirement != null) {
+                result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.OK);
+                result.setResult(cdRequirement);
+            } else {
+                result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+                result.setMessage("项目不存在");
+            }
+        } else {
+            result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+            result.setMessage((String) serviceResult.getErrorMessage().get(0));
+        }
+        return result;
+    }
+
+    @PostMapping("edit")
+    public ResponseResult<CdProject> edit(HttpServletRequest request, @RequestBody CdRequirement cdRequirement) {
+        ResponseResult<CdProject> result = new ResponseResult<>();
+
+        if (cdRequirement.getId() == null) {
+            result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+            result.setMessage("请选择要编辑的项目");
+            return result;
+        }
+
+        CdRequirement requirement = new CdRequirement();
+        requirement.setId(cdRequirement.getId());
+        ServiceResult serviceResult = targetService.queryOne(requirement);
+        if (serviceResult.isSuccess()) {
+            requirement = (CdRequirement) serviceResult.getResult();
+            if (requirement != null) {
+                cdRequirement.setUpdate(true);
+                targetService.save(Collections.singletonList(cdRequirement));
+                result.setResponseStatus(ResponseStatus.OK);
+            } else {
+                result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+                result.setMessage("项目不存在");
+            }
+        } else {
+            result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+            result.setMessage((String) serviceResult.getErrorMessage().get(0));
+        }
+        return result;
+    }
 }

@@ -2,10 +2,7 @@ package com.selfboot.chandao.controller;
 
 import com.selfboot.chandao.common.*;
 import com.selfboot.chandao.common.ResponseStatus;
-import com.selfboot.chandao.domain.CdActionLog;
-import com.selfboot.chandao.domain.CdBug;
-import com.selfboot.chandao.domain.CdTestTask;
-import com.selfboot.chandao.domain.CdUser;
+import com.selfboot.chandao.domain.*;
 import com.selfboot.chandao.listener.DataCallback;
 import com.selfboot.chandao.persist.CrudService;
 import com.selfboot.chandao.persist.DataCallbackParam;
@@ -217,6 +214,65 @@ public class CdBugController extends BaseController<CdBug,CdBugService> {
             result.setMessage((String) serviceResult.getErrorMessage().get(0));
         }
 
+        return result;
+    }
+
+    @PostMapping("showDetail")
+    public ResponseResult<CdBug> showDetail(HttpServletRequest request, @RequestBody CdBug cdBug) {
+        ResponseResult<CdBug> result = new ResponseResult<>();
+
+        if (cdBug.getId() == null) {
+            result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+            result.setMessage("请选择要查看的项目");
+            return result;
+        }
+
+        CdBug bug = new CdBug();
+        bug.setId(cdBug.getId());
+        ServiceResult serviceResult = targetService.queryOne(bug);
+        if (serviceResult.isSuccess()) {
+            cdBug = (CdBug) serviceResult.getResult();
+            if (cdBug != null) {
+                result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.OK);
+                result.setResult(cdBug);
+            } else {
+                result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+                result.setMessage("项目不存在");
+            }
+        } else {
+            result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+            result.setMessage((String) serviceResult.getErrorMessage().get(0));
+        }
+        return result;
+    }
+
+    @PostMapping("edit")
+    public ResponseResult<CdBug> edit(HttpServletRequest request, @RequestBody CdBug cdBug) {
+        ResponseResult<CdBug> result = new ResponseResult<>();
+
+        if (cdBug.getId() == null) {
+            result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+            result.setMessage("请选择要编辑的项目");
+            return result;
+        }
+
+        CdBug bug = new CdBug();
+        bug.setId(cdBug.getId());
+        ServiceResult serviceResult = targetService.queryOne(bug);
+        if (serviceResult.isSuccess()) {
+            bug = (CdBug) serviceResult.getResult();
+            if (bug != null) {
+                cdBug.setUpdate(true);
+                targetService.save(Collections.singletonList(cdBug));
+                result.setResponseStatus(ResponseStatus.OK);
+            } else {
+                result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+                result.setMessage("项目不存在");
+            }
+        } else {
+            result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+            result.setMessage((String) serviceResult.getErrorMessage().get(0));
+        }
         return result;
     }
 }

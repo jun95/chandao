@@ -96,6 +96,12 @@
                 field : 'operate',
                 title : '操作',
                 events:{     //为按钮添加事件
+                    "click #showDetail":function(e,value,row,index){
+                        showDetail(row.id);
+                    },
+                    "click #edit":function(e,value,row,index){
+                        edit(row.id);
+                    },
                     "click #del":function(e,value,row,index){
                         del(row.id);
                     }
@@ -112,6 +118,35 @@
             pageSize : 10,
             pageList : [ 5, 10, 25, 50, 100 ],
             clickToSelect : false
+        });
+    }
+
+    function showDetail(requireId) {
+        $('#detail_id').val(requireId);
+
+        layer.open({
+            type: 2,
+            shade: 0.2,
+            title:'详细信息',
+            skin: 'layui-layer-blue',
+            maxmin: false,
+            area: ['40%', '90%'],
+            content: 'pagecomponent/require/requirelook.html'
+        });
+    }
+
+    var index = null;
+    function edit(requireId) {
+        $('#detail_id').val(requireId);
+
+        index = layer.open({
+            type: 2,
+            shade: 0.2,
+            title:'编辑信息',
+            skin: 'layui-layer-blue',
+            maxmin: false,
+            area: ['40%', '90%'],
+            content: 'pagecomponent/require/requireedit.html'
         });
     }
 
@@ -146,9 +181,10 @@
 
     function operateFormatter(value, row, index) {
         return [
-            /*'<a class="btn active disabled" href="#">编辑</a>',*/
+            '<a class="btn btn-default" href="#" id="showDetail">查看</a>',
+            '<a class="btn btn-default" href="#" id="edit">编辑</a>',
             '<a class="btn btn-default" href="#" id="del">删除</a>'
-            /*'<a class="btn active" href="#">准入</a>'*/
+
         ].join('');
     }
 
@@ -268,6 +304,7 @@
         <li>需求管理</li>
     </ol>
     <div class="panel-body">
+        <input type="hidden" id="detail_id">
         <div class="row">
             <div class="col-md-3">
                 <form action="" class="form-inline">

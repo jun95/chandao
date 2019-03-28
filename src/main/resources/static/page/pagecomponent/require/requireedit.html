@@ -38,22 +38,22 @@
         save();
     });
 
-
     function save() {
         $('#save_button').click(function(){
             var entity = {};
             entity.id = parent.$('#detail_id').val();
-            entity.name = $('#name').val();
+            entity.title = $('#title').val();
             entity.projectName = $('#projectName').val();
             entity.begin = $('#begin').val();
-            entity.end = $('#pri').val();
+            entity.end = $('#end').val();
+            entity.days = $('#days').val();
             entity.description = $('#description').val();
 
             <!--loding-->
             //var load = layer.load();
             $.ajax({
                 type: "POST",
-                url: "/testtask/edit",
+                url: "/require/edit",
                 headers: {
                     "content-Type": "application/json"
                 },
@@ -95,15 +95,16 @@
     }
 
     function showDetail() {
-        var testtaskId = parent.$('#detail_id').val();
+        var requireId = parent.$('#detail_id').val();
+
         var entity = {};
-        entity.id = testtaskId;
+        entity.id = requireId;
 
         <!--loding-->
         var load = layer.load();
         $.ajax({
             type: "POST",
-            url: "/testtask/showDetail",
+            url: "/require/showDetail",
             headers: {
                 "content-Type": "application/json"
             },
@@ -123,14 +124,15 @@
     }
 
     function fillingDetailByResult(result) {
-        setById('id',result.id)
-        setById('name',result.name);
+        setById('title',result.title);
         setById('projectName',result.projectName);
-        setById('requirementName',result.requirementName);
         setById('begin',new Date(result.begin).format("yyyy-MM-dd"));
         setById('end',new Date(result.end).format("yyyy-MM-dd"));
         setById('status',getStatusDesc(result.status));
-        setById('assignedByName',result.assignedByName);
+        setById('closedName',result.closedName);
+        setById('days',result.days);
+        setById('closedDate',result.closedDate != null ? new Date(result.closedDate).format("yyyy-MM-dd HH:mm:ss") : null);
+        setById('createName',result.createName);
         setById('description',result.description);
     }
 
@@ -153,66 +155,57 @@
     <div class="panel-body">
         <div class="row">
             <div class="col-md-3">
-                <label class="form-label">测试任务名称：</label>
-                <input type="text" id="name" class="form-control" disabled = "disabled">
+                <label class="form-label">需求标题：</label>
+                <input type="text" id="title" class="form-control" >
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-3">
-                <label class="form-label">关联项目：</label>
-                <input type="text" id="projectName" class="form-control" disabled = "disabled">
+                <label class="form-label">所在项目：</label>
+                <input type="text" id="projectName" class="form-control" disabled="disabled">
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-3">
-                <label class="form-label">关联需求：</label>
-                <input type="text" id="requirementName" class="form-control" disabled = "disabled">
+                <label class="form-label">需求开始时间：</label>
+                <input type="text" id="begin" class="form_date form-control" >
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-3">
-                <label class="form-label">开始时间：</label>
-                <input class="form_date form-control" value="" id="begin" name="begin">
-                <!--<input type="text" id="begin" class="form-control" >-->
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-3">
-                <label class="form-label">结束时间：</label>
-                <input class="form_date form-control" value="" id="end" name="end">
-                <!--<input type="text" id="end" class="form-control" >-->
+                <label class="form-label">需求结束时间：</label>
+                <input type="text" id="end" class="form_date form-control" >
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-3">
                 <label class="form-label">状态：</label>
-                <input type="text" id="status" class="form-control" disabled = "disabled">
+                <input type="text" id="status" class="form-control" disabled="disabled">
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-3">
-                <label class="form-label">测试任务描述：</label>
+                <label class="form-label">需求描述：</label>
                 <input type="text" id="description" class="form-control" >
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-3">
-                <label class="form-label">指派给：</label>
-                <input type="text" id="assignedByName" class="form-control" disabled = "disabled">
+                <label class="form-label">创建人：</label>
+                <input type="text" id="createName" class="form-control" disabled="disabled">
             </div>
         </div>
-
 
         <div class="col-md-3" style="margin-top:15px;">
             <button id="save_button" class="btn  btn-success" style="display: block;margin: 0 auto">保存</button>
             <!--<button id="del_button" class="btn  btn-danger">禁用</button>-->
         </div>
+
     </div>
 </div>

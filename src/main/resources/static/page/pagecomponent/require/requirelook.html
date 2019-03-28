@@ -1,0 +1,136 @@
+<link rel="stylesheet" type="text/css"
+      href="/page/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css"
+      href="/page/bootstrap/css/bootstrap-table.css">
+<link rel="stylesheet" type="text/css"
+      href="/page/bootstrap/css/jquery-ui.css">
+
+<script type="text/javascript"
+        src="/page/js/jquery.min.js"></script>
+<script type="text/javascript"
+        src="/page/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript"
+        src="/page/js/jquery-ui.min.js"></script>
+<script type="text/javascript"
+        src="/page/js/bootstrap-table.min.js"></script>
+<script type="text/javascript"
+        src="/page/js/bootstrap-table-zh-CN.min.js"></script>
+<script type="text/javascript" src="/page/layer/layer.js"></script>
+<script type="text/javascript" src="/page/js/common.js"></script>
+
+<script>
+
+    $(function(){
+        showDetail();
+    });
+
+    function showDetail() {
+        var requireId = parent.$('#detail_id').val();
+
+        var entity = {};
+        entity.id = requireId;
+
+        <!--loding-->
+        var load = layer.load();
+        $.ajax({
+            type: "POST",
+            url: "/require/showDetail",
+            headers: {
+                "content-Type": "application/json"
+            },
+            data: JSON.stringify(entity),
+            success: function (data) {
+                layer.close(load);
+                if (data.code == 200) {
+                    fillingDetailByResult(data.result);
+                } else {
+                    layer.msg(data.message);
+                }
+            },
+            error: function (data) {
+                layer.msg(data.responseText);
+            }
+        });
+    }
+
+    function fillingDetailByResult(result) {
+        setById('title',result.title);
+        setById('projectName',result.projectName);
+        setById('begin',new Date(result.begin).format("yyyy-MM-dd"));
+        setById('end',new Date(result.end).format("yyyy-MM-dd"));
+        setById('status',getStatusDesc(result.status));
+        setById('closedName',result.closedName);
+        setById('days',result.days);
+        setById('closedDate',result.closedDate != null ? new Date(result.closedDate).format("yyyy-MM-dd HH:mm:ss") : null);
+        setById('createName',result.createName);
+        setById('description',result.description);
+    }
+
+    function getStatusDesc(s) {
+        if (s == 'wait') {
+            return '待开始';
+        } else if (s == 'done') {
+            return '已关闭';
+        } else if (s == 'doing') {
+            return '进行中';
+        }
+    }
+
+    function setById(id,value) {
+        $('#' + id).val(value);
+    }
+</script>
+
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-3">
+                <label class="form-label">需求标题：</label>
+                <input type="text" id="title" class="form-control" disabled="disabled">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <label class="form-label">所在项目：</label>
+                <input type="text" id="projectName" class="form-control" disabled="disabled">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <label class="form-label">需求开始时间：</label>
+                <input type="text" id="begin" class="form-control" disabled="disabled">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <label class="form-label">需求结束时间：</label>
+                <input type="text" id="end" class="form-control" disabled="disabled">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <label class="form-label">状态：</label>
+                <input type="text" id="status" class="form-control" disabled="disabled">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <label class="form-label">需求描述：</label>
+                <input type="text" id="description" class="form-control" disabled="disabled">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <label class="form-label">创建人：</label>
+                <input type="text" id="createName" class="form-control" disabled="disabled">
+            </div>
+        </div>
+
+    </div>
+</div>
