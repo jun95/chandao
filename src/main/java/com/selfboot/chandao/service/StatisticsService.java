@@ -1,10 +1,7 @@
 package com.selfboot.chandao.service;
 
 import com.selfboot.chandao.domain.CdProject;
-import com.selfboot.chandao.vo.BugProgressVO;
-import com.selfboot.chandao.vo.ProjectProgressVO;
-import com.selfboot.chandao.vo.TestProgressVO;
-import com.selfboot.chandao.vo.UserProgressVO;
+import com.selfboot.chandao.vo.*;
 
 import java.util.List;
 
@@ -15,9 +12,9 @@ public interface StatisticsService {
 
     ProjectProgressVO selectProjectAnalysisResult(CdProject project);
 
-    List<UserProgressVO> selectUserAnalysisList(List<CdProject> list);
+    List<UserProgressVO> selectUserAnalysisList(UserProgressQueryVO userProgressQueryVO);
 
-    List<TestProgressVO> selectTestAnalysisList(List<CdProject> list);
+    List<TestProgressVO> selectTestAnalysisList(TestProgressQueryVO testProgressQueryVO);
 
     BugProgressVO selectBugAnalysisResult(CdProject project);
 }

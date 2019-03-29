@@ -3,10 +3,10 @@ package com.selfboot.chandao.vo;
 import java.io.Serializable;
 
 /**
- * 用户分析查询VO
+ * 测试分析查询VO
  * Created by hwj on 2019/3/29.
  */
-public class UserProgressQueryVO implements Serializable {
+public class TestProgressQueryVO implements Serializable {
 
     /**
      * 项目名称

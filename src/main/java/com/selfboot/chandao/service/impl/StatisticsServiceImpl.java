@@ -3,10 +3,7 @@ package com.selfboot.chandao.service.impl;
 import com.selfboot.chandao.dao.StatisticsDAO;
 import com.selfboot.chandao.domain.CdProject;
 import com.selfboot.chandao.service.StatisticsService;
-import com.selfboot.chandao.vo.BugProgressVO;
-import com.selfboot.chandao.vo.ProjectProgressVO;
-import com.selfboot.chandao.vo.TestProgressVO;
-import com.selfboot.chandao.vo.UserProgressVO;
+import com.selfboot.chandao.vo.*;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -27,13 +24,13 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public List<UserProgressVO> selectUserAnalysisList(List<CdProject> list) {
-        return statisticsDAO.selectUserAnalysisList(list);
+    public List<UserProgressVO> selectUserAnalysisList(UserProgressQueryVO userProgressQueryVO) {
+        return statisticsDAO.selectUserAnalysisList(userProgressQueryVO);
     }
 
     @Override
-    public List<TestProgressVO> selectTestAnalysisList(List<CdProject> list) {
-        return statisticsDAO.selectTestAnalysisList(list);
+    public List<TestProgressVO> selectTestAnalysisList(TestProgressQueryVO testProgressQueryVO) {
+        return statisticsDAO.selectTestAnalysisList(testProgressQueryVO);
     }
 
     @Override

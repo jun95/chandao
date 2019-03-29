@@ -37,6 +37,18 @@ public class TestProgressVO implements Serializable {
      * 完成的测试任务数量
      */
     private Float finishedTestTaskNum;
+    /**
+     * 项目创建人
+     */
+    private Long projectCreateBy;
+
+    public Long getProjectCreateBy() {
+        return projectCreateBy;
+    }
+
+    public void setProjectCreateBy(Long projectCreateBy) {
+        this.projectCreateBy = projectCreateBy;
+    }
 
     public Float getTotalTestTaskNum() {
         return totalTestTaskNum;

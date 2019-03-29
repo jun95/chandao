@@ -36,6 +36,18 @@ public class UserProgressVO implements Serializable {
      * 实际总耗时
      */
     private Float totalConsumed;
+    /**
+     * 项目创建人
+     */
+    private Long projectCreateBy;
+
+    public Long getProjectCreateBy() {
+        return projectCreateBy;
+    }
+
+    public void setProjectCreateBy(Long projectCreateBy) {
+        this.projectCreateBy = projectCreateBy;
+    }
 
     public Date getProjectBeginTime() {
         return projectBeginTime;

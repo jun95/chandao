@@ -12,28 +12,61 @@
 
   <select id="selectUserAnalysisList" resultType="com.selfboot.chandao.vo.UserProgressVO">
     SELECT a.account,a.user_id as userId,a.id as projectId,a.`begin` as projectBeginTime,a.`end` as projectEndTime,a.`name` as projectName,
-    SUM(task.estimate) as totalEstimate,SUM(task.consumed) as totalConsumed from cd_task task
+    SUM(task.estimate) as totalEstimate,SUM(task.consumed) as totalConsumed,a.create_by as projectCreateBy from cd_task task
     LEFT JOIN
     (SELECT
-        usergroup.user_id,project.id,usergroup.account,project.deleted,project.`begin`,project.`end`,project.`name`
+    usergroup.user_id,project.id,usergroup.account,project.deleted,project.`begin`,project.`end`,project.`name`,project.create_by
     FROM
-        cd_usergroup usergroup
-        INNER JOIN cd_project project ON usergroup.group_id = project.group_id
+    cd_usergroup usergroup
+    INNER JOIN cd_project project ON usergroup.group_id = project.group_id
 
     ) a ON task.project_id = a.id
 
     WHERE a.deleted = 1 and task.deleted = 1 and task.assigned_by = a.user_id
-    and task.project_id in
-      <foreach collection="projectList" item="item" open="(" close=")" separator=",">
-          #{item.id}
-      </foreach>
-
-    GROUP BY a.user_id,a.id,a.account,task.last_edited_date
-    ORDER BY task.last_edited_date desc;
+    GROUP BY a.user_id,a.account,a.id
+    <choose>
+      <when test="entity.projectCreateBy != null">
+        HAVING a.create_by = #{entity.projectCreateBy}
+        <if test="entity.projectName != null and entity.projectName != ''">
+          AND a.`name` like CONCAT('%',#{entity.projectName,jdbcType=CHAR},'%')
+        </if>
+      </when>
+      <otherwise>
+        <if test="entity.projectName != null and entity.projectName != ''">
+          HAVING a.`name` like CONCAT('%',#{entity.projectName,jdbcType=CHAR},'%')
+        </if>
+      </otherwise>
+    </choose>
   </select>
 
   <select id="selectTestAnalysisList" resultType="com.selfboot.chandao.vo.TestProgressVO">
     SELECT a.account,a.user_id as userId,a.id as projectId,a.`begin` as projectBeginTime,a.`end` as projectEndTime,a.`name` as projectName,
+    count(1) as finishedTestTaskNum,a.create_by as projectCreateBy from cd_testtask task
+    LEFT JOIN
+    (SELECT
+    usergroup.user_id,project.id,usergroup.account,project.deleted,project.`begin`,project.`end`,project.`name`,project.create_by
+    FROM
+    cd_usergroup usergroup
+    INNER JOIN cd_project project ON usergroup.group_id = project.group_id
+
+    ) a ON task.project_id = a.id
+
+    WHERE a.deleted = 1 and task.deleted = 1 and task.closed_by = a.user_id
+    GROUP BY a.user_id,a.account,a.id
+    <choose>
+      <when test="entity.projectCreateBy != null">
+        HAVING a.create_by = #{entity.projectCreateBy}
+        <if test="entity.projectName != null and entity.projectName != ''">
+          AND a.`name` like CONCAT('%',#{entity.projectName,jdbcType=CHAR},'%')
+        </if>
+      </when>
+      <otherwise>
+        <if test="entity.projectName != null and entity.projectName != ''">
+          HAVING a.`name` like CONCAT('%',#{entity.projectName,jdbcType=CHAR},'%')
+        </if>
+      </otherwise>
+    </choose>
+    <!--SELECT a.account,a.user_id as userId,a.id as projectId,a.`begin` as projectBeginTime,a.`end` as projectEndTime,a.`name` as projectName,
     COUNT(1) as finishedTestTaskNum from cd_testtask task
     LEFT JOIN
     (SELECT
@@ -51,7 +84,7 @@
     </foreach>
 
     GROUP BY a.user_id,a.id,a.account,task.finished_date
-    ORDER BY task.finished_date desc;
+    ORDER BY task.finished_date desc;-->
   </select>
 
     <select id="selectBugAnalysisResult" resultType="com.selfboot.chandao.vo.BugProgressVO">

@@ -1,5 +1,7 @@
 package com.selfboot.chandao.controller;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.selfboot.chandao.domain.CdProject;
 import com.selfboot.chandao.domain.CdTestTask;
 import com.selfboot.chandao.listener.DataCallback;
@@ -9,10 +11,7 @@ import com.selfboot.chandao.service.CdProjectService;
 import com.selfboot.chandao.service.CdTestTaskService;
 import com.selfboot.chandao.service.StatisticsService;
 import com.selfboot.chandao.util.UserUtil;
-import com.selfboot.chandao.vo.BugProgressVO;
-import com.selfboot.chandao.vo.ProjectProgressVO;
-import com.selfboot.chandao.vo.TestProgressVO;
-import com.selfboot.chandao.vo.UserProgressVO;
+import com.selfboot.chandao.vo.*;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -85,6 +84,7 @@ public class StatisticsController {
      */
     private Map<String, Object> getProjectByCurrUser(ServletRequest request,CdProject cdProject,Integer offset,Integer limit) {
         Map<String, Object> queryResult = null;
+        cdProject.setDeleted(1);
         if (UserUtil.isAdmin(request)) {
             queryResult = cdProjectService.selectRecord(cdProject, offset, limit);
         } else {
@@ -103,26 +103,41 @@ public class StatisticsController {
      * @return
      */
     @GetMapping("getUserAnalysisList")
-    public Map<String, Object> getUserAnalysisList(CdProject cdProject, @RequestParam(value = "id", required = false) String id,
+    public Map<String, Object> getUserAnalysisList(UserProgressQueryVO queryVO,
                                                    @RequestParam(value = "offset", required = false) Integer offset,
                                                    @RequestParam(value = "limit", required = false) Integer limit,
                                                    ServletRequest request) {
-        Map<String,Object> responseContent = new HashMap<>();
+        if (!UserUtil.isAdmin(request)) {
+            queryVO.setProjectCreateBy(UserUtil.getUser(request).getId());
+        }
+        return selectUserAnalysisList(queryVO, offset, limit);
+    }
+
+    private Map<String, Object> selectUserAnalysisList(UserProgressQueryVO queryVO, Integer offset, Integer limit) {
+        // 准备结果集
+        Map<String, Object> resultSet = new HashMap<>();
         long total = 0;
-        List<UserProgressVO> userProgressVOList = new ArrayList<>();
+        boolean isPagination = true;
 
-        Map<String, Object> queryResult = getProjectByCurrUser(request,cdProject,offset,limit);
-        List<CdProject> list = (List<CdProject>) queryResult.get("data");
+        offset = (offset == null ? 0 : offset);
+        limit = (limit == null ? 10 : limit);
 
-        if (!CollectionUtils.isEmpty(list)) {
-            total = (long) queryResult.get("total");
-            userProgressVOList = statisticsService.selectUserAnalysisList(list);
+        // 检查是否需要分页
+        if (offset < 0 && limit < 0)
+            isPagination = false;
+
+        if (isPagination) {
+            PageHelper.offsetPage(offset, limit);
         }
 
-        responseContent.put("rows", userProgressVOList);
-        responseContent.put("total",total);
+        List<UserProgressVO> recordDOS = statisticsService.selectUserAnalysisList(queryVO);;
 
-        return responseContent;
+        total = isPagination ? new PageInfo<>(recordDOS).getTotal() :
+                CollectionUtils.isEmpty(recordDOS) ? 0 : recordDOS.size();
+
+        resultSet.put("rows", recordDOS);
+        resultSet.put("total", total);
+        return resultSet;
     }
 
     /**
@@ -130,33 +145,53 @@ public class StatisticsController {
      * @return
      */
     @GetMapping("getTestAnalysisList")
-    public Map<String, Object> getTestAnalysisList(CdProject cdProject, @RequestParam(value = "id", required = false) String id,
+    public Map<String, Object> getTestAnalysisList(TestProgressQueryVO queryVO,
                                                    @RequestParam(value = "offset", required = false) Integer offset,
                                                    @RequestParam(value = "limit", required = false) Integer limit,
                                                    ServletRequest request) {
-        Map<String,Object> responseContent = new HashMap<>();
+
+        if (!UserUtil.isAdmin(request)) {
+            queryVO.setProjectCreateBy(UserUtil.getUser(request).getId());
+        }
+        Map<String, Object> queryResult = selectTestAnalysisList(queryVO, offset, limit);
+
+        return queryResult;
+    }
+
+    private Map<String, Object> selectTestAnalysisList(TestProgressQueryVO queryVO, Integer offset, Integer limit) {
+        // 准备结果集
+        Map<String, Object> resultSet = new HashMap<>();
         long total = 0;
-        List<TestProgressVO> testProgressVOList = new ArrayList<>();
+        boolean isPagination = true;
 
-        Map<String, Object> queryResult = getProjectByCurrUser(request,cdProject,offset,limit);
-        List<CdProject> list = (List<CdProject>) queryResult.get("data");
+        offset = (offset == null ? 0 : offset);
+        limit = (limit == null ? 10 : limit);
 
-        if (!CollectionUtils.isEmpty(list)) {
-            total = (long) queryResult.get("total");
-            testProgressVOList = statisticsService.selectTestAnalysisList(list);
+        // 检查是否需要分页
+        if (offset < 0 && limit < 0)
+            isPagination = false;
 
+        if (isPagination) {
+            PageHelper.offsetPage(offset, limit);
+        }
+
+        List<TestProgressVO> recordDOS = statisticsService.selectTestAnalysisList(queryVO);
+
+        if (!CollectionUtils.isEmpty(recordDOS)) {
             CdTestTask entity = null;
-            for (TestProgressVO testProgressVO : testProgressVOList) {
+            for (TestProgressVO testProgressVO : recordDOS) {
                 entity = new CdTestTask();
                 entity.setProjectId(testProgressVO.getProjectId());
                 testProgressVO.setTotalTestTaskNum(Float.valueOf(cdTestTaskService.queryCount(entity)));
             }
         }
 
-        responseContent.put("rows", testProgressVOList);
-        responseContent.put("total",total);
+        total = isPagination ? new PageInfo<>(recordDOS).getTotal() :
+                CollectionUtils.isEmpty(recordDOS) ? 0 : recordDOS.size();
 
-        return responseContent;
+        resultSet.put("rows", recordDOS);
+        resultSet.put("total", total);
+        return resultSet;
     }
 
     /**
