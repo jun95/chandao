@@ -22,9 +22,12 @@ import java.util.Map;
 @RestController
 @RequestMapping("role")
 public class RoleController extends BaseController<CdURole, RoleService> {
-
+    /**
+     *获取角色列表
+     * @return
+     */
     @GetMapping("getRoleRecords")
-    public Map<String,Object> getUserRecords(CdURole cdURole, @RequestParam(value = "id",required = false) String id,
+    public Map<String,Object> getRoleRecords(CdURole cdURole, @RequestParam(value = "id",required = false) String id,
                                              @RequestParam(value = "offset",required = false) Integer offset,
                                              @RequestParam(value = "limit",required = false) Integer limit) {
         if (!StringUtils.isBlank(id)) {
@@ -34,6 +37,11 @@ public class RoleController extends BaseController<CdURole, RoleService> {
         return getRecords(cdURole,offset,limit);
     }
 
+    /**
+     * 新增角色
+     * @param cdURole
+     * @return
+     */
     @PostMapping("addRole")
     public ResponseResult<String> addRole(@RequestBody @Valid CdURole cdURole) {
         ResponseResult<String> result = new ResponseResult<>();

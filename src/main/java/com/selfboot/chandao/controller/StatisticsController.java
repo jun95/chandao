@@ -57,12 +57,7 @@ public class StatisticsController {
         long total = 0;
         List<ProjectProgressVO> projectProgressVOList = new ArrayList<>(limit);
 
-        Map<String, Object> queryResult = cdProjectService.selectRecord(cdProject, offset, limit, new DataCallback<CdProject>() {
-            @Override
-            public List<CdProject> onPushData(CrudService crudService, DataCallbackParam<CdProject> params) {
-                return cdProjectService.selectListByGroup(params.getEntity(), UserUtil.getUser(request).getId());
-            }
-        });
+        Map<String, Object> queryResult = getProjectByCurrUser(request,cdProject,offset,limit);
         List<CdProject> list = (List<CdProject>) queryResult.get("data");
 
         if (!CollectionUtils.isEmpty(list)) {
@@ -81,6 +76,29 @@ public class StatisticsController {
     }
 
     /**
+     * 通过当前用户可见的项目信息
+     * @param request
+     * @param cdProject
+     * @param offset
+     * @param limit
+     * @return
+     */
+    private Map<String, Object> getProjectByCurrUser(ServletRequest request,CdProject cdProject,Integer offset,Integer limit) {
+        Map<String, Object> queryResult = null;
+        if (UserUtil.isAdmin(request)) {
+            queryResult = cdProjectService.selectRecord(cdProject, offset, limit);
+        } else {
+            queryResult = cdProjectService.selectRecord(cdProject, offset, limit, new DataCallback<CdProject>() {
+                @Override
+                public List<CdProject> onPushData(CrudService crudService, DataCallbackParam<CdProject> params) {
+                    return cdProjectService.selectListByGroup(params.getEntity(), UserUtil.getUser(request).getId());
+                }
+            });
+        }
+        return queryResult;
+    }
+
+    /**
      * 人员分析
      * @return
      */
@@ -93,12 +111,7 @@ public class StatisticsController {
         long total = 0;
         List<UserProgressVO> userProgressVOList = new ArrayList<>();
 
-        Map<String, Object> queryResult = cdProjectService.selectRecord(cdProject, offset, limit, new DataCallback<CdProject>() {
-            @Override
-            public List<CdProject> onPushData(CrudService crudService, DataCallbackParam<CdProject> params) {
-                return cdProjectService.selectListByGroup(params.getEntity(), UserUtil.getUser(request).getId());
-            }
-        });
+        Map<String, Object> queryResult = getProjectByCurrUser(request,cdProject,offset,limit);
         List<CdProject> list = (List<CdProject>) queryResult.get("data");
 
         if (!CollectionUtils.isEmpty(list)) {
@@ -125,12 +138,7 @@ public class StatisticsController {
         long total = 0;
         List<TestProgressVO> testProgressVOList = new ArrayList<>();
 
-        Map<String, Object> queryResult = cdProjectService.selectRecord(cdProject, offset, limit, new DataCallback<CdProject>() {
-            @Override
-            public List<CdProject> onPushData(CrudService crudService, DataCallbackParam<CdProject> params) {
-                return cdProjectService.selectListByGroup(params.getEntity(), UserUtil.getUser(request).getId());
-            }
-        });
+        Map<String, Object> queryResult = getProjectByCurrUser(request,cdProject,offset,limit);
         List<CdProject> list = (List<CdProject>) queryResult.get("data");
 
         if (!CollectionUtils.isEmpty(list)) {
@@ -164,12 +172,7 @@ public class StatisticsController {
         long total = 0;
         List<BugProgressVO> bugProgressVOList = new ArrayList<>();
 
-        Map<String, Object> queryResult = cdProjectService.selectRecord(cdProject, offset, limit, new DataCallback<CdProject>() {
-            @Override
-            public List<CdProject> onPushData(CrudService crudService, DataCallbackParam<CdProject> params) {
-                return cdProjectService.selectListByGroup(params.getEntity(), UserUtil.getUser(request).getId());
-            }
-        });
+        Map<String, Object> queryResult = getProjectByCurrUser(request,cdProject,offset,limit);
         List<CdProject> list = (List<CdProject>) queryResult.get("data");
 
         if (!CollectionUtils.isEmpty(list)) {
@@ -180,7 +183,6 @@ public class StatisticsController {
                 bugProgressVO.setProjectName(project.getName());
                 bugProgressVOList.add(bugProgressVO);
             }
-            //bugProgressVOList = statisticsService.selectBugAnalysisResult(list);
         }
 
         responseContent.put("rows", bugProgressVOList);

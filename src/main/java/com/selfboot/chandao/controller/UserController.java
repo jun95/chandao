@@ -37,6 +37,11 @@ public class UserController extends BaseController<CdUser, CdUserService> {
     @Autowired
     private RoleService roleService;
 
+    /**
+     * 获取用户信息
+     * @param request
+     * @return
+     */
     @RequestMapping("getUserInfo")
     public ResponseResult<UserInfoVO> getUserName(HttpServletRequest request) {
         ResponseResult<UserInfoVO> result = new ResponseResult<>(ResponseStatus.OK);
@@ -49,6 +54,10 @@ public class UserController extends BaseController<CdUser, CdUserService> {
         return result;
     }
 
+    /**
+     * 获取用户列表
+     * @return
+     */
     @GetMapping("getUserRecords")
     public Map<String,Object> getUserRecords(HttpServletRequest request,CdUser cdUser,
                                              @RequestParam(value = "id",required = false) String id,
@@ -76,6 +85,11 @@ public class UserController extends BaseController<CdUser, CdUserService> {
         }
     }
 
+    /**
+     * 添加用户
+     * @param cdUser
+     * @return
+     */
     @PostMapping("addMember")
     public ResponseResult<String> addMember(@RequestBody @Valid CdUser cdUser) {
         ResponseResult<String> result = new ResponseResult<>();
@@ -101,6 +115,11 @@ public class UserController extends BaseController<CdUser, CdUserService> {
         return result;
     }
 
+    /**
+     * 禁用用户
+     * @param ids
+     * @return
+     */
     @PostMapping("removeMember")
     public ResponseResult<String> removeMember(@RequestBody @NotEmpty(message = "请选择要禁用的记录") List<Long> ids) {
         ResponseResult<String> result = new ResponseResult<>();

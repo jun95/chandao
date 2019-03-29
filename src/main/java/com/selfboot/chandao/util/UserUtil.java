@@ -51,4 +51,13 @@ public class UserUtil {
         }*/
         return token;
     }
+
+    /**
+     * 是否是管理员账户
+     * @param request
+     * @return
+     */
+    public static boolean isAdmin(ServletRequest request) {
+        return getUser(request).getType() == 1;
+    }
 }

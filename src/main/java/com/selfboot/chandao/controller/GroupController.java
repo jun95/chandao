@@ -29,6 +29,10 @@ public class GroupController extends BaseController<CdGroup, CdGroupService> {
     @Resource
     private CdUserGroupService cdUserGroupService;
 
+    /**
+     * 获取项目组列表
+     * @return
+     */
     @GetMapping("getGroupRecords")
     public Map<String,Object> getGroupRecords(CdGroup cdGroup, @RequestParam(value = "id",required = false) String id,
                                               @RequestParam(value = "offset",required = false) Integer offset,
@@ -40,6 +44,10 @@ public class GroupController extends BaseController<CdGroup, CdGroupService> {
         return getRecords(cdGroup,offset,limit);
     }
 
+    /**
+     * 获取全部项目组
+     * @return
+     */
     @PostMapping("getGroupTotalRecord")
     public ResponseResult<List<CdGroup>> getGroupTotalRecord() {
         ResponseResult<List<CdGroup>> result = new ResponseResult<>();
@@ -56,6 +64,10 @@ public class GroupController extends BaseController<CdGroup, CdGroupService> {
         return result;
     }
 
+    /**
+     *获取组成员信息
+     * @return
+     */
     @GetMapping("getGroupMemberRecords")
     public Map<String,Object> getGroupMemberRecords(CdUserGroup cdUserGroup, @RequestParam(value = "groupId",required = false) String groupId,
                                               @RequestParam(value = "offset",required = false) Integer offset,
@@ -78,6 +90,12 @@ public class GroupController extends BaseController<CdGroup, CdGroupService> {
         }
     }
 
+    /**
+     * 添加项目组
+     * @param request
+     * @param cdGroup
+     * @return
+     */
     @PostMapping("addGroup")
     public ResponseResult<String> addGroup(HttpServletRequest request, @RequestBody @Valid CdGroup cdGroup) {
         ResponseResult<String> result = new ResponseResult<>();
@@ -98,6 +116,12 @@ public class GroupController extends BaseController<CdGroup, CdGroupService> {
         return result;
     }
 
+    /**
+     * 添加项目组成员
+     * @param request
+     * @param cdUserGroupList
+     * @return
+     */
     @PostMapping("addGroupMember")
     public ResponseResult<String> addGroupMember(HttpServletRequest request,
                                                  @RequestBody @Valid List<CdUserGroup> cdUserGroupList) {

@@ -37,8 +37,12 @@ public class CdRequirementController extends BaseController<CdRequirement, CdReq
     @Autowired
     private CdProjectService cdProjectService;
 
+    /**
+     * 获取需求列表
+     * @return
+     */
     @GetMapping("getRequireRecords")
-    public Map<String,Object> getUserRecords(HttpServletRequest request,CdRequirement cdRequirement,
+    public Map<String,Object> getRequireRecords(HttpServletRequest request,CdRequirement cdRequirement,
                                              @RequestParam(value = "id",required = false) String id,
                                              @RequestParam(value = "offset",required = false) Integer offset,
                                              @RequestParam(value = "limit" ,required = false) Integer limit) {
@@ -46,6 +50,10 @@ public class CdRequirementController extends BaseController<CdRequirement, CdReq
             cdRequirement.setId(Long.parseLong(id));
         }
         cdRequirement.setDeleted(1);
+        if (UserUtil.isAdmin(request)) {
+            return getRecords(cdRequirement, offset, limit);
+        }
+
         return getRecords(cdRequirement, offset, limit, new DataCallback<CdRequirement>() {
             @Override
             public List<CdRequirement> onPushData(CrudService crudService, DataCallbackParam<CdRequirement> params) {
@@ -54,8 +62,13 @@ public class CdRequirementController extends BaseController<CdRequirement, CdReq
         });
     }
 
+    /**
+     * 通过项目id获取需求列表
+     * @param cdRequirement
+     * @return
+     */
     @PostMapping("getRequireTotalRecordByProjectId")
-    public ResponseResult<List<CdRequirement>> getGroupTotalRecord(@RequestBody CdRequirement cdRequirement) {
+    public ResponseResult<List<CdRequirement>> getRequireTotalRecordByProjectId(@RequestBody CdRequirement cdRequirement) {
         ResponseResult<List<CdRequirement>> result = new ResponseResult<>();
         if (cdRequirement.getProjectId() == null) {
             result.setResponseStatus(ResponseStatus.ERROR);
@@ -75,6 +88,13 @@ public class CdRequirementController extends BaseController<CdRequirement, CdReq
         return result;
     }
 
+    /**
+     * 新增需求
+     * @param request
+     * @param cdRequirement
+     * @return
+     * @throws GlobalException
+     */
     @PostMapping("addRequire")
     public ResponseResult<String> addRequire(HttpServletRequest request, @RequestBody @Valid CdRequirement cdRequirement) throws GlobalException {
         ResponseResult<String> result = new ResponseResult<>();
@@ -141,6 +161,12 @@ public class CdRequirementController extends BaseController<CdRequirement, CdReq
         return false;
     }
 
+    /**
+     * 删除需求
+     * @param request
+     * @param cdRequirement
+     * @return
+     */
     @PostMapping("delete")
     public ResponseResult<String> delete(HttpServletRequest request,@RequestBody CdRequirement cdRequirement) {
         ResponseResult<String> result = new ResponseResult<>();
@@ -177,6 +203,12 @@ public class CdRequirementController extends BaseController<CdRequirement, CdReq
         return result;
     }
 
+    /**
+     * 展示需求详情
+     * @param request
+     * @param cdRequirement
+     * @return
+     */
     @PostMapping("showDetail")
     public ResponseResult<CdRequirement> showDetail(HttpServletRequest request, @RequestBody CdRequirement cdRequirement) {
         ResponseResult<CdRequirement> result = new ResponseResult<>();
@@ -206,6 +238,12 @@ public class CdRequirementController extends BaseController<CdRequirement, CdReq
         return result;
     }
 
+    /**
+     * 编辑需求
+     * @param request
+     * @param cdRequirement
+     * @return
+     */
     @PostMapping("edit")
     public ResponseResult<CdProject> edit(HttpServletRequest request, @RequestBody CdRequirement cdRequirement) {
         ResponseResult<CdProject> result = new ResponseResult<>();

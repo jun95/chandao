@@ -36,6 +36,10 @@ public class CdTestTaskController extends BaseController<CdTestTask,CdTestTaskSe
     @Autowired
     private CdActionLogService cdActionLogService;
 
+    /**
+     * 获取测试任务列表
+     * @return
+     */
     @GetMapping("getTestTaskRecords")
     public Map<String,Object> getTestTaskRecords(HttpServletRequest request,CdTestTask cdTestTask,
                                                  @RequestParam(value = "id",required = false) String id,
@@ -45,6 +49,10 @@ public class CdTestTaskController extends BaseController<CdTestTask,CdTestTaskSe
             cdTestTask.setId(Long.parseLong(id));
         }
         cdTestTask.setDeleted(1);
+        if (UserUtil.isAdmin(request)) {
+            return getRecords(cdTestTask, offset, limit);
+        }
+
         return getRecords(cdTestTask, offset, limit, new DataCallback<CdTestTask>() {
             @Override
             public List<CdTestTask> onPushData(CrudService crudService, DataCallbackParam<CdTestTask> params) {
@@ -53,6 +61,12 @@ public class CdTestTaskController extends BaseController<CdTestTask,CdTestTaskSe
         });
     }
 
+    /**
+     * 新增测试任务
+     * @param request
+     * @param cdTestTask
+     * @return
+     */
     @PostMapping("addTestTask")
     public ResponseResult<String> addTestTask(HttpServletRequest request, @RequestBody @Valid CdTestTask cdTestTask) {
         ResponseResult<String> result = new ResponseResult<>();
@@ -78,6 +92,12 @@ public class CdTestTaskController extends BaseController<CdTestTask,CdTestTaskSe
         return result;
     }
 
+    /**
+     * 删除测试任务
+     * @param request
+     * @param cdTestTask
+     * @return
+     */
     @PostMapping("delete")
     public ResponseResult<String> delete(HttpServletRequest request,@RequestBody CdTestTask cdTestTask) {
         ResponseResult<String> result = new ResponseResult<>();
@@ -114,6 +134,12 @@ public class CdTestTaskController extends BaseController<CdTestTask,CdTestTaskSe
         return result;
     }
 
+    /**
+     * 展示测试任务详情
+     * @param request
+     * @param cdTestTask
+     * @return
+     */
     @PostMapping("showDetail")
     public ResponseResult<CdTestTask> showDetail(HttpServletRequest request,@RequestBody CdTestTask cdTestTask) {
         ResponseResult<CdTestTask> result = new ResponseResult<>();
@@ -143,6 +169,12 @@ public class CdTestTaskController extends BaseController<CdTestTask,CdTestTaskSe
         return result;
     }
 
+    /**
+     * 编辑测试任务
+     * @param request
+     * @param cdTestTask
+     * @return
+     */
     @PostMapping("edit")
     public ResponseResult<CdTask> edit(HttpServletRequest request, @RequestBody CdTestTask cdTestTask) {
         ResponseResult<CdTask> result = new ResponseResult<>();
@@ -173,6 +205,12 @@ public class CdTestTaskController extends BaseController<CdTestTask,CdTestTaskSe
         return result;
     }
 
+    /**
+     * 更新测试任务状态
+     * @param request
+     * @param cdTestTask
+     * @return
+     */
     @PostMapping("updateStatus")
     public ResponseResult<String> updateStatus(HttpServletRequest request,@RequestBody CdTestTask cdTestTask) {
         ResponseResult<String> result = new ResponseResult<>();
@@ -225,6 +263,12 @@ public class CdTestTaskController extends BaseController<CdTestTask,CdTestTaskSe
         }
     }
 
+    /**
+     * 指派测试任务
+     * @param request
+     * @param cdTestTask
+     * @return
+     */
     @PostMapping("assigned")
     public ResponseResult<String> assigned(HttpServletRequest request, @RequestBody CdTestTask cdTestTask) {
         ResponseResult<String> result = new ResponseResult<>();

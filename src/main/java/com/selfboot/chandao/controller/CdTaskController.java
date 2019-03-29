@@ -40,6 +40,10 @@ public class CdTaskController extends BaseController<CdTask, CdTaskService> {
     @Autowired
     private CdRequirementService cdRequirementService;
 
+    /**
+     * 获取任务列表
+     * @return
+     */
     @GetMapping("getTaskRecords")
     public Map<String,Object> getTaskRecords(HttpServletRequest request,CdTask cdTask,
                                              @RequestParam(value = "id",required = false) String id,
@@ -49,6 +53,10 @@ public class CdTaskController extends BaseController<CdTask, CdTaskService> {
             cdTask.setId(Long.parseLong(id));
         }
         cdTask.setDeleted(1);
+        if (UserUtil.isAdmin(request)) {
+            return getRecords(cdTask, offset, limit);
+        }
+
         return getRecords(cdTask, offset, limit, new DataCallback<CdTask>() {
             @Override
             public List<CdTask> onPushData(CrudService crudService, DataCallbackParam<CdTask> params) {
@@ -57,7 +65,12 @@ public class CdTaskController extends BaseController<CdTask, CdTaskService> {
         });
     }
 
-
+    /**
+     * 新增任务
+     * @param request
+     * @param cdTask
+     * @return
+     */
     @PostMapping("addTask")
     public ResponseResult<String> addTask(HttpServletRequest request, @RequestBody @Valid CdTask cdTask) {
         ResponseResult<String> result = new ResponseResult<>();
@@ -84,6 +97,12 @@ public class CdTaskController extends BaseController<CdTask, CdTaskService> {
         return result;
     }
 
+    /**
+     * 更新任务状态
+     * @param request
+     * @param cdTask
+     * @return
+     */
     @PostMapping("updateStatus")
     public ResponseResult<String> updateStatus(HttpServletRequest request,@RequestBody CdTask cdTask) {
         ResponseResult<String> result = new ResponseResult<>();
@@ -158,6 +177,12 @@ public class CdTaskController extends BaseController<CdTask, CdTaskService> {
         }
     }
 
+    /**
+     * 指派任务
+     * @param request
+     * @param cdTask
+     * @return
+     */
     @PostMapping("assigned")
     public ResponseResult<String> assigned(HttpServletRequest request, @RequestBody CdTask cdTask) {
         ResponseResult<String> result = new ResponseResult<>();
@@ -224,6 +249,12 @@ public class CdTaskController extends BaseController<CdTask, CdTaskService> {
         return result;
     }
 
+    /**
+     * 展示任务详情
+     * @param request
+     * @param cdTask
+     * @return
+     */
     @PostMapping("showDetail")
     public ResponseResult<CdTask> showDetail(HttpServletRequest request, @RequestBody CdTask cdTask) {
         ResponseResult<CdTask> result = new ResponseResult<>();
@@ -253,6 +284,12 @@ public class CdTaskController extends BaseController<CdTask, CdTaskService> {
         return result;
     }
 
+    /**
+     * 编辑任务
+     * @param request
+     * @param cdTask
+     * @return
+     */
     @PostMapping("edit")
     public ResponseResult<CdTask> edit(HttpServletRequest request, @RequestBody CdTask cdTask) {
         ResponseResult<CdTask> result = new ResponseResult<>();

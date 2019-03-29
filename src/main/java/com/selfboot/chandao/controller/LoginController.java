@@ -39,7 +39,10 @@ public class LoginController {
     @Resource
     private PermissionService permissionService;
 
-
+    /**
+     * 登录
+     * @return
+     */
     @PostMapping(value = "login")
     @ResponseBody
     public ResponseResult<List<CdUPermission>> login(HttpServletResponse response,
@@ -77,6 +80,12 @@ public class LoginController {
         return result;
     }
 
+    /**
+     * 注销
+     * @param request
+     * @param response
+     * @return
+     */
     @GetMapping(value = "logout")
     @ResponseBody
     public ResponseResult<String> logout(HttpServletRequest request,HttpServletResponse response) {
@@ -92,6 +101,10 @@ public class LoginController {
         return result;
     }
 
+    /**
+     * 注册
+     * @return
+     */
     @PostMapping(value = "register")
     @ResponseBody
     public ResponseResult<String> register() {
@@ -100,7 +113,10 @@ public class LoginController {
         return result;
     }
 
-
+    /**
+     * 未认证时调用的接口(在shiro配置上使用)
+     * @return
+     */
     @RequestMapping(value = "unauth",method = RequestMethod.GET)
     @ResponseBody
     public ResponseResult<String> unauth() {

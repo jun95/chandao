@@ -36,8 +36,12 @@ public class CdProjectController extends BaseController<CdProject, CdProjectServ
     @Autowired
     private CdRequirementService cdRequirementService;
 
+    /**
+     * 获取项目列表信息
+     * @return
+     */
     @GetMapping("getProjectRecords")
-    public Map<String,Object> getUserRecords(HttpServletRequest request,CdProject cdProject,
+    public Map<String,Object> getProjectRecords(HttpServletRequest request,CdProject cdProject,
                                              @RequestParam(value = "id",required = false) String id,
                                              @RequestParam(value = "offset",required = false) Integer offset,
                                              @RequestParam(value = "limit" ,required = false) Integer limit) {
@@ -45,6 +49,12 @@ public class CdProjectController extends BaseController<CdProject, CdProjectServ
             cdProject.setId(Long.parseLong(id));
         }
         cdProject.setDeleted(1);
+
+        boolean isAdmin = UserUtil.isAdmin(request);
+        if (isAdmin) {
+            return getRecords(cdProject, offset, limit);
+        }
+
         return getRecords(cdProject, offset, limit, new DataCallback<CdProject>() {
             @Override
             public List<CdProject> onPushData(CrudService crudService, DataCallbackParam<CdProject> params) {
@@ -53,19 +63,35 @@ public class CdProjectController extends BaseController<CdProject, CdProjectServ
         });
     }
 
+    /**
+     * 获取当前用户创建/在用户组中的项目
+     * @param request
+     * @return
+     */
     @PostMapping("getProjectTotalRecord")
-    public ResponseResult<List<CdProject>> getGroupTotalRecord(HttpServletRequest request) {
+    public ResponseResult<List<CdProject>> getProjectTotalRecord(HttpServletRequest request) {
         ResponseResult<List<CdProject>> result = new ResponseResult<>();
         CdProject cdProject = new CdProject();
         cdProject.setDeleted(1);
 
-        Long userId = UserUtil.getUser(request).getId();
+        CdUser user = UserUtil.getUser(request);
+        Long userId = null;
+        if (user.getType() == 2) {  //普通用户
+            userId = user.getId();
+        }
+
         List<CdProject> list = targetService.selectUnCloseProject(cdProject,userId);
         result.setResult(list);
         result.setResponseStatus(ResponseStatus.OK);
         return result;
     }
 
+    /**
+     * 更新项目状态信息
+     * @param request
+     * @param projectVO
+     * @return
+     */
     @PostMapping("updateStatus")
     public ResponseResult<String> updateStatus(HttpServletRequest request,@RequestBody @Valid ProjectVO projectVO) {
         ResponseResult<String> result = new ResponseResult<>();
@@ -107,7 +133,12 @@ public class CdProjectController extends BaseController<CdProject, CdProjectServ
         cdRequirementService.updateByProjectId(cdRequirement);
     }
 
-
+    /**
+     * 新增项目
+     * @param request
+     * @param cdProject
+     * @return
+     */
     @PostMapping("addProject")
     public ResponseResult<String> addProject(HttpServletRequest request,@RequestBody @Valid CdProject cdProject) {
         ResponseResult<String> result = new ResponseResult<>();
@@ -142,6 +173,12 @@ public class CdProjectController extends BaseController<CdProject, CdProjectServ
         return result;
     }
 
+    /**
+     * 查看项目详情
+     * @param request
+     * @param cdProject
+     * @return
+     */
     @PostMapping("showDetail")
     public ResponseResult<CdProject> showDetail(HttpServletRequest request, @RequestBody CdProject cdProject) {
         ResponseResult<CdProject> result = new ResponseResult<>();
@@ -171,6 +208,12 @@ public class CdProjectController extends BaseController<CdProject, CdProjectServ
         return result;
     }
 
+    /**
+     * 编辑项目
+     * @param request
+     * @param cdProject
+     * @return
+     */
     @PostMapping("edit")
     public ResponseResult<CdProject> edit(HttpServletRequest request, @RequestBody CdProject cdProject) {
         ResponseResult<CdProject> result = new ResponseResult<>();

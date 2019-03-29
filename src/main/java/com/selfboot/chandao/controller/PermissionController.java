@@ -24,8 +24,12 @@ import java.util.Map;
 @RequestMapping("permission")
 public class PermissionController extends BaseController<CdUPermission,PermissionService> {
 
+    /**
+     * 获取权限列表
+     * @return
+     */
     @GetMapping("getPermissionRecords")
-    public Map<String,Object> getUserRecords(CdUPermission cdUPermission, @RequestParam(value = "id",required = false) String id,
+    public Map<String,Object> getPermissionRecords(CdUPermission cdUPermission, @RequestParam(value = "id",required = false) String id,
                                              @RequestParam(value = "offset",required = false) Integer offset,
                                              @RequestParam(value = "limit",required = false) Integer limit) {
         if (!StringUtils.isBlank(id)) {
@@ -35,7 +39,10 @@ public class PermissionController extends BaseController<CdUPermission,Permissio
         return getRecords(cdUPermission,offset,limit);
     }
 
-
+    /**
+     * 获取全部的权限谢谢
+     * @return
+     */
     @PostMapping("getPermissionTotalRecord")
     public ResponseResult<List<CdUPermission>> getGroupTotalRecord() {
         ResponseResult<List<CdUPermission>> result = new ResponseResult<>();
@@ -49,6 +56,12 @@ public class PermissionController extends BaseController<CdUPermission,Permissio
         return result;
     }
 
+    /**
+     * 添加权限
+     * @param cdUPermission
+     * @return
+     * @throws GlobalException
+     */
     @PostMapping("addPermission")
     public ResponseResult<String> addPermission(@RequestBody @Valid CdUPermission cdUPermission) throws GlobalException {
         ResponseResult<String> result = new ResponseResult<>();
@@ -79,6 +92,12 @@ public class PermissionController extends BaseController<CdUPermission,Permissio
         return result;
     }
 
+    /**
+     * 删除权限
+     * @param request
+     * @param cdUPermission
+     * @return
+     */
     @PostMapping("delete")
     public ResponseResult<String> delete(HttpServletRequest request, @RequestBody CdUPermission cdUPermission) {
         ResponseResult<String> result = new ResponseResult<>(ResponseStatus.OK);
@@ -92,6 +111,11 @@ public class PermissionController extends BaseController<CdUPermission,Permissio
         return result;
     }
 
+    /**
+     * 查询角色拥有的权限
+     * @param rid
+     * @return
+     */
     @PostMapping("resourcesWithSelected")
     public ResponseResult<List<CdUPermission>> resourcesWithSelected(Integer rid) {
         ResponseResult<List<CdUPermission>> result = new ResponseResult<>(ResponseStatus.OK);
@@ -101,6 +125,11 @@ public class PermissionController extends BaseController<CdUPermission,Permissio
         return result;
     }
 
+    /**
+     * 获取当前用户的菜单信息
+     * @param request
+     * @return
+     */
     @PostMapping("loadMenu")
     public ResponseResult<List<CdUPermission>> loadMenu(HttpServletRequest request) {
         ResponseResult<List<CdUPermission>> result = new ResponseResult<>(ResponseStatus.OK);

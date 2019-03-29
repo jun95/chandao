@@ -31,6 +31,10 @@ public class CdBugController extends BaseController<CdBug,CdBugService> {
     @Autowired
     private CdActionLogService cdActionLogService;
 
+    /**
+     * 获取BUG列表
+     * @return
+     */
     @GetMapping("getBugRecords")
     public Map<String,Object> getBugRecords(HttpServletRequest request,CdBug cdBug,
                                             @RequestParam(value = "id",required = false) String id,
@@ -40,6 +44,11 @@ public class CdBugController extends BaseController<CdBug,CdBugService> {
             cdBug.setId(Long.parseLong(id));
         }
         cdBug.setDeleted(1);
+
+        if (UserUtil.isAdmin(request)) {
+            return getRecords(cdBug, offset, limit);
+        }
+
         return getRecords(cdBug, offset, limit, new DataCallback<CdBug>() {
             @Override
             public List<CdBug> onPushData(CrudService crudService, DataCallbackParam<CdBug> params) {
@@ -48,6 +57,12 @@ public class CdBugController extends BaseController<CdBug,CdBugService> {
         });
     }
 
+    /**
+     * 新增BUG
+     * @param request
+     * @param cdBug
+     * @return
+     */
     @PostMapping("addBug")
     public ResponseResult<String> addBug(HttpServletRequest request, @RequestBody @Valid CdBug cdBug) {
         ResponseResult<String> result = new ResponseResult<>();
@@ -70,6 +85,12 @@ public class CdBugController extends BaseController<CdBug,CdBugService> {
         return result;
     }
 
+    /**
+     * 删除bug
+     * @param request
+     * @param cdBug
+     * @return
+     */
     @PostMapping("delete")
     public ResponseResult<String> delete(HttpServletRequest request,@RequestBody CdBug cdBug) {
         ResponseResult<String> result = new ResponseResult<>();
@@ -106,6 +127,12 @@ public class CdBugController extends BaseController<CdBug,CdBugService> {
         return result;
     }
 
+    /**
+     *更新bug状态
+     * @param request
+     * @param cdBug
+     * @return
+     */
     @PostMapping("updateStatus")
     public ResponseResult<String> updateStatus(HttpServletRequest request,@RequestBody CdBug cdBug) {
         ResponseResult<String> result = new ResponseResult<>();
@@ -169,6 +196,12 @@ public class CdBugController extends BaseController<CdBug,CdBugService> {
         }
     }
 
+    /**
+     * 指派bug
+     * @param request
+     * @param cdBug
+     * @return
+     */
     @PostMapping("assigned")
     public ResponseResult<String> assigned(HttpServletRequest request, @RequestBody CdBug cdBug) {
         ResponseResult<String> result = new ResponseResult<>();
@@ -226,6 +259,12 @@ public class CdBugController extends BaseController<CdBug,CdBugService> {
         return result;
     }
 
+    /**
+     * 查看bug详情
+     * @param request
+     * @param cdBug
+     * @return
+     */
     @PostMapping("showDetail")
     public ResponseResult<CdBug> showDetail(HttpServletRequest request, @RequestBody CdBug cdBug) {
         ResponseResult<CdBug> result = new ResponseResult<>();
@@ -255,6 +294,12 @@ public class CdBugController extends BaseController<CdBug,CdBugService> {
         return result;
     }
 
+    /**
+     * 编辑bug
+     * @param request
+     * @param cdBug
+     * @return
+     */
     @PostMapping("edit")
     public ResponseResult<CdBug> edit(HttpServletRequest request, @RequestBody CdBug cdBug) {
         ResponseResult<CdBug> result = new ResponseResult<>();
