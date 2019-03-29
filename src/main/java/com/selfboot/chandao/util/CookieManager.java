@@ -65,4 +65,21 @@ public class CookieManager {
             }
         }
     }
+
+    public static void editCookie(HttpServletRequest request,HttpServletResponse response,String cookieName,String value){
+        Cookie[] cookies = request.getCookies();
+        if (null==cookies) {
+            return;
+        } else {
+            for(Cookie cookie : cookies){
+                if(cookie.getName().equals(cookieName)){
+                    cookie.setValue(value);
+                    cookie.setPath("/");
+                    cookie.setMaxAge(30 * 60);// 设置为30min
+                    response.addCookie(cookie);
+                    break;
+                }
+            }
+        }
+    }
 }

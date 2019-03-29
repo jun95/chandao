@@ -1,5 +1,7 @@
 package com.selfboot.chandao.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.selfboot.chandao.common.Constant;
 import com.selfboot.chandao.common.ResponseResult;
 import com.selfboot.chandao.common.ResponseStatus;
 import com.selfboot.chandao.common.ServiceResult;
@@ -11,7 +13,6 @@ import com.selfboot.chandao.persist.DataCallbackParam;
 import com.selfboot.chandao.service.CdUserService;
 import com.selfboot.chandao.service.RoleService;
 import com.selfboot.chandao.util.UserUtil;
-import com.selfboot.chandao.vo.UserInfoVO;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import java.util.*;
@@ -43,14 +47,15 @@ public class UserController extends BaseController<CdUser, CdUserService> {
      * @return
      */
     @RequestMapping("getUserInfo")
-    public ResponseResult<UserInfoVO> getUserName(HttpServletRequest request) {
-        ResponseResult<UserInfoVO> result = new ResponseResult<>(ResponseStatus.OK);
+    public ResponseResult<CdUser> getUserName(HttpServletRequest request) {
+        ResponseResult<CdUser> result = new ResponseResult<>(ResponseStatus.OK);
         CdUser user = UserUtil.getUser(request);
-        UserInfoVO userInfoVO = new UserInfoVO();
+        /*UserInfoVO userInfoVO = new UserInfoVO();
         userInfoVO.setId(user.getId());
-        userInfoVO.setAccount(user.getAccount());
+        userInfoVO.setAccount(user.getAccount());*/
 
-        result.setResult(userInfoVO);
+        user.setPassword(null);
+        result.setResult(user);
         return result;
     }
 
@@ -83,6 +88,41 @@ public class UserController extends BaseController<CdUser, CdUserService> {
                 }
             });
         }
+    }
+
+    /**
+     * 保存修改后的用户信息
+     * @param cdUser
+     * @return
+     */
+    @PostMapping("saveInfo")
+    public ResponseResult<String> saveInfo(HttpServletRequest request,HttpServletResponse response,
+                                           @RequestBody @Valid CdUser cdUser) {
+        ResponseResult<String> result = new ResponseResult<>();
+
+        Long count = targetService.queryCount(cdUser);
+        if (count == 0) {
+            result.setResponseStatus(ResponseStatus.ERROR);
+            result.setMessage("当前用户不存在");
+            return result;
+        }
+
+        cdUser.setUpdateId(cdUser.getId());
+        cdUser.setUpdateTime(new Date());
+        cdUser.setUpdate(true);
+        ServiceResult serviceResult = targetService.save(Collections.singletonList(cdUser));
+        if (serviceResult.isSuccess()) {
+            result.setResponseStatus(ResponseStatus.OK);
+
+            HttpSession session = request.getSession();
+            session.setAttribute(Constant.USER_INFO, JSON.toJSONString(cdUser));
+            UserUtil.setUser(request,response);
+        } else {
+            result.setResponseStatus(ResponseStatus.ERROR);
+            result.setMessage((String) serviceResult.getErrorMessage().get(0));
+        }
+
+        return result;
     }
 
     /**

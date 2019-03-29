@@ -2,6 +2,8 @@ $(function() {
 	welcomePageInit();
 	//getRequestPrefix();
 	homePage();
+
+    editPersonalInfo();
 });
 
 // 获取请求前缀
@@ -19,6 +21,12 @@ function homePage(){
 	$('.home').click(function(){
 		$('#panel').load('/page/pagecomponent/welcomePage.html');
 	})
+}
+
+function editPersonalInfo() {
+    $('#editInfo').click(function(){
+        $('#panel').load('/page/pagecomponent/personalInfoedit.html');
+    })
 }
 
 // 侧边栏连接点击动作

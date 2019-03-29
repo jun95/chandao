@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -50,6 +51,11 @@ public class UserUtil {
             }
         }*/
         return token;
+    }
+
+    public static void setUser(ServletRequest request, HttpServletResponse response) {
+        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+        CookieManager.editCookie(httpServletRequest,response,Constant.USER_INFO,httpServletRequest.getSession().getId());
     }
 
     /**

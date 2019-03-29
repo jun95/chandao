@@ -129,6 +129,14 @@ public class LoginController {
 
         CdUser entity = new CdUser();
         entity.setAccount(registerVO.getAccount());
+
+        Long count = cdUserService.queryCount(entity);
+        if (count > 0) {
+            result.setResponseStatus(ResponseStatus.ERROR);
+            result.setMessage("当前用户名已经被使用，请更换");
+            return result;
+        }
+
         entity.setPassword(MD5Util.inputPassFormPass(registerVO.getPassword()));
         entity.setDeleted(1);
         entity.setType(2); //默认是普通用户
