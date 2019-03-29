@@ -115,7 +115,7 @@ public class LoginController {
      */
     @PostMapping(value = "register")
     @ResponseBody
-    public ResponseResult<String> register(RegisterVO registerVO,
+    public ResponseResult<String> register(@Valid RegisterVO registerVO,
                                                         HttpServletRequest request,
                                                         HttpServletResponse response) {
         ResponseResult<String> result = new ResponseResult<>(ResponseStatus.OK);
