@@ -54,11 +54,13 @@ public class CdProjectController extends BaseController<CdProject, CdProjectServ
     }
 
     @PostMapping("getProjectTotalRecord")
-    public ResponseResult<List<CdProject>> getGroupTotalRecord() {
+    public ResponseResult<List<CdProject>> getGroupTotalRecord(HttpServletRequest request) {
         ResponseResult<List<CdProject>> result = new ResponseResult<>();
         CdProject cdProject = new CdProject();
         cdProject.setDeleted(1);
-        List<CdProject> list = targetService.selectUnCloseProject(cdProject);
+
+        Long userId = UserUtil.getUser(request).getId();
+        List<CdProject> list = targetService.selectUnCloseProject(cdProject,userId);
         result.setResult(list);
         result.setResponseStatus(ResponseStatus.OK);
         return result;

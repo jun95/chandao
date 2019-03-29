@@ -1,0 +1,95 @@
+<script type="text/javascript" src="/page/js/common.js"></script>
+<script>
+    // 查询参数
+    project_name_like = null;
+
+    $(function(){
+        userOperationRecordTableInit();
+        searchActionInit();
+    });
+
+    function userOperationRecordTableInit(){
+        $('#userOperationRecordTable').bootstrapTable({
+            columns:[{
+                field : 'projectName',
+                title : '项目名称'
+            },{
+                field : 'totalBugNum',
+                title : 'BUG数'
+
+            },{
+                field : 'repeatRepairRate',
+                title : '重复修复率'
+
+            }],
+            url : '/statistics/getBugAnalysisList',
+            method : 'GET',
+            queryParams : queryParams,
+            sidePagination : "server",
+            dataType : 'json',
+            pagination : true,
+            pageNumber : 1,
+            pageSize : 10,
+            pageList : [ 5, 10, 25, 50, 100 ],
+            clickToSelect : false
+        });
+    }
+
+    // 表格刷新
+    function tableRefresh() {
+        $('#userOperationRecordTable').bootstrapTable('refresh', {
+            query : {}
+        });
+    }
+
+    // 分页查询参数
+    function queryParams(params) {
+        var temp = {
+            limit : params.limit,
+            offset : params.offset,
+            projectNameLike : project_name_like
+        }
+        return temp;
+    }
+
+    // 查询操作
+    function searchActionInit(){
+        $('#search_button').click(function(){
+            project_name_like = $('#projectNameLike').val();
+            tableRefresh();
+        })
+    }
+
+</script>
+
+<div class="panel panel-default">
+    <ol class="breadcrumb">
+        <li>人员分析</li>
+    </ol>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-3">
+                <form action="" class="form-inline">
+                    <div class="form-group">
+
+                        <label class="form-label">项目名称：</label>
+                        <input type="text" id="projectNameLike" class="form-control" placeholder="项目名称" style="width:50%">
+
+                    </div>
+
+                </form>
+            </div>
+
+            <div class="col-md-3">
+                <button class="btn btn-success" id="search_button">
+                    <span class="glyphicon glyphicon-search"></span> <span>查询</span>
+                </button>
+            </div>
+        </div>
+        <div class="row" style="margin-top:25px">
+            <div class="col-md-12">
+                <table class="table table-striped" id="userOperationRecordTable"></table>
+            </div>
+        </div>
+    </div>
+</div>

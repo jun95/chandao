@@ -382,8 +382,7 @@
     function change(selectId) {
         var select = $('#' + selectId);
         select.change(function () {
-
-            alert($(this).children("option:selected").val());
+            initReq($(this).children("option:selected").val());
         });
     }
 </script>

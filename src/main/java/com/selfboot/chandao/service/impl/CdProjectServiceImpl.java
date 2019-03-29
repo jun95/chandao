@@ -16,8 +16,8 @@ public class CdProjectServiceImpl extends BootStrapServiceImpl<CdProject, CdProj
 
 
     @Override
-    public List<CdProject> selectUnCloseProject(CdProject cdProject) {
-        return targetDAO.selectUnCloseProject(cdProject);
+    public List<CdProject> selectUnCloseProject(CdProject cdProject, Long userId) {
+        return targetDAO.selectUnCloseProject(cdProject,userId);
     }
 
     @Override

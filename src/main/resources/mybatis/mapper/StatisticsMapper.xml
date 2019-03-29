@@ -32,4 +32,35 @@
     ORDER BY task.last_edited_date desc;
   </select>
 
+  <select id="selectTestAnalysisList" resultType="com.selfboot.chandao.vo.TestProgressVO">
+    SELECT a.account,a.user_id as userId,a.id as projectId,a.`begin` as projectBeginTime,a.`end` as projectEndTime,a.`name` as projectName,
+    COUNT(1) as finishedTestTaskNum from cd_testtask task
+    LEFT JOIN
+    (SELECT
+        usergroup.user_id,project.id,usergroup.account,project.deleted,project.`begin`,project.`end`,project.`name`
+    FROM
+        cd_usergroup usergroup
+        INNER JOIN cd_project project ON usergroup.group_id = project.group_id
+
+    ) a ON task.project_id = a.id
+
+    WHERE a.deleted = 1 and task.deleted = 1 and task.finished_by = a.user_id
+    and task.project_id in
+    <foreach collection="projectList" item="item" open="(" close=")" separator=",">
+      #{item.id}
+    </foreach>
+
+    GROUP BY a.user_id,a.id,a.account,task.finished_date
+    ORDER BY task.finished_date desc;
+  </select>
+
+    <select id="selectBugAnalysisResult" resultType="com.selfboot.chandao.vo.BugProgressVO">
+    SELECT a.totalBugNum,CONCAT(ROUND(a.repeatNum / a.totalBugNum * 100, 2),'','%') as repeatRepairRate
+    FROM(
+    SELECT
+    (SELECT COUNT(1)  from cd_bug WHERE  project_id = #{entity.id}) as totalBugNum,
+    (SELECT COUNT(1)  from cd_bug WHERE  project_id = #{entity.id} and activated_count > 0) as repeatNum
+     FROM dual) a
+    </select>
+
 </mapper>

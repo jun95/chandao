@@ -13,9 +13,10 @@ public interface CdProjectService extends BootStrapService<CdProject> {
     /**
      * 查询状态为待开始、进行中的项目
      * @param cdProject
+     * @param userId
      * @return
      */
-    List<CdProject> selectUnCloseProject(CdProject cdProject);
+    List<CdProject> selectUnCloseProject(CdProject cdProject, Long userId);
 
     List<CdProject> selectListByGroup(CdProject entity, Long userId);
 }

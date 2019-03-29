@@ -92,6 +92,10 @@
     )
   </select>
 
+  <select id="count" parameterType="com.selfboot.chandao.domain.CdTestTask" resultType="long">
+    select count(1) from cd_testtask where project_id = #{projectId,jdbcType=BIGINT}
+  </select>
+
   <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
