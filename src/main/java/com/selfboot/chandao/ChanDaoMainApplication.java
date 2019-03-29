@@ -14,6 +14,5 @@ public class ChanDaoMainApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(ChanDaoMainApplication.class,args);
-        System.out.println("我就试试看提交");
     }
 }

@@ -110,6 +110,16 @@ public class CdBug extends BaseEntity {
 
     private String statusDesc;
 
+    private String assignedByNameLike;
+
+    public String getAssignedByNameLike() {
+        return assignedByNameLike;
+    }
+
+    public void setAssignedByNameLike(String assignedByNameLike) {
+        this.assignedByNameLike = assignedByNameLike;
+    }
+
     public String getStatusDesc() {
         return statusDesc;
     }

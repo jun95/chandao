@@ -53,10 +53,10 @@
     <if test="entity != null">
       <!--<if test="entity.projectNameLike != null and entity.projectNameLike != '' ">
         AND project_name like CONCAT('%',#{entity.projectNameLike,jdbcType=CHAR},'%')
-      </if>
-      <if test="entity.requireNameLike != null and entity.requireNameLike != '' ">
-        AND requirement_name like CONCAT('%',#{entity.requireNameLike,jdbcType=CHAR},'%')
       </if>-->
+      <if test="entity.assignedByNameLike != null and entity.assignedByNameLike != '' ">
+        AND assigned_by_name like CONCAT('%',#{entity.assignedByNameLike,jdbcType=CHAR},'%')
+      </if>
       <if test="entity.titleLike != null and entity.titleLike != '' ">
         AND title like CONCAT('%',#{entity.titleLike,jdbcType=CHAR},'%')
       </if>

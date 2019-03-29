@@ -4,6 +4,7 @@
     search_id = null;
     test_task_name_like = null;
     status_like = null;
+    assignedby_like = null;
 
     $(function(){
         datePickerInit();
@@ -259,7 +260,8 @@
 			offset : params.offset,
 			id : search_id,
             testTaskNameLike : test_task_name_like,
-            status : status_like
+            status : status_like,
+            assignedByNameLike : assignedby_like
 		};
 		return temp;
 	}
@@ -269,6 +271,7 @@
         $('#search_button').click(function(){
             search_id = $('#id').val();
             test_task_name_like = $('#testTaskNameLike').val();
+            assignedby_like = $('#assignedByNameLike').val();
             status_like = $('#status').val() == 'all' ? '' : $('#status').val();
             tableRefresh();
         })
@@ -439,6 +442,19 @@
 
                 </form>
             </div>
+
+            <div class="col-md-3">
+                <form action="" class="form-inline">
+                    <div class="form-group">
+
+                        <label class="form-label">指派给：</label>
+                        <input type="text" id="assignedByNameLike" class="form-control" placeholder="指派给" style="width:50%">
+
+                    </div>
+
+                </form>
+            </div>
+
             <div class="col-md-3">
                 <button class="btn btn-success" id="search_button">
                     <span class="glyphicon glyphicon-search"></span> <span>查询</span>

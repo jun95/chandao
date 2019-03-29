@@ -122,6 +122,16 @@ public class CdTask extends BaseEntity {
 
     private String taskNameLike;
 
+    private String assignedByNameLike;
+
+    public String getAssignedByNameLike() {
+        return assignedByNameLike;
+    }
+
+    public void setAssignedByNameLike(String assignedByNameLike) {
+        this.assignedByNameLike = assignedByNameLike;
+    }
+
     public String getTaskNameLike() {
         return taskNameLike;
     }

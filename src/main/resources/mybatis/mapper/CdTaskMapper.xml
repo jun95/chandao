@@ -53,6 +53,9 @@
   <sql id="where_fragment">
     WHERE 1 = 1
     <if test="entity != null">
+      <if test="entity.assignedByNameLike != null and entity.assignedByNameLike != '' ">
+        AND assigned_by_name like CONCAT('%',#{entity.assignedByNameLike,jdbcType=CHAR},'%')
+      </if>
       <if test="entity.projectNameLike != null and entity.projectNameLike != '' ">
         AND project_name like CONCAT('%',#{entity.projectNameLike,jdbcType=CHAR},'%')
       </if>
