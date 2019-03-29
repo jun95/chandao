@@ -59,8 +59,8 @@ public class UserController extends BaseController<CdUser, CdUserService> {
             cdUser.setId(Long.parseLong(id));
         }
         CdUser user = UserUtil.getUser(request);
-        if (user.getType() != 1) { //是普通用户
-            cdUser.setType(0);
+        if (user.getType() != null && user.getType() != 1) { //是普通用户
+            cdUser.setType(2);
         }
 
         if (cdUser.getGroupId() == null) {

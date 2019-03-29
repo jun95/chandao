@@ -93,10 +93,15 @@
     function saveRoleResources() {
         var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
             checkNode= zTree.getCheckedNodes(true);
+
+        console.log(checkNode);
+
         var ids = new Array();
         for(var i=0;i<checkNode.length;i++){
             ids.push(checkNode[i].id);
         }
+
+        console.log(ids);
         $.ajax({
             async:false,
             type : "POST",

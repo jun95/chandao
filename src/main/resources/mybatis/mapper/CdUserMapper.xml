@@ -15,10 +15,11 @@
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     <result column="update_id" property="updateId" jdbcType="BIGINT" />
     <result column="deleted" property="deleted" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, account, password, type, realname, nickname, mobile, gender, last_login_time, 
-    create_time, update_time, update_id, deleted
+    create_time, update_time, update_id, deleted,type
   </sql>
 
     <sql id="where_fragment">

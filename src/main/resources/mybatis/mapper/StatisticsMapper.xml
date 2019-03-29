@@ -10,4 +10,26 @@
     (select count(1) from cd_task WHERE project_id = #{entity.id} AND `status` = 'closed') AS closedTaskNum FROM dual
   </select>
 
+  <select id="selectUserAnalysisList" resultType="com.selfboot.chandao.vo.UserProgressVO">
+    SELECT a.account,a.user_id as userId,a.id as projectId,a.`begin` as projectBeginTime,a.`end` as projectEndTime,a.`name` as projectName,
+    SUM(task.estimate) as totalEstimate,SUM(task.consumed) as totalConsumed from cd_task task
+    LEFT JOIN
+    (SELECT
+        usergroup.user_id,project.id,usergroup.account,project.deleted,project.`begin`,project.`end`,project.`name`
+    FROM
+        cd_usergroup usergroup
+        INNER JOIN cd_project project ON usergroup.group_id = project.group_id
+
+    ) a ON task.project_id = a.id
+
+    WHERE a.deleted = 1 and task.deleted = 1 and task.assigned_by = a.user_id
+    and task.project_id in
+      <foreach collection="projectList" item="item" open="(" close=")" separator=",">
+          #{item.id}
+      </foreach>
+
+    GROUP BY a.user_id,a.id,a.account,task.last_edited_date
+    ORDER BY task.last_edited_date desc;
+  </select>
+
 </mapper>

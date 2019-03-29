@@ -10,6 +10,7 @@ import com.selfboot.chandao.service.CdUserService;
 import com.selfboot.chandao.service.StatisticsService;
 import com.selfboot.chandao.util.UserUtil;
 import com.selfboot.chandao.vo.ProjectProgressVO;
+import com.selfboot.chandao.vo.UserProgressVO;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletRequest;
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +42,10 @@ public class StatisticsController {
     @Resource
     private CdUserService cdUserService;
 
+    /**
+     * 项目分析
+     * @return
+     */
     @GetMapping("getProjectAnalysisList")
     public Map<String, Object> getProjectAnalysisList(CdProject cdProject, @RequestParam(value = "id", required = false) String id,
                                                       @RequestParam(value = "offset", required = false) Integer offset,
@@ -73,36 +79,37 @@ public class StatisticsController {
         return responseContent;
     }
 
+    /**
+     * 人员分析
+     * @return
+     */
     @GetMapping("getUserAnalysisList")
-    public Map<String, Object> getUserAnalysisList(CdUser cdUser, @RequestParam(value = "id", required = false) String id,
+    public Map<String, Object> getUserAnalysisList(CdProject cdProject, @RequestParam(value = "id", required = false) String id,
                                                    @RequestParam(value = "offset", required = false) Integer offset,
                                                    @RequestParam(value = "limit", required = false) Integer limit,
                                                    ServletRequest request) {
-
         Map<String,Object> responseContent = new HashMap<>();
         long total = 0;
-        List<ProjectProgressVO> projectProgressVOList = new ArrayList<>(limit);
+        List<UserProgressVO> userProgressVOList = null;
 
-        Map<String, Object> queryResult = cdUserService.selectRecord(cdUser, offset, limit, new DataCallback<CdUser>() {
+        Map<String, Object> queryResult = cdProjectService.selectRecord(cdProject, offset, limit, new DataCallback<CdProject>() {
             @Override
-            public List<CdUser> onPushData(CrudService crudService, DataCallbackParam<CdUser> params) {
-                return cdUserService.getListByGroupId(params.getEntity());
+            public List<CdProject> onPushData(CrudService crudService, DataCallbackParam<CdProject> params) {
+                return cdProjectService.selectListByGroup(params.getEntity(), UserUtil.getUser(request).getId());
             }
         });
-        List<CdUser> list = (List<CdUser>) queryResult.get("data");
+        List<CdProject> list = (List<CdProject>) queryResult.get("data");
 
         if (!CollectionUtils.isEmpty(list)) {
             total = (long) queryResult.get("total");
-            for (CdUser user : list) {
-                /*ProjectProgressVO projectProgressVO = statisticsService.selectProjectAnalysisResult(project);
-                projectProgressVO.setProjectName(user.getName());
-                projectProgressVOList.add(projectProgressVO);*/
-            }
+            userProgressVOList = statisticsService.selectUserAnalysisList(list);
         }
 
-        responseContent.put("rows", projectProgressVOList);
+        responseContent.put("rows", userProgressVOList);
         responseContent.put("total",total);
 
         return responseContent;
     }
+
+
 }

@@ -55,9 +55,16 @@
   </select>
 
   <select id="selectLatestRecord" resultMap="BaseResultMap">
-    SELECT max(id) as id,object_type, object_id, project_id, action, status, previous_owner, assigned_by,
+    SELECT id as id,object_type, object_id, project_id, action, status, previous_owner, assigned_by,
     account, date from cd_action_log
+    WHERE
+    id = (
+    SELECT
+    max(id) AS id
+    FROM
+    cd_action_log
     <include refid="where_fragment"/>
+    )
   </select>
 
   <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
