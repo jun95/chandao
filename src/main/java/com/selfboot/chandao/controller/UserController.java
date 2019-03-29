@@ -104,6 +104,7 @@ public class UserController extends BaseController<CdUser, CdUserService> {
         cdUser.setPassword("b7797cce01b4b131b433b6acf4add449");
         cdUser.setDeleted(1);
         cdUser.setType(2); //默认是普通用户
+        cdUser.setCreateTime(new Date());
         ServiceResult serviceResult = targetService.save(Collections.singletonList(cdUser));
         if (serviceResult.isSuccess()) {
             result.setResponseStatus(ResponseStatus.OK);
