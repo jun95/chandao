@@ -104,6 +104,9 @@
                     "click #closed":function(e,value,row,index){
                         toUpdateStatus(row.id,row.status,'closed','关闭');
                     },
+                    "click #active":function(e,value,row,index){
+                        toUpdateStatus(row.id,row.status,'active','激活');
+                    },
                     "click #showDetail":function(e,value,row,index){
                         showDetail(row.id);
                     },
