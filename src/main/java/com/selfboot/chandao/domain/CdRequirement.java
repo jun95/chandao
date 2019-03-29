@@ -67,6 +67,16 @@ public class CdRequirement extends BaseEntity {
 
     private String requireNameLike;
 
+    private String createNameLike;
+
+    public String getCreateNameLike() {
+        return createNameLike;
+    }
+
+    public void setCreateNameLike(String createNameLike) {
+        this.createNameLike = createNameLike;
+    }
+
     public String getProjectNameLike() {
         return projectNameLike;
     }

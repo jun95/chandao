@@ -32,6 +32,9 @@
   <sql id="where_fragment">
     WHERE 1 = 1
     <if test="entity != null">
+      <if test="entity.createNameLike != null and entity.createNameLike != '' ">
+        AND create_name like CONCAT('%',#{entity.createNameLike,jdbcType=CHAR},'%')
+      </if>
       <if test="entity.projectNameLike != null and entity.projectNameLike != '' ">
         AND name like CONCAT('%',#{entity.projectNameLike,jdbcType=CHAR},'%')
       </if>

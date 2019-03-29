@@ -67,6 +67,16 @@ public class CdProject extends BaseEntity {
 
     private String projectNameLike;
 
+    private String createNameLike;
+
+    public String getCreateNameLike() {
+        return createNameLike;
+    }
+
+    public void setCreateNameLike(String createNameLike) {
+        this.createNameLike = createNameLike;
+    }
+
     public String getProjectNameLike() {
         return projectNameLike;
     }

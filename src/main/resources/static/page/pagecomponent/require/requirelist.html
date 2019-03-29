@@ -4,6 +4,7 @@
     search_id = null;
     project_name_like = null;
     require_name_like = null;
+    create_name_like = null;
     status_like = null;
 
     $(function(){
@@ -203,7 +204,8 @@
             id : search_id,
             projectNameLike : project_name_like,
             requireNameLike : require_name_like,
-            status : status_like
+            status : status_like,
+            createNameLike : create_name_like
         };
         return temp;
     }
@@ -214,7 +216,7 @@
             search_id = $('#id').val();
             project_name_like = $('#projectNameLike').val();
             require_name_like = $('#requireNameLike').val();
-            console.log($('#status').val())
+            create_name_like = $('#createNameLike').val();
             status_like = $('#status').val() == 'all' ? '' : $('#status').val();
             tableRefresh();
         })
@@ -333,6 +335,18 @@
             <div class="col-md-3">
                 <form action="" class="form-inline">
                     <div class="form-group">
+
+                        <label class="form-label">创建人：</label>
+                        <input type="text" id="createNameLike" class="form-control" placeholder="创建人名称" style="width:50%">
+
+                    </div>
+
+                </form>
+            </div>
+
+            <div class="col-md-3">
+                <form action="" class="form-inline">
+                    <div class="form-group">
                         <label class="form-label">状态：</label>
                         <select name="" id="status" class="form-control">
                             <option value="all">所有状态</option>
@@ -345,7 +359,7 @@
 
                 </form>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3" style="margin-top:10px">
                 <button class="btn btn-success" id="search_button">
                     <span class="glyphicon glyphicon-search"></span> <span>查询</span>
                 </button>
