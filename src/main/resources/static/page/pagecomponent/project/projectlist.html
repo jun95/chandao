@@ -482,6 +482,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" onclick="removeUserMember();" class="btn btn-danger">删除</button>
             </div>
         </div>
     </div>
@@ -497,6 +498,8 @@
     function showMemberOperationRecordTableInit(){
         $('#showMemberOperationRecordTable').bootstrapTable({
             columns:[{
+                checkbox:true
+            },{
                 field : 'account',
                 title : '组用户账号'
             },{
@@ -609,6 +612,46 @@
                     if (data.code == 200) {
                         layer.msg("添加成功");
                         $('#addGroupMember').modal('hide');
+                    } else {
+                        layer.msg(data.message);
+                    }
+                },
+                error: function (data) {
+                    layer.msg(data.responseText);
+                }
+            });
+        }
+    }
+
+    function removeUserMember() {
+        var rows = $("#showMemberOperationRecordTable").bootstrapTable('getSelections');
+        //console.log(rows);
+        if (rows.length == 0) {// rows 主要是为了判断是否选中，下面的else内容才是主要
+            layer.msg("请先选择要删除的成员!");
+            return;
+        } else {
+            var arrays = new Array();// 声明一个数组
+            $(rows).each(function () {// 通过获得别选中的来进行遍历
+                var entity = {};
+                entity.id = this.id;
+                arrays.push(entity);// cid为获得到的整条数据中的一列
+            });
+            console.log(arrays);
+
+            <!--loding-->
+            var load = layer.load();
+            $.ajax({
+                type: "POST",
+                url: "/group/removeGroupMember",
+                headers: {
+                    "content-Type": "application/json"
+                },
+                data: JSON.stringify(arrays),
+                success: function (data) {
+                    layer.close(load);
+                    if (data.code == 200) {
+                        layer.msg("删除成功");
+                        tableRefresh('showMemberOperationRecordTable');
                     } else {
                         layer.msg(data.message);
                     }

@@ -26,6 +26,18 @@
     </if>
   </sql>
 
+  <delete id="deleteByCondition">
+    delete from cd_usergroup
+    <include refid="where_fragment" />
+  </delete>
+
+  <delete id="deleteBatch">
+    delete from cd_usergroup where id in
+    <foreach collection="list" item="item" open="(" close=")" separator=",">
+      #{item.id}
+    </foreach>
+  </delete>
+
   <select id="selectListByCondition" resultMap="BaseResultMap">
     SELECT
     <include refid="Base_Column_List"/>

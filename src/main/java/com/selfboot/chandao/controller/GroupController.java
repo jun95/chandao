@@ -144,4 +144,33 @@ public class GroupController extends BaseController<CdGroup, CdGroupService> {
 
         return result;
     }
+
+    /**
+     * 删除项目组成员
+     * @param request
+     * @param cdUserGroupList
+     * @return
+     */
+    @PostMapping("removeGroupMember")
+    public ResponseResult<String> removeGroupMember(HttpServletRequest request,
+                                                 @RequestBody @Valid List<CdUserGroup> cdUserGroupList) {
+        ResponseResult<String> result = new ResponseResult<>();
+
+        CdUser user = UserUtil.getUser(request);
+        for (CdUserGroup cdUserGroup : cdUserGroupList) {
+            cdUserGroup.setCreateTime(new Date());
+            cdUserGroup.setCreateBy(user.getId());
+            cdUserGroup.setCreateName(user.getAccount());
+        }
+
+        ServiceResult serviceResult = cdUserGroupService.delete(cdUserGroupList);
+        if (serviceResult.isSuccess()) {
+            result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.OK);
+        } else {
+            result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+            result.setMessage((String) serviceResult.getErrorMessage().get(0));
+        }
+
+        return result;
+    }
 }
