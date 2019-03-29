@@ -103,10 +103,14 @@ public class CdProjectController extends BaseController<CdProject, CdProjectServ
             if (cdProject != null) {
                 cdProject.setStatus(projectVO.getStatus());
                 cdProject.setUpdate(true);
+                CdUser user = UserUtil.getUser(request);
+
+                ProjectStatusEnum status = ProjectStatusEnum.getStatus(cdProject.getStatus());
+                buildFinalProject(cdProject,status,user);
 
                 serviceResult = targetService.save(Collections.singletonList(cdProject));
 
-                updateRequirement(cdProject);
+                updateRequirement(cdProject,status,user);
 
                 if (serviceResult.isSuccess()) {
                     result.setResponseStatus(ResponseStatus.OK);
@@ -124,11 +128,29 @@ public class CdProjectController extends BaseController<CdProject, CdProjectServ
         return result;
     }
 
-    private void updateRequirement(CdProject cdProject) {
+    private void buildFinalProject(CdProject cdProject, ProjectStatusEnum status, CdUser user) {
+        switch (status) {
+            case DONE:
+                cdProject.setClosedBy(user.getId());
+                cdProject.setClosedName(user.getAccount());
+                cdProject.setClosedDate(new Date());
+                break;
+        }
+    }
+
+    private void updateRequirement(CdProject cdProject, ProjectStatusEnum status, CdUser user) {
         CdRequirement cdRequirement = new CdRequirement();
         cdRequirement.setUpdate(true);
         cdRequirement.setProjectId(cdProject.getId());
         cdRequirement.setStatus(cdProject.getStatus());
+
+        switch (status) {
+            case DONE:
+                cdRequirement.setClosedBy(user.getId());
+                cdRequirement.setClosedName(user.getAccount());
+                cdRequirement.setClosedDate(new Date());
+                break;
+        }
 
         cdRequirementService.updateByProjectId(cdRequirement);
     }
