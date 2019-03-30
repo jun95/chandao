@@ -84,7 +84,7 @@ public class StatisticsController {
      */
     private Map<String, Object> getProjectByCurrUser(ServletRequest request,CdProject cdProject,Integer offset,Integer limit) {
         Map<String, Object> queryResult = null;
-        cdProject.setDeleted(1);
+        //cdProject.setDeleted(1);
         if (UserUtil.isAdmin(request)) {
             queryResult = cdProjectService.selectRecord(cdProject, offset, limit);
         } else {
