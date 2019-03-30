@@ -40,6 +40,11 @@ public class SimpleRealm extends AuthorizingRealm {
         super();
     }
 
+    /**
+     * 授权
+     * @param principalCollection
+     * @return
+     */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         CdUser user= (CdUser) SecurityUtils.getSubject().getPrincipal();
