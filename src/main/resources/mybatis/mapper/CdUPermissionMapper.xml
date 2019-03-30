@@ -56,6 +56,12 @@
 		ORDER BY re.sort ASC
   </select>
 
+  <select id="findPermissionByUserId" resultType="java.lang.String">
+    select p.url from cd_u_permission p , cd_u_role_permission rp, cd_user_role ur
+	where uid =#{userId,jdbcType=BIGINT} and p.id = rp.pid and rp.rid = ur.rid
+    <![CDATA[ and p.parent_id <> 0 ]]>
+  </select>
+
   <select id="getMenu" resultMap="BaseResultMap">
     SELECT re.id,re.name,re.parent_id,re.url,re.sort
         FROM cd_u_permission re LEFT JOIN cd_u_role_permission rr

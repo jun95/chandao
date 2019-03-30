@@ -6,6 +6,7 @@ import com.selfboot.chandao.domain.CdUserRole;
 import com.selfboot.chandao.persist.BootStrapService;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by 87570 on 2019/3/18.
@@ -18,4 +19,6 @@ public interface RoleService extends BootStrapService<CdURole> {
     List<CdURole> queryRoleListWithSelected(Integer uid);
 
     void addUserRole(CdUserRole userRole);
+
+    Set<String> findRoleByUserId(Long userId);
 }

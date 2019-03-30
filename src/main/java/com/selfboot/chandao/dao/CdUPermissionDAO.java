@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Set;
 
 @Mapper
 public interface CdUPermissionDAO extends CrudDAO<CdUPermission> {
@@ -17,4 +18,6 @@ public interface CdUPermissionDAO extends CrudDAO<CdUPermission> {
     List<CdUPermission> queryResourcesListWithSelected(@Param("rid") Integer rid);
 
     List<CdUPermission> getMenu(@Param("userId") Long userId,@Param("type") Integer type);
+
+    Set<String> findPermissionByUserId(@Param("userId") Long userId);
 }

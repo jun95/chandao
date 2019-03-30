@@ -16,6 +16,8 @@ import com.selfboot.chandao.util.DateUtil;
 import com.selfboot.chandao.util.UserUtil;
 import com.selfboot.chandao.vo.ProjectVO;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -92,6 +94,7 @@ public class CdProjectController extends BaseController<CdProject, CdProjectServ
      * @param projectVO
      * @return
      */
+    @RequiresRoles(value={"管理员", "项目经理"},logical = Logical.OR)
     @PostMapping("updateStatus")
     public ResponseResult<String> updateStatus(HttpServletRequest request,@RequestBody @Valid ProjectVO projectVO) {
         ResponseResult<String> result = new ResponseResult<>();
@@ -161,6 +164,7 @@ public class CdProjectController extends BaseController<CdProject, CdProjectServ
      * @param cdProject
      * @return
      */
+    @RequiresRoles(value={"管理员", "项目经理"},logical = Logical.OR)
     @PostMapping("addProject")
     public ResponseResult<String> addProject(HttpServletRequest request,@RequestBody @Valid CdProject cdProject) {
         ResponseResult<String> result = new ResponseResult<>();
@@ -236,6 +240,7 @@ public class CdProjectController extends BaseController<CdProject, CdProjectServ
      * @param cdProject
      * @return
      */
+    @RequiresRoles(value={"管理员", "项目经理"},logical = Logical.OR)
     @PostMapping("edit")
     public ResponseResult<CdProject> edit(HttpServletRequest request, @RequestBody CdProject cdProject) {
         ResponseResult<CdProject> result = new ResponseResult<>();

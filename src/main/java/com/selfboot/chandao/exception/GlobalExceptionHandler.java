@@ -2,6 +2,7 @@ package com.selfboot.chandao.exception;
 
 import com.selfboot.chandao.common.ResponseResult;
 import com.selfboot.chandao.common.ResponseStatus;
+import org.apache.shiro.authz.AuthorizationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindException;
@@ -57,6 +58,8 @@ public class GlobalExceptionHandler {
                 result.setMessage(item.getMessage());
                 break;
             }
+        } else if (e instanceof AuthorizationException) {
+            result.setMessage("你没有权限进行操作");
         } else {
             result.setMessage("系统错误");
         }

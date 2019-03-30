@@ -1,7 +1,8 @@
 package com.selfboot.chandao.controller;
 
-import com.selfboot.chandao.common.*;
+import com.selfboot.chandao.common.ResponseResult;
 import com.selfboot.chandao.common.ResponseStatus;
+import com.selfboot.chandao.common.ServiceResult;
 import com.selfboot.chandao.domain.CdGroup;
 import com.selfboot.chandao.domain.CdUser;
 import com.selfboot.chandao.domain.CdUserGroup;
@@ -12,12 +13,17 @@ import com.selfboot.chandao.service.CdGroupService;
 import com.selfboot.chandao.service.CdUserGroupService;
 import com.selfboot.chandao.util.UserUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by hwj on 2019/3/20.
@@ -96,6 +102,7 @@ public class GroupController extends BaseController<CdGroup, CdGroupService> {
      * @param cdGroup
      * @return
      */
+    @RequiresRoles(value={"管理员"},logical = Logical.OR)
     @PostMapping("addGroup")
     public ResponseResult<String> addGroup(HttpServletRequest request, @RequestBody @Valid CdGroup cdGroup) {
         ResponseResult<String> result = new ResponseResult<>();
@@ -122,6 +129,7 @@ public class GroupController extends BaseController<CdGroup, CdGroupService> {
      * @param cdUserGroupList
      * @return
      */
+    @RequiresRoles(value={"管理员","项目经理"},logical = Logical.OR)
     @PostMapping("addGroupMember")
     public ResponseResult<String> addGroupMember(HttpServletRequest request,
                                                  @RequestBody @Valid List<CdUserGroup> cdUserGroupList) {
@@ -151,6 +159,7 @@ public class GroupController extends BaseController<CdGroup, CdGroupService> {
      * @param cdUserGroupList
      * @return
      */
+    @RequiresRoles(value={"管理员","项目经理"},logical = Logical.OR)
     @PostMapping("removeGroupMember")
     public ResponseResult<String> removeGroupMember(HttpServletRequest request,
                                                  @RequestBody @Valid List<CdUserGroup> cdUserGroupList) {

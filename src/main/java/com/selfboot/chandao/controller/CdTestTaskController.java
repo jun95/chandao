@@ -16,6 +16,8 @@ import com.selfboot.chandao.service.CdTestTaskService;
 import com.selfboot.chandao.util.ActionLogHelper;
 import com.selfboot.chandao.util.UserUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -67,6 +69,7 @@ public class CdTestTaskController extends BaseController<CdTestTask,CdTestTaskSe
      * @param cdTestTask
      * @return
      */
+    @RequiresRoles(value={"管理员", "测试人员"},logical = Logical.OR)
     @PostMapping("addTestTask")
     public ResponseResult<String> addTestTask(HttpServletRequest request, @RequestBody @Valid CdTestTask cdTestTask) {
         ResponseResult<String> result = new ResponseResult<>();
@@ -98,6 +101,7 @@ public class CdTestTaskController extends BaseController<CdTestTask,CdTestTaskSe
      * @param cdTestTask
      * @return
      */
+    @RequiresRoles(value={"管理员", "测试人员"},logical = Logical.OR)
     @PostMapping("delete")
     public ResponseResult<String> delete(HttpServletRequest request,@RequestBody CdTestTask cdTestTask) {
         ResponseResult<String> result = new ResponseResult<>();
@@ -175,6 +179,7 @@ public class CdTestTaskController extends BaseController<CdTestTask,CdTestTaskSe
      * @param cdTestTask
      * @return
      */
+    @RequiresRoles(value={"管理员", "测试人员"},logical = Logical.OR)
     @PostMapping("edit")
     public ResponseResult<CdTask> edit(HttpServletRequest request, @RequestBody CdTestTask cdTestTask) {
         ResponseResult<CdTask> result = new ResponseResult<>();
@@ -211,6 +216,7 @@ public class CdTestTaskController extends BaseController<CdTestTask,CdTestTaskSe
      * @param cdTestTask
      * @return
      */
+    @RequiresRoles(value={"管理员", "测试人员"},logical = Logical.OR)
     @PostMapping("updateStatus")
     public ResponseResult<String> updateStatus(HttpServletRequest request,@RequestBody CdTestTask cdTestTask) {
         ResponseResult<String> result = new ResponseResult<>();
@@ -251,14 +257,19 @@ public class CdTestTaskController extends BaseController<CdTestTask,CdTestTaskSe
     private void buildFinalTestTask(CdTestTask task, ProjectStatusEnum status, CdUser user) {
         switch (status) {
             case DONE:
-                task.setFinishedBy(user.getId());
-                task.setFinishedName(user.getAccount());
-                task.setFinishedDate(new Date());
+                task.setClosedBy(user.getId());
+                task.setClosedName(user.getAccount());
+                task.setClosedDate(new Date());
                 break;
             case DOING:
                 task.setOpenedBy(user.getId());
                 task.setOpenedName(user.getAccount());
                 task.setOpenedDate(new Date());
+                break;
+            case FINISHED:
+                task.setFinishedBy(user.getId());
+                task.setFinishedName(user.getAccount());
+                task.setFinishedDate(new Date());
                 break;
         }
     }
@@ -269,6 +280,7 @@ public class CdTestTaskController extends BaseController<CdTestTask,CdTestTaskSe
      * @param cdTestTask
      * @return
      */
+    @RequiresRoles(value={"管理员", "测试人员"},logical = Logical.OR)
     @PostMapping("assigned")
     public ResponseResult<String> assigned(HttpServletRequest request, @RequestBody CdTestTask cdTestTask) {
         ResponseResult<String> result = new ResponseResult<>();

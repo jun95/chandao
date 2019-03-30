@@ -2,22 +2,18 @@ package com.selfboot.chandao.service.impl;
 
 import com.selfboot.chandao.dao.CdURoleDAO;
 import com.selfboot.chandao.dao.CdURolePermissionDAO;
-import com.selfboot.chandao.dao.CdUserDAO;
 import com.selfboot.chandao.dao.CdUserRoleDAO;
 import com.selfboot.chandao.domain.CdURole;
 import com.selfboot.chandao.domain.CdURolePermission;
 import com.selfboot.chandao.domain.CdUserRole;
-import com.selfboot.chandao.persist.BootStrapService;
 import com.selfboot.chandao.persist.BootStrapServiceImpl;
-import com.selfboot.chandao.persist.CrudService;
 import com.selfboot.chandao.service.RoleService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by 87570 on 2019/3/18.
@@ -79,5 +75,10 @@ public class RoleServiceImpl extends BootStrapServiceImpl<CdURole,CdURoleDAO> im
         /*List<Integer> userid = new ArrayList<Integer>();
         userid.add(userRole.getUserid());
         myShiroRealm.clearUserAuthByUserId(userid);*/
+    }
+
+    @Override
+    public Set<String> findRoleByUserId(Long userId) {
+        return targetDAO.findRoleByUserId(userId);
     }
 }

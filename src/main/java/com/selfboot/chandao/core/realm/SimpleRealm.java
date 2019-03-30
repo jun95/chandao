@@ -1,11 +1,16 @@
 package com.selfboot.chandao.core.realm;
 
+import com.alibaba.fastjson.JSON;
 import com.selfboot.chandao.common.ServiceResult;
 import com.selfboot.chandao.core.token.ShiroToken;
 import com.selfboot.chandao.domain.CdUser;
 import com.selfboot.chandao.service.CdUserService;
+import com.selfboot.chandao.service.PermissionService;
+import com.selfboot.chandao.service.RoleService;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.slf4j.Logger;
@@ -13,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * Created by 87570 on 2019/3/17.
@@ -22,6 +28,12 @@ public class SimpleRealm extends AuthorizingRealm {
     @Resource
     private CdUserService cdUserService;
 
+    @Resource
+    private PermissionService permissionService;
+
+    @Resource
+    private RoleService roleService;
+
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     public SimpleRealm() {
@@ -30,7 +42,22 @@ public class SimpleRealm extends AuthorizingRealm {
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        return null;
+        CdUser user= (CdUser) SecurityUtils.getSubject().getPrincipal();
+
+        // 权限信息对象info,用来存放查出的用户的所有的角色（role）及权限（permission）
+        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
+
+        //根据用户ID查询角色（role），放入到Authorization里。
+        Set<String> roles = roleService.findRoleByUserId(user.getId());
+        info.setRoles(roles);
+
+        logger.info("授权的角色信息为：" + JSON.toJSONString(roles));
+
+        Set<String> permissionSet = permissionService.findPermissionByUserId(user.getId());
+        info.setStringPermissions(permissionSet);
+
+        logger.info("授权的权限信息为：" + JSON.toJSONString(permissionSet));
+        return info;
     }
 
     /**
@@ -61,4 +88,6 @@ public class SimpleRealm extends AuthorizingRealm {
         }
         return new SimpleAuthenticationInfo(user,user.getPassword(), getName());
     }
+
+
 }

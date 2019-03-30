@@ -3,11 +3,12 @@ package com.selfboot.chandao.controller;
 import com.selfboot.chandao.common.ResponseResult;
 import com.selfboot.chandao.common.ResponseStatus;
 import com.selfboot.chandao.common.ServiceResult;
-import com.selfboot.chandao.domain.CdUPermission;
 import com.selfboot.chandao.domain.CdURole;
 import com.selfboot.chandao.domain.CdURolePermission;
 import com.selfboot.chandao.service.RoleService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -42,6 +43,7 @@ public class RoleController extends BaseController<CdURole, RoleService> {
      * @param cdURole
      * @return
      */
+    @RequiresRoles(value={"管理员"},logical = Logical.OR)
     @PostMapping("addRole")
     public ResponseResult<String> addRole(@RequestBody @Valid CdURole cdURole) {
         ResponseResult<String> result = new ResponseResult<>();
@@ -62,6 +64,7 @@ public class RoleController extends BaseController<CdURole, RoleService> {
      * @param rolePermission
      * @return
      */
+    @RequiresRoles(value={"管理员"},logical = Logical.OR)
     @PostMapping("allotPermission")
     public ResponseResult<String> allotPermission(CdURolePermission rolePermission) {
         ResponseResult<String> result = new ResponseResult<>(ResponseStatus.OK);

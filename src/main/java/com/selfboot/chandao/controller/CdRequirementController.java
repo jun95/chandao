@@ -17,6 +17,8 @@ import com.selfboot.chandao.service.CdRequirementService;
 import com.selfboot.chandao.util.DateUtil;
 import com.selfboot.chandao.util.UserUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -95,6 +97,7 @@ public class CdRequirementController extends BaseController<CdRequirement, CdReq
      * @return
      * @throws GlobalException
      */
+    @RequiresRoles(value={"管理员", "项目经理","需求人员"},logical = Logical.OR)
     @PostMapping("addRequire")
     public ResponseResult<String> addRequire(HttpServletRequest request, @RequestBody @Valid CdRequirement cdRequirement) throws GlobalException {
         ResponseResult<String> result = new ResponseResult<>();
@@ -167,6 +170,7 @@ public class CdRequirementController extends BaseController<CdRequirement, CdReq
      * @param cdRequirement
      * @return
      */
+    @RequiresRoles(value={"管理员", "项目经理","需求人员"},logical = Logical.OR)
     @PostMapping("delete")
     public ResponseResult<String> delete(HttpServletRequest request,@RequestBody CdRequirement cdRequirement) {
         ResponseResult<String> result = new ResponseResult<>();
@@ -244,6 +248,7 @@ public class CdRequirementController extends BaseController<CdRequirement, CdReq
      * @param cdRequirement
      * @return
      */
+    @RequiresRoles(value={"管理员", "项目经理","需求人员"},logical = Logical.OR)
     @PostMapping("edit")
     public ResponseResult<CdProject> edit(HttpServletRequest request, @RequestBody CdRequirement cdRequirement) {
         ResponseResult<CdProject> result = new ResponseResult<>();

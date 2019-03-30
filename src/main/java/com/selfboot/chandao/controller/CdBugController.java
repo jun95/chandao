@@ -1,25 +1,32 @@
 package com.selfboot.chandao.controller;
 
-import com.selfboot.chandao.common.*;
+import com.selfboot.chandao.common.BugStatusEnum;
+import com.selfboot.chandao.common.ResponseResult;
 import com.selfboot.chandao.common.ResponseStatus;
-import com.selfboot.chandao.domain.*;
+import com.selfboot.chandao.common.ServiceResult;
+import com.selfboot.chandao.domain.CdActionLog;
+import com.selfboot.chandao.domain.CdBug;
+import com.selfboot.chandao.domain.CdTestTask;
+import com.selfboot.chandao.domain.CdUser;
 import com.selfboot.chandao.listener.DataCallback;
 import com.selfboot.chandao.persist.CrudService;
 import com.selfboot.chandao.persist.DataCallbackParam;
 import com.selfboot.chandao.service.CdActionLogService;
 import com.selfboot.chandao.service.CdBugService;
+import com.selfboot.chandao.service.RoleService;
 import com.selfboot.chandao.util.ActionLogHelper;
 import com.selfboot.chandao.util.UserUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.AuthorizationException;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by 87570 on 2019/3/23.
@@ -30,6 +37,9 @@ public class CdBugController extends BaseController<CdBug,CdBugService> {
 
     @Autowired
     private CdActionLogService cdActionLogService;
+
+    @Resource
+    private RoleService roleService;
 
     /**
      * 获取BUG列表
@@ -63,6 +73,7 @@ public class CdBugController extends BaseController<CdBug,CdBugService> {
      * @param cdBug
      * @return
      */
+    @RequiresRoles(value={"管理员", "测试人员"},logical = Logical.OR)
     @PostMapping("addBug")
     public ResponseResult<String> addBug(HttpServletRequest request, @RequestBody @Valid CdBug cdBug) {
         ResponseResult<String> result = new ResponseResult<>();
@@ -91,6 +102,7 @@ public class CdBugController extends BaseController<CdBug,CdBugService> {
      * @param cdBug
      * @return
      */
+    @RequiresRoles(value={"管理员", "测试人员"},logical = Logical.OR)
     @PostMapping("delete")
     public ResponseResult<String> delete(HttpServletRequest request,@RequestBody CdBug cdBug) {
         ResponseResult<String> result = new ResponseResult<>();
@@ -133,6 +145,7 @@ public class CdBugController extends BaseController<CdBug,CdBugService> {
      * @param cdBug
      * @return
      */
+    @RequiresRoles(value={"管理员", "测试人员","开发人员"},logical = Logical.OR)
     @PostMapping("updateStatus")
     public ResponseResult<String> updateStatus(HttpServletRequest request,@RequestBody CdBug cdBug) {
         ResponseResult<String> result = new ResponseResult<>();
@@ -150,6 +163,14 @@ public class CdBugController extends BaseController<CdBug,CdBugService> {
                 cdBug.setActivatedCount(query.getActivatedCount() == null ? 0 : query.getActivatedCount());
 
                 BugStatusEnum status = BugStatusEnum.getStatus(cdBug.getStatus());
+                //只有解决开发人员才能点击
+                if (status != BugStatusEnum.RESOLVED) {
+                    Set<String> roles = roleService.findRoleByUserId(user.getId());
+                    if (roles.contains("开发人员")) {
+                        throw new AuthorizationException();
+                    }
+                }
+
                 buildFinalTestTask(cdBug,status,user);
 
                 CdActionLog cdActionLog = ActionLogHelper.buildBugLog(user.getAccount(), query,
@@ -202,6 +223,7 @@ public class CdBugController extends BaseController<CdBug,CdBugService> {
      * @param cdBug
      * @return
      */
+    @RequiresRoles(value={"管理员", "测试人员","开发人员"},logical = Logical.OR)
     @PostMapping("assigned")
     public ResponseResult<String> assigned(HttpServletRequest request, @RequestBody CdBug cdBug) {
         ResponseResult<String> result = new ResponseResult<>();
@@ -300,6 +322,7 @@ public class CdBugController extends BaseController<CdBug,CdBugService> {
      * @param cdBug
      * @return
      */
+    @RequiresRoles(value={"管理员", "测试人员"},logical = Logical.OR)
     @PostMapping("edit")
     public ResponseResult<CdBug> edit(HttpServletRequest request, @RequestBody CdBug cdBug) {
         ResponseResult<CdBug> result = new ResponseResult<>();

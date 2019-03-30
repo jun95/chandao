@@ -8,6 +8,7 @@ import com.selfboot.chandao.util.MenuUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by 87570 on 2019/3/18.
@@ -35,5 +36,10 @@ public class PermissionServiceImpl extends BootStrapServiceImpl<CdUPermission,Cd
     @Override
     public List<CdUPermission> loadMenu(Long userId) {
         return MenuUtil.getMenu(targetDAO.getMenu(userId,1));
+    }
+
+    @Override
+    public Set<String> findPermissionByUserId(Long userId) {
+        return targetDAO.findPermissionByUserId(userId);
     }
 }

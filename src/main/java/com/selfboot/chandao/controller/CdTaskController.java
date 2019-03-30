@@ -1,12 +1,13 @@
 package com.selfboot.chandao.controller;
 
-import com.selfboot.chandao.common.*;
+import com.selfboot.chandao.common.ResponseResult;
 import com.selfboot.chandao.common.ResponseStatus;
+import com.selfboot.chandao.common.ServiceResult;
+import com.selfboot.chandao.common.TaskStatusEnum;
 import com.selfboot.chandao.domain.CdActionLog;
 import com.selfboot.chandao.domain.CdRequirement;
 import com.selfboot.chandao.domain.CdTask;
 import com.selfboot.chandao.domain.CdUser;
-import com.selfboot.chandao.domain.*;
 import com.selfboot.chandao.listener.DataCallback;
 import com.selfboot.chandao.persist.CrudService;
 import com.selfboot.chandao.persist.DataCallbackParam;
@@ -17,6 +18,8 @@ import com.selfboot.chandao.util.ActionLogHelper;
 import com.selfboot.chandao.util.DateUtil;
 import com.selfboot.chandao.util.UserUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -71,6 +74,7 @@ public class CdTaskController extends BaseController<CdTask, CdTaskService> {
      * @param cdTask
      * @return
      */
+    @RequiresRoles(value={"管理员", "项目经理","需求人员","开发人员"},logical = Logical.OR)
     @PostMapping("addTask")
     public ResponseResult<String> addTask(HttpServletRequest request, @RequestBody @Valid CdTask cdTask) {
         ResponseResult<String> result = new ResponseResult<>();
@@ -103,6 +107,7 @@ public class CdTaskController extends BaseController<CdTask, CdTaskService> {
      * @param cdTask
      * @return
      */
+    @RequiresRoles(value={"管理员", "项目经理","需求人员","开发人员"},logical = Logical.OR)
     @PostMapping("updateStatus")
     public ResponseResult<String> updateStatus(HttpServletRequest request,@RequestBody CdTask cdTask) {
         ResponseResult<String> result = new ResponseResult<>();
@@ -183,6 +188,7 @@ public class CdTaskController extends BaseController<CdTask, CdTaskService> {
      * @param cdTask
      * @return
      */
+    @RequiresRoles(value={"管理员", "项目经理","需求人员","开发人员"},logical = Logical.OR)
     @PostMapping("assigned")
     public ResponseResult<String> assigned(HttpServletRequest request, @RequestBody CdTask cdTask) {
         ResponseResult<String> result = new ResponseResult<>();
@@ -290,6 +296,7 @@ public class CdTaskController extends BaseController<CdTask, CdTaskService> {
      * @param cdTask
      * @return
      */
+    @RequiresRoles(value={"管理员", "项目经理","需求人员","开发人员"},logical = Logical.OR)
     @PostMapping("edit")
     public ResponseResult<CdTask> edit(HttpServletRequest request, @RequestBody CdTask cdTask) {
         ResponseResult<CdTask> result = new ResponseResult<>();

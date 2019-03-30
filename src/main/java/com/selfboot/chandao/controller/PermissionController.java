@@ -9,6 +9,8 @@ import com.selfboot.chandao.exception.GlobalException;
 import com.selfboot.chandao.service.PermissionService;
 import com.selfboot.chandao.util.UserUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -62,6 +64,7 @@ public class PermissionController extends BaseController<CdUPermission,Permissio
      * @return
      * @throws GlobalException
      */
+    @RequiresRoles(value={"管理员"},logical = Logical.OR)
     @PostMapping("addPermission")
     public ResponseResult<String> addPermission(@RequestBody @Valid CdUPermission cdUPermission) throws GlobalException {
         ResponseResult<String> result = new ResponseResult<>();
@@ -98,6 +101,7 @@ public class PermissionController extends BaseController<CdUPermission,Permissio
      * @param cdUPermission
      * @return
      */
+    @RequiresRoles(value={"管理员"},logical = Logical.OR)
     @PostMapping("delete")
     public ResponseResult<String> delete(HttpServletRequest request, @RequestBody CdUPermission cdUPermission) {
         ResponseResult<String> result = new ResponseResult<>(ResponseStatus.OK);

@@ -14,6 +14,8 @@ import com.selfboot.chandao.service.CdUserService;
 import com.selfboot.chandao.service.RoleService;
 import com.selfboot.chandao.util.UserUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,6 +132,7 @@ public class UserController extends BaseController<CdUser, CdUserService> {
      * @param cdUser
      * @return
      */
+    @RequiresRoles(value={"管理员"},logical = Logical.OR)
     @PostMapping("addMember")
     public ResponseResult<String> addMember(@RequestBody @Valid CdUser cdUser) {
         ResponseResult<String> result = new ResponseResult<>();
@@ -161,6 +164,7 @@ public class UserController extends BaseController<CdUser, CdUserService> {
      * @param ids
      * @return
      */
+    @RequiresRoles(value={"管理员"},logical = Logical.OR)
     @PostMapping("removeMember")
     public ResponseResult<String> removeMember(@RequestBody @NotEmpty(message = "请选择要禁用的记录") List<Long> ids) {
         ResponseResult<String> result = new ResponseResult<>();
@@ -196,6 +200,7 @@ public class UserController extends BaseController<CdUser, CdUserService> {
      *  	  此处获取的参数的角色id是以 “,” 分隔的字符串
      * @return
      */
+    @RequiresRoles(value={"管理员"},logical = Logical.OR)
     @RequestMapping("/saveUserRoles")
     public ResponseResult<String> saveUserRoles(CdUserRole userRole){
         ResponseResult<String> result = new ResponseResult<>();

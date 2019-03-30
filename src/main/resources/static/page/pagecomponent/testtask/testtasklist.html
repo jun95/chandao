@@ -72,9 +72,11 @@
                     if (s == 'wait') {
                         return '待开始';
                     } else if (s == 'done') {
-                        return '已完成';
+                        return '已关闭';
                     } else if (s == 'doing') {
                         return '进行中';
+                    }  else if (s == 'finished') {
+                        return '已完成';
                     }
                 }
             },{
@@ -99,8 +101,13 @@
                     "click #assignedBy":function(e,value,row,index){
                         assignedBy(row.projectId,row.id);
                     },
-                    "click #done":function(e,value,row,index){
+                    "click #finished":function(e,value,row,index){
                         toUpdateStatus(row.id,row.status,'done','完成');
+                    },
+                    "click #done":function(e,value,row,index){
+                        $("#taskId").val(row.id);
+                        $('#closeTestTask').modal();
+                        //toUpdateStatus(row.id,row.status,'closed','关闭');
                     },
                     "click #del":function(e,value,row,index){
                         del(row.id);
@@ -203,6 +210,10 @@
         entity.status = expectStatus;
         entity.statusDesc = statusDesc;
 
+        if(expectStatus == 'done') {
+            entity.closedReason = $('#closedReason').val();
+        }
+
         <!--loding-->
         var load = layer.load();
         $.ajax({
@@ -234,15 +245,18 @@
         if (s == 'wait') {
             arr.push('<a class="btn btn-default" href="#" id="tostart">开始</a>');
             arr.push('<a class="btn btn-default" href="#" id="assignedBy">指派</a>');
+            arr.push('<a class="btn btn-default" href="#" id="del">删除</a>');
+            arr.push('<a class="btn btn-default" href="#" id="edit">编辑</a>');
         } else if (s == 'doing') {
-            arr.push('<a class="btn btn-default" href="#" id="done">完成</a>');
+            arr.push('<a class="btn btn-default" href="#" id="finished">完成</a>');
             arr.push('<a class="btn btn-default" href="#" id="assignedBy">指派</a>');
+            arr.push('<a class="btn btn-default" href="#" id="del">删除</a>');
+            arr.push('<a class="btn btn-default" href="#" id="edit">编辑</a>');
+        } else if (s == 'finished') {
+            arr.push('<a class="btn btn-default" href="#" id="done">关闭</a>');
         }
 
         arr.push('<a class="btn btn-default" href="#" id="look">查看</a>');
-        arr.push('<a class="btn btn-default" href="#" id="edit">编辑</a>');
-        arr.push('<a class="btn btn-default" href="#" id="del">删除</a>');
-
         return arr.join('');
     }
 
@@ -435,7 +449,8 @@
                             <option value="all">所有状态</option>
                             <option value="wait">待开始</option>
                             <option value="doing">进行中</option>
-                            <option value="done">已完成</option>
+                            <option value="finished">已完成</option>
+                            <option value="done">已关闭</option>
                         </select>
                     </div>
 
@@ -528,6 +543,23 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
                 <button type="button" onclick="addAssignedBy();" class="btn btn-primary">指派</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="closeTestTask" tabindex="-1" role="dialog" aria-labelledby="closeTestTaskLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="closeTestTaskLabel">关闭测试任务</h4>
+            </div>
+            <div class="modal-body">
+                <textarea class="form-control" rows="5" name="closedReason" id="closedReason"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" onclick="toUpdateStatus($('#taskId').val(),'','done','关闭');" class="btn btn-primary">关闭测试任务</button>
             </div>
         </div>
     </div>
