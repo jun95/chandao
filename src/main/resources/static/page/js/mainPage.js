@@ -4,6 +4,7 @@ $(function() {
 	homePage();
 
     editPersonalInfo();
+    modifyPwd();
 });
 
 // 获取请求前缀
@@ -26,6 +27,12 @@ function homePage(){
 function editPersonalInfo() {
     $('#editInfo').click(function(){
         $('#panel').load('/page/pagecomponent/personalInfoedit.html');
+    })
+}
+
+function modifyPwd() {
+    $('#modifyPwd').click(function(){
+        $('#panel').load('/page/pagecomponent/personalpwdedit.html');
     })
 }
 

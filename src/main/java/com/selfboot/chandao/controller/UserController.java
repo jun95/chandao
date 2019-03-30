@@ -12,8 +12,11 @@ import com.selfboot.chandao.persist.CrudService;
 import com.selfboot.chandao.persist.DataCallbackParam;
 import com.selfboot.chandao.service.CdUserService;
 import com.selfboot.chandao.service.RoleService;
+import com.selfboot.chandao.util.MD5Util;
 import com.selfboot.chandao.util.UserUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authc.AccountException;
+import org.apache.shiro.authc.DisabledAccountException;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.slf4j.Logger;
@@ -109,6 +112,66 @@ public class UserController extends BaseController<CdUser, CdUserService> {
             return result;
         }
 
+        cdUser.setUpdateId(cdUser.getId());
+        cdUser.setUpdateTime(new Date());
+        cdUser.setUpdate(true);
+        ServiceResult serviceResult = targetService.save(Collections.singletonList(cdUser));
+        if (serviceResult.isSuccess()) {
+            result.setResponseStatus(ResponseStatus.OK);
+
+            HttpSession session = request.getSession();
+            session.setAttribute(Constant.USER_INFO, JSON.toJSONString(cdUser));
+            UserUtil.setUser(request,response);
+        } else {
+            result.setResponseStatus(ResponseStatus.ERROR);
+            result.setMessage((String) serviceResult.getErrorMessage().get(0));
+        }
+
+        return result;
+    }
+
+    /**
+     * 保存修改后的用户信息
+     * @param cdUser
+     * @return
+     */
+    @PostMapping("modifyPwd")
+    public ResponseResult<String> modifyPwd(HttpServletRequest request,HttpServletResponse response,
+                                           @RequestBody CdUser cdUser) {
+        ResponseResult<String> result = new ResponseResult<>();
+
+        CdUser user = UserUtil.getUser(request);
+        if (user == null) {
+            result.setResponseStatus(ResponseStatus.ERROR);
+            result.setMessage("当前用户不存在/登录过期");
+            return result;
+        }
+
+        if (StringUtils.isBlank(cdUser.getNewPassword())) {
+            result.setResponseStatus(ResponseStatus.ERROR);
+            result.setMessage("新密码不能为空");
+            return result;
+        }
+
+        String password = cdUser.getPassword();
+        if (StringUtils.isBlank(cdUser.getPassword())) {
+            result.setResponseStatus(ResponseStatus.ERROR);
+            result.setMessage("旧密码不能为空");
+            return result;
+        }
+
+        ServiceResult<CdUser> userServiceResult = targetService.login(user.getAccount(), MD5Util.inputPassFormPass(password));
+        if(null == userServiceResult.getResult()){
+            throw new AccountException("帐号或密码不正确！");
+            /**
+             * 如果用户的status为禁用。那么就抛出<code>DisabledAccountException</code>
+             */
+        }else if(CdUser.DEL == userServiceResult.getResult().getDeleted().intValue()){
+            throw new DisabledAccountException("帐号已经禁止登录！");
+        }
+
+        cdUser.setId(user.getId());
+        cdUser.setPassword(MD5Util.inputPassFormPass(cdUser.getNewPassword()));
         cdUser.setUpdateId(cdUser.getId());
         cdUser.setUpdateTime(new Date());
         cdUser.setUpdate(true);
