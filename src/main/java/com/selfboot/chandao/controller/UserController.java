@@ -73,7 +73,7 @@ public class UserController extends BaseController<CdUser, CdUserService> {
                                              @RequestParam(value = "id",required = false) String id,
                                              @RequestParam(value = "offset",required = false) Integer offset,
                                              @RequestParam(value = "limit" ,required = false) Integer limit) {
-        cdUser.setDeleted(1);
+        //cdUser.setDeleted(1);
         if (!StringUtils.isBlank(id)) {
             cdUser.setId(Long.parseLong(id));
         }
@@ -224,24 +224,22 @@ public class UserController extends BaseController<CdUser, CdUserService> {
 
     /**
      * 禁用用户
-     * @param ids
+     * @param cdUsers
      * @return
      */
     @RequiresRoles(value={"管理员"},logical = Logical.OR)
     @PostMapping("removeMember")
-    public ResponseResult<String> removeMember(@RequestBody @NotEmpty(message = "请选择要禁用的记录") List<Long> ids) {
+    public ResponseResult<String> removeMember(@RequestBody @NotEmpty(message = "请选择要禁用的记录") List<CdUser> cdUsers) {
         ResponseResult<String> result = new ResponseResult<>();
-        if (CollectionUtils.isEmpty(ids)) {
+        if (CollectionUtils.isEmpty(cdUsers)) {
             result.setResponseStatus(ResponseStatus.ILLEGAL_ARG);
             result.setMessage("请选择一条记录");
             return result;
         }
         List<CdUser> cdUserList = new ArrayList<>();
-        CdUser cdUser = null;
-        for (Long id : ids) {
-            cdUser = new CdUser();
-            cdUser.setId(id);
-            cdUser.setDeleted(CdUser.DEL);
+        for (CdUser cdUser : cdUsers) {
+            /*cdUser.setId(id);
+            cdUser.setDeleted(CdUser.DEL);*/
             cdUser.setUpdate(true);
             cdUserList.add(cdUser);
         }

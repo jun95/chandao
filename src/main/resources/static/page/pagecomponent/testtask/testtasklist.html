@@ -102,7 +102,7 @@
                         assignedBy(row.projectId,row.id);
                     },
                     "click #finished":function(e,value,row,index){
-                        toUpdateStatus(row.id,row.status,'done','完成');
+                        toUpdateStatus(row.id,row.status,'finished','完成');
                     },
                     "click #done":function(e,value,row,index){
                         $("#taskId").val(row.id);
@@ -556,6 +556,7 @@
                 <h4 class="modal-title" id="closeTestTaskLabel">关闭测试任务</h4>
             </div>
             <div class="modal-body">
+                测试报告:
                 <textarea class="form-control" rows="5" name="closedReason" id="closedReason"></textarea>
             </div>
             <div class="modal-footer">
