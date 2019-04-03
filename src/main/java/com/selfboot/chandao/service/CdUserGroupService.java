@@ -11,4 +11,6 @@ import java.util.List;
 public interface CdUserGroupService extends BootStrapService<CdUserGroup> {
 
     List<CdUserGroup> getListByProjectId(Long projectId);
+
+    List<CdUserGroup> getListByConditionWithRole(CdUserGroup cdUserGroup);
 }

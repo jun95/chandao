@@ -10,6 +10,11 @@
     <result column="create_name" property="createName" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
   </resultMap>
+
+  <resultMap id="HasRoleResultMap" type="com.selfboot.chandao.domain.CdUserGroup" extends="BaseResultMap">
+    <result column="roles" property="roles" jdbcType="VARCHAR" />
+  </resultMap>
+
   <sql id="Base_Column_List" >
     id, user_id, account, group_id, create_by, create_name, create_time
   </sql>
@@ -45,9 +50,18 @@
     <include refid="where_fragment"/>
   </select>
 
-  <select id="getListByProjectId" resultMap="BaseResultMap">
+  <select id="selectListByConditionWithRole" resultMap="HasRoleResultMap">
     SELECT
-    usergroup.*
+    <include refid="Base_Column_List"/>,
+    (SELECT GROUP_CONCAT(r.name) FROM cd_u_role r INNER JOIN cd_user_role ur ON ur.rid = r.id WHERE ur.id = cd_usergroup.user_id) as roles
+    FROM cd_usergroup
+    <include refid="where_fragment"/>
+  </select>
+
+  <select id="getListByProjectId" resultMap="HasRoleResultMap">
+    SELECT
+    usergroup.*,
+    (SELECT GROUP_CONCAT(r.name) FROM cd_u_role r INNER JOIN cd_user_role ur ON ur.rid = r.id WHERE ur.id = usergroup.user_id) as roles
     FROM cd_usergroup usergroup
     WHERE usergroup.group_id = (SELECT group_id FROM cd_project project WHERE project.id = #{projectId,jdbcType=BIGINT})
   </select>

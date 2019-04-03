@@ -14,4 +14,6 @@ import java.util.List;
 public interface CdUserDAO extends CrudDAO<CdUser> {
 
     List<CdUser> getListByGroupId(@Param("entity") CdUser user);
+
+    List<CdUser> selectListByConditionWithRole(@Param("entity") CdUser user);
 }

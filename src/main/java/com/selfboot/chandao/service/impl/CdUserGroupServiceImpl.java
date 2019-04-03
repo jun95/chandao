@@ -21,4 +21,9 @@ public class CdUserGroupServiceImpl extends BootStrapServiceImpl<CdUserGroup,CdU
 
         return targetDAO.getListByProjectId(projectId);
     }
+
+    @Override
+    public List<CdUserGroup> getListByConditionWithRole(CdUserGroup cdUserGroup) {
+        return targetDAO.selectListByConditionWithRole(cdUserGroup);
+    }
 }

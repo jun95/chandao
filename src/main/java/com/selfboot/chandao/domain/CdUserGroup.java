@@ -29,6 +29,16 @@ public class CdUserGroup extends BaseEntity{
     /**  */
     private Date createTime;
 
+    private String roles;
+
+    public String getRoles() {
+        return roles;
+    }
+
+    public void setRoles(String roles) {
+        this.roles = roles;
+    }
+
     public Long getProjectId() {
         return projectId;
     }

@@ -51,6 +51,18 @@ public class CdUser extends BaseEntity implements Serializable {
     private Long groupId;
 
     private String newPassword;
+    /**
+     * 角色名称
+     */
+    private String roles;
+
+    public String getRoles() {
+        return roles;
+    }
+
+    public void setRoles(String roles) {
+        this.roles = roles;
+    }
 
     public String getNewPassword() {
         return newPassword;

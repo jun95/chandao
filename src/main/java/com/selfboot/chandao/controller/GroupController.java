@@ -83,7 +83,14 @@ public class GroupController extends BaseController<CdGroup, CdGroupService> {
         }
 
         if (cdUserGroup.getProjectId() == null) {
-            return getRecords(cdUserGroupService,cdUserGroup,offset,limit);
+            return getRecords(cdUserGroupService, cdUserGroup, offset, limit, new DataCallback<CdUserGroup>() {
+                @Override
+                public List<CdUserGroup> onPushData(CrudService crudService, DataCallbackParam<CdUserGroup> params) {
+                    CdUserGroupService service = (CdUserGroupService) crudService;
+                    List<CdUserGroup> groupList = service.getListByConditionWithRole(params.getEntity());
+                    return groupList;
+                }
+            });
         } else {
             return getRecords(cdUserGroupService, cdUserGroup, offset, limit, new DataCallback<CdUserGroup>() {
                 @Override

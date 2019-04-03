@@ -35,6 +35,11 @@ public class CdUserServiceImpl extends BootStrapServiceImpl<CdUser,CdUserDAO> im
         return targetDAO.getListByGroupId(user);
     }
 
+    @Override
+    public List<CdUser> getListByConditionWithRole(CdUser user) {
+        return targetDAO.selectListByConditionWithRole(user);
+    }
+
     /*@Override
     public Map<String, Object> selectUserRecord(CdUser user, int offset, int limit) {
         // 准备结果集

@@ -18,6 +18,8 @@ public interface CdUserService extends BootStrapService<CdUser> {
 
     List<CdUser> getListByGroupId(CdUser user);
 
+    List<CdUser> getListByConditionWithRole(CdUser user);
+
     //Map<String, Object> selectUserRecord(CdUser user,int offset, int limit);
 
 }

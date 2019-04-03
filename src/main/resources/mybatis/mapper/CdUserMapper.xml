@@ -17,6 +17,11 @@
     <result column="deleted" property="deleted" jdbcType="INTEGER" />
     <result column="type" property="type" jdbcType="INTEGER" />
   </resultMap>
+
+    <resultMap id="HasRoleResultMap" type="com.selfboot.chandao.domain.CdUser" extends="BaseResultMap">
+        <result column="roles" property="roles" jdbcType="VARCHAR" />
+    </resultMap>
+
   <sql id="Base_Column_List" >
     id, account, password, type, realname, nickname, mobile, gender, last_login_time, 
     create_time, update_time, update_id, deleted,type
@@ -49,9 +54,10 @@
         </if>
     </sql>
 
-    <select id="getListByGroupId" resultMap="BaseResultMap">
+    <select id="getListByGroupId" resultMap="HasRoleResultMap">
         SELECT
-        <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List"/>,
+        (SELECT GROUP_CONCAT(r.name) FROM cd_u_role r INNER JOIN cd_user_role ur ON ur.rid = r.id WHERE ur.id = cd_user.id) as roles
         FROM cd_user
         <include refid="where_fragment"/>
         AND id not IN (SELECT user_id FROM cd_usergroup WHERE group_id = #{entity.groupId,jdbcType=BIGINT})
@@ -60,6 +66,14 @@
     <select id="selectListByCondition" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>
+        FROM cd_user
+        <include refid="where_fragment"/>
+    </select>
+
+    <select id="selectListByConditionWithRole" resultMap="HasRoleResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>,
+        (SELECT GROUP_CONCAT(r.name) FROM cd_u_role r INNER JOIN cd_user_role ur ON ur.rid = r.id WHERE ur.id = cd_user.id) as roles
         FROM cd_user
         <include refid="where_fragment"/>
     </select>
