@@ -57,7 +57,7 @@
     <select id="getListByGroupId" resultMap="HasRoleResultMap">
         SELECT
         <include refid="Base_Column_List"/>,
-        (SELECT GROUP_CONCAT(r.name) FROM cd_u_role r INNER JOIN cd_user_role ur ON ur.rid = r.id WHERE ur.id = cd_user.id) as roles
+        (SELECT GROUP_CONCAT(r.name) FROM cd_u_role r INNER JOIN cd_user_role ur ON ur.rid = r.id WHERE ur.uid = cd_user.id) as roles
         FROM cd_user
         <include refid="where_fragment"/>
         AND id not IN (SELECT user_id FROM cd_usergroup WHERE group_id = #{entity.groupId,jdbcType=BIGINT})
@@ -73,7 +73,7 @@
     <select id="selectListByConditionWithRole" resultMap="HasRoleResultMap">
         SELECT
         <include refid="Base_Column_List"/>,
-        (SELECT GROUP_CONCAT(r.name) FROM cd_u_role r INNER JOIN cd_user_role ur ON ur.rid = r.id WHERE ur.id = cd_user.id) as roles
+        (SELECT GROUP_CONCAT(r.name) FROM cd_u_role r INNER JOIN cd_user_role ur ON ur.rid = r.id WHERE ur.uid = cd_user.id) as roles
         FROM cd_user
         <include refid="where_fragment"/>
     </select>

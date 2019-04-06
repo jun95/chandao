@@ -29,6 +29,18 @@
     <include refid="where_fragment"/>
   </select>
 
+  <select id="selectUserGroupList" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM cd_group
+    <include refid="where_fragment"/>
+    <if test="userId != null">
+      AND id in (
+        SELECT group_id from cd_usergroup WHERE user_id = #{userId}
+      )
+    </if>
+  </select>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select
     <include refid="Base_Column_List" />

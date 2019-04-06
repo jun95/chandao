@@ -53,7 +53,7 @@
   <select id="selectListByConditionWithRole" resultMap="HasRoleResultMap">
     SELECT
     <include refid="Base_Column_List"/>,
-    (SELECT GROUP_CONCAT(r.name) FROM cd_u_role r INNER JOIN cd_user_role ur ON ur.rid = r.id WHERE ur.id = cd_usergroup.user_id) as roles
+    (SELECT GROUP_CONCAT(r.name) FROM cd_u_role r INNER JOIN cd_user_role ur ON ur.rid = r.id WHERE ur.uid = cd_usergroup.user_id) as roles
     FROM cd_usergroup
     <include refid="where_fragment"/>
   </select>
@@ -61,7 +61,7 @@
   <select id="getListByProjectId" resultMap="HasRoleResultMap">
     SELECT
     usergroup.*,
-    (SELECT GROUP_CONCAT(r.name) FROM cd_u_role r INNER JOIN cd_user_role ur ON ur.rid = r.id WHERE ur.id = usergroup.user_id) as roles
+    (SELECT GROUP_CONCAT(r.name) FROM cd_u_role r INNER JOIN cd_user_role ur ON ur.rid = r.id WHERE ur.uid = usergroup.user_id) as roles
     FROM cd_usergroup usergroup
     WHERE usergroup.group_id = (SELECT group_id FROM cd_project project WHERE project.id = #{projectId,jdbcType=BIGINT})
   </select>

@@ -51,6 +51,27 @@ public class GroupController extends BaseController<CdGroup, CdGroupService> {
     }
 
     /**
+     * 获取当前用户所在项目组列表
+     * @return
+     */
+    @GetMapping("getUserGroupRecords")
+    public Map<String,Object> getUserGroupRecords(HttpServletRequest request,CdGroup cdGroup,
+                                                  @RequestParam(value = "id",required = false) String id,
+                                              @RequestParam(value = "offset",required = false) Integer offset,
+                                              @RequestParam(value = "limit",required = false) Integer limit) {
+        if (!StringUtils.isBlank(id)) {
+            cdGroup.setId(Long.parseLong(id));
+        }
+        cdGroup.setDeleted(1);
+        return getRecords(cdGroup, offset, limit, new DataCallback<CdGroup>() {
+            @Override
+            public List<CdGroup> onPushData(CrudService crudService, DataCallbackParam<CdGroup> params) {
+                return targetService.getUserGroupList(params.getEntity(),UserUtil.isAdmin(request) ? null : UserUtil.getUser(request).getId());
+            }
+        });
+    }
+
+    /**
      * 获取全部项目组
      * @return
      */

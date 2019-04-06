@@ -1,0 +1,110 @@
+<script type="text/javascript" src="/page/js/common.js"></script>
+<script>
+    // 查询参数
+    search_user_id = null;
+    search_user_account = null;
+    search_user_nick_name = null;
+    search_start_date = null;
+    search_end_date = null;
+
+    $(function(){
+        groupOperationRecordTableInit();
+        searchActionInit();
+        insertActionInit();
+    })
+
+    function groupOperationRecordTableInit(){
+        $('#roleOperationRecordTable').bootstrapTable({
+            columns:[{
+                field : 'id',
+                title : '项目组ID'
+            },{
+                field : 'name',
+                title : '项目组名称'
+            },{
+                field : 'description',
+                title : '项目组描述'
+            },{
+                field : 'createName',
+                title : '创建人'
+            },{
+                field : 'createTime',
+                title : '创建时间',
+                formatter : function (value,row,index) {
+                    if (row.createTime != null) {
+                        return new Date(row.createTime).format('yyyy-MM-dd hh:mm:ss');
+                    }
+                    return null;
+                }
+            }],
+            url : '/group/getUserGroupRecords',
+            method : 'GET',
+            queryParams : queryParams,
+            sidePagination : "server",
+            dataType : 'json',
+            pagination : true,
+            pageNumber : 1,
+            pageSize : 10,
+            pageList : [ 5, 10, 25, 50, 100 ],
+            clickToSelect : false
+        });
+    }
+
+
+    // 表格刷新
+    function tableRefresh(id) {
+        $('#' + id).bootstrapTable('refresh', {
+            query : {}
+        });
+    }
+
+    // 分页查询参数
+    function queryParams(params) {
+        var temp = {
+            limit : params.limit,
+            offset : params.offset,
+            id : search_user_id
+        };
+        return temp;
+    }
+
+    // 查询操作
+    function searchActionInit(){
+        $('#search_button').click(function(){
+            search_user_id = $('#id').val();
+            tableRefresh('roleOperationRecordTable');
+        })
+    }
+</script>
+
+<div class="panel panel-default">
+    <ol class="breadcrumb">
+        <li>所在项目组</li>
+    </ol>
+    <div class="panel-body">
+        <input type="hidden" id="group_id">
+        <div class="row">
+            <div class="col-md-3">
+                <form action="" class="form-inline">
+                    <div class="form-group">
+
+                        <label class="form-label">项目组ID：</label>
+                        <input type="text" id="id" class="form-control" placeholder="项目组ID" style="width:50%">
+
+                    </div>
+
+                </form>
+            </div>
+
+            <div class="col-md-3">
+                <button class="btn btn-success" id="search_button">                      <span>查询</span>
+                </button>
+            </div>
+        </div>
+        <div class="row" style="margin-top:25px">
+            <div class="col-md-12">
+                <table class="table table-striped" id="roleOperationRecordTable"></table>
+            </div>
+        </div>
+    </div>
+</div>

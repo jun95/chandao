@@ -5,6 +5,7 @@ $(function() {
 
     editPersonalInfo();
     modifyPwd();
+    ownerTeam();
 });
 
 // 获取请求前缀
@@ -33,6 +34,12 @@ function editPersonalInfo() {
 function modifyPwd() {
     $('#modifyPwd').click(function(){
         $('#panel').load('/page/pagecomponent/personalpwdedit.html');
+    })
+}
+
+function ownerTeam() {
+    $('#ownerTeam').click(function(){
+        $('#panel').load('/page/pagecomponent/ownerTeam.html');
     })
 }
 

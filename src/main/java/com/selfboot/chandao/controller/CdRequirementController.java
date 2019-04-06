@@ -236,6 +236,13 @@ public class CdRequirementController extends BaseController<CdRequirement, CdReq
         if (serviceResult.isSuccess()) {
             cdRequirement = (CdRequirement) serviceResult.getResult();
             if (cdRequirement != null) {
+
+                if (ProjectStatusEnum.getStatus(cdRequirement.getStatus()) != ProjectStatusEnum.WAIT) {
+                    result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+                    result.setMessage("需求只有在待开始状态的时候能删除");
+                    return result;
+                }
+
                 cdRequirement.setDeleted(CdTestTask.DEL);
                 cdRequirement.setUpdate(true);
 
@@ -247,7 +254,7 @@ public class CdRequirementController extends BaseController<CdRequirement, CdReq
                 result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
             } else {
                 result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
-                result.setMessage("测试任务不存在");
+                result.setMessage("需求不存在");
             }
         } else {
             result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
