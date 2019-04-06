@@ -53,6 +53,12 @@
       <if test="entity.projectId != null">
         AND project_id = #{entity.projectId,jdbcType=BIGINT}
       </if>
+      <if test="entity.statusList != null">
+        AND status NOT IN
+        <foreach collection="entity.statusList" item="item" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
       <if test="entity.deleted != null">
         AND deleted = #{entity.deleted,jdbcType=INTEGER}
       </if>
@@ -75,13 +81,15 @@
     <include refid="Blob_Column_List" />
     FROM cd_requirement
     <include refid="where_fragment"/>
-    AND project_id in (
-    SELECT
-    project.id
-    FROM cd_project project
-    WHERE (project.create_by = #{userId,jdbcType=BIGINT} OR (SELECT COUNT(1) FROM cd_usergroup u_group
-    WHERE u_group.user_id = #{userId,jdbcType=BIGINT} and u_group.group_id = project.group_id) > 0 )
-    )
+    <if test="userId != null">
+      AND project_id in (
+      SELECT
+      project.id
+      FROM cd_project project
+      WHERE (project.create_by = #{userId,jdbcType=BIGINT} OR (SELECT COUNT(1) FROM cd_usergroup u_group
+      WHERE u_group.user_id = #{userId,jdbcType=BIGINT} and u_group.group_id = project.group_id) > 0 )
+      )
+    </if>
   </select>
 
   <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >

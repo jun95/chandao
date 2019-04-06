@@ -5,6 +5,7 @@ import com.selfboot.chandao.persist.BaseEntity;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
 
 public class CdRequirement extends BaseEntity {
 
@@ -68,6 +69,18 @@ public class CdRequirement extends BaseEntity {
     private String requireNameLike;
 
     private String createNameLike;
+    /**
+     * 状态集
+     */
+    private List<String> statusList;
+
+    public List<String> getStatusList() {
+        return statusList;
+    }
+
+    public void setStatusList(List<String> statusList) {
+        this.statusList = statusList;
+    }
 
     public String getCreateNameLike() {
         return createNameLike;

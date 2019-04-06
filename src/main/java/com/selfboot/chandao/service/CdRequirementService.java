@@ -12,5 +12,5 @@ public interface CdRequirementService extends BootStrapService<CdRequirement> {
 
     void updateByProjectId(CdRequirement cdRequirement);
 
-    List<CdRequirement> selectListByProject(CdRequirement entity, Long id);
+    List<CdRequirement> selectListByProject(CdRequirement entity, Long userId);
 }

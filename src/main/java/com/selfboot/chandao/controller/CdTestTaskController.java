@@ -4,16 +4,16 @@ import com.selfboot.chandao.common.ProjectStatusEnum;
 import com.selfboot.chandao.common.ResponseResult;
 import com.selfboot.chandao.common.ResponseStatus;
 import com.selfboot.chandao.common.ServiceResult;
-import com.selfboot.chandao.domain.CdActionLog;
-import com.selfboot.chandao.domain.CdTask;
-import com.selfboot.chandao.domain.CdTestTask;
-import com.selfboot.chandao.domain.CdUser;
+import com.selfboot.chandao.domain.*;
+import com.selfboot.chandao.exception.GlobalException;
 import com.selfboot.chandao.listener.DataCallback;
 import com.selfboot.chandao.persist.CrudService;
 import com.selfboot.chandao.persist.DataCallbackParam;
 import com.selfboot.chandao.service.CdActionLogService;
+import com.selfboot.chandao.service.CdProjectService;
 import com.selfboot.chandao.service.CdTestTaskService;
 import com.selfboot.chandao.util.ActionLogHelper;
+import com.selfboot.chandao.util.DateUtil;
 import com.selfboot.chandao.util.UserUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
@@ -37,6 +37,9 @@ public class CdTestTaskController extends BaseController<CdTestTask,CdTestTaskSe
 
     @Autowired
     private CdActionLogService cdActionLogService;
+
+    @Autowired
+    private CdProjectService cdProjectService;
 
     /**
      * 获取测试任务列表
@@ -71,8 +74,34 @@ public class CdTestTaskController extends BaseController<CdTestTask,CdTestTaskSe
      */
     @RequiresRoles(value={"管理员", "测试人员"},logical = Logical.OR)
     @PostMapping("addTestTask")
-    public ResponseResult<String> addTestTask(HttpServletRequest request, @RequestBody @Valid CdTestTask cdTestTask) {
+    public ResponseResult<String> addTestTask(HttpServletRequest request, @RequestBody @Valid CdTestTask cdTestTask) throws GlobalException {
         ResponseResult<String> result = new ResponseResult<>();
+
+        Date begin = cdTestTask.getBegin();
+        Date end = cdTestTask.getEnd();
+        int days = DateUtil.dayDiff(end, begin);
+
+        //日期不符合要求
+        if (days <= 0) {
+            result.setResponseStatus(ResponseStatus.ERROR);
+            result.setMessage("开始日期需小于结束日期");
+            return result;
+        }
+
+        Long projectId = cdTestTask.getProjectId();
+        CdProject entity = new CdProject();
+        entity.setId(projectId);
+        ServiceResult serviceResult1 = cdProjectService.queryOne(entity);
+        if (serviceResult1.isSuccess()) {
+            entity = (CdProject) serviceResult1.getResult();
+
+            if (entity == null) {
+                throw new GlobalException("项目不存在");
+            }
+
+        } else {
+            throw new GlobalException("项目不存在");
+        }
 
         CdUser user = UserUtil.getUser(request);
         /*cdTestTask.setOpenedBy(user.getId());
@@ -93,6 +122,22 @@ public class CdTestTaskController extends BaseController<CdTestTask,CdTestTaskSe
         }
 
         return result;
+    }
+
+    /**
+     * 是否在项目时间范围内
+     * @param entity
+     * @param start
+     * @param end
+     */
+    private boolean checkTimeScope(CdProject entity, long start, long end) {
+        long compareStart = entity.getBegin().getTime();
+        long compareEnd = entity.getEnd().getTime();
+
+        if (compareEnd > start && compareStart < end) {  //说明有重叠
+            return true;
+        }
+        return false;
     }
 
     /**

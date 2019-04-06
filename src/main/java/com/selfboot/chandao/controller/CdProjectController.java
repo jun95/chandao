@@ -7,6 +7,7 @@ import com.selfboot.chandao.common.ServiceResult;
 import com.selfboot.chandao.domain.CdProject;
 import com.selfboot.chandao.domain.CdRequirement;
 import com.selfboot.chandao.domain.CdUser;
+import com.selfboot.chandao.exception.GlobalException;
 import com.selfboot.chandao.listener.DataCallback;
 import com.selfboot.chandao.persist.CrudService;
 import com.selfboot.chandao.persist.DataCallbackParam;
@@ -23,10 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by hwj on 2019/3/21.
@@ -96,7 +94,7 @@ public class CdProjectController extends BaseController<CdProject, CdProjectServ
      */
     @RequiresRoles(value={"管理员", "项目经理"},logical = Logical.OR)
     @PostMapping("updateStatus")
-    public ResponseResult<String> updateStatus(HttpServletRequest request,@RequestBody @Valid ProjectVO projectVO) {
+    public ResponseResult<String> updateStatus(HttpServletRequest request,@RequestBody @Valid ProjectVO projectVO) throws GlobalException {
         ResponseResult<String> result = new ResponseResult<>();
         CdProject cdProject = new CdProject();
         cdProject.setId(projectVO.getId());
@@ -110,6 +108,15 @@ public class CdProjectController extends BaseController<CdProject, CdProjectServ
 
                 ProjectStatusEnum status = ProjectStatusEnum.getStatus(cdProject.getStatus());
                 buildFinalProject(cdProject,status,user);
+
+                /*if (status == ProjectStatusEnum.DONE) {
+                    CdRequirement require = new CdRequirement();
+                    require.setStatusList(buildStatusList(ProjectStatusEnum.DONE.getStatusName()));
+                    List<CdRequirement> requirementList = cdRequirementService.selectListByProject(require, null);
+                    if (!CollectionUtils.isEmpty(requirementList)) {
+                        throw new GlobalException("需求未能全部关闭，当需求全部关闭时，项目才能关闭");
+                    }
+                }*/
 
                 serviceResult = targetService.save(Collections.singletonList(cdProject));
 
@@ -129,6 +136,13 @@ public class CdProjectController extends BaseController<CdProject, CdProjectServ
             result.setMessage((String) serviceResult.getErrorMessage().get(0));
         }
         return result;
+    }
+
+    private List<String> buildStatusList(String... statuses) {
+        if (statuses == null || statuses.length == 0) {
+            return null;
+        }
+        return Arrays.asList(statuses);
     }
 
     private void buildFinalProject(CdProject cdProject, ProjectStatusEnum status, CdUser user) {

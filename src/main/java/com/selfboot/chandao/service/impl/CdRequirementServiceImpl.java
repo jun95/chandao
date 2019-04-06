@@ -21,7 +21,7 @@ public class CdRequirementServiceImpl extends BootStrapServiceImpl<CdRequirement
     }
 
     @Override
-    public List<CdRequirement> selectListByProject(CdRequirement entity, Long id) {
-        return targetDAO.selectListByProject(entity,id);
+    public List<CdRequirement> selectListByProject(CdRequirement entity, Long userId) {
+        return targetDAO.selectListByProject(entity,userId);
     }
 }

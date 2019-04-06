@@ -165,6 +165,55 @@ public class CdRequirementController extends BaseController<CdRequirement, CdReq
     }
 
     /**
+     * 更新需求状态
+     * @param request
+     * @param cdRequirement
+     * @return
+     */
+    @RequiresRoles(value={"管理员", "项目经理","需求人员"},logical = Logical.OR)
+    @PostMapping("updateStatus")
+    public ResponseResult<String> updateStatus(HttpServletRequest request,@RequestBody CdRequirement cdRequirement) {
+        ResponseResult<String> result = new ResponseResult<>();
+        CdRequirement query = new CdRequirement();
+        query.setId(cdRequirement.getId());
+        ServiceResult serviceResult = targetService.queryOne(query);
+        if (serviceResult.isSuccess()) {
+            query = (CdRequirement) serviceResult.getResult();
+            if (query != null) {
+                cdRequirement.setUpdate(true);
+
+                ProjectStatusEnum status = ProjectStatusEnum.getStatus(cdRequirement.getStatus());
+                buildFinalRequirement(cdRequirement,status,UserUtil.getUser(request));
+
+                serviceResult = targetService.save(Collections.singletonList(cdRequirement));
+                if (serviceResult.isSuccess()) {
+
+                    result.setResponseStatus(ResponseStatus.OK);
+                    return result;
+                }
+                result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+            } else {
+                result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+                result.setMessage("测试任务不存在");
+            }
+        } else {
+            result.setResponseStatus(com.selfboot.chandao.common.ResponseStatus.ERROR);
+            result.setMessage((String) serviceResult.getErrorMessage().get(0));
+        }
+        return result;
+    }
+
+    private void buildFinalRequirement(CdRequirement cdRequirement, ProjectStatusEnum status, CdUser user) {
+        switch (status) {
+            case DONE:
+                cdRequirement.setClosedBy(user.getId());
+                cdRequirement.setClosedName(user.getAccount());
+                cdRequirement.setClosedDate(new Date());
+                break;
+        }
+    }
+
+    /**
      * 删除需求
      * @param request
      * @param cdRequirement
