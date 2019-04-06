@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * Created by 87570 on 2019/3/16.
  */
-public interface BaseService<V extends BaseEntity> {
+public interface BaseService<V extends BaseEntity> extends RootService {
 
     /**
      * 保存数据（插入或更新）

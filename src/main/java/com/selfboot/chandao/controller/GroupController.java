@@ -63,7 +63,7 @@ public class GroupController extends BaseController<CdGroup, CdGroupService> {
             cdGroup.setId(Long.parseLong(id));
         }
         cdGroup.setDeleted(1);
-        return getRecords(cdGroup, offset, limit, new DataCallback<CdGroup>() {
+        return getRecords(cdGroup, offset, limit, new DataCallback<CdGroup,CdGroup>() {
             @Override
             public List<CdGroup> onPushData(CrudService crudService, DataCallbackParam<CdGroup> params) {
                 return targetService.getUserGroupList(params.getEntity(),UserUtil.isAdmin(request) ? null : UserUtil.getUser(request).getId());
@@ -104,7 +104,7 @@ public class GroupController extends BaseController<CdGroup, CdGroupService> {
         }
 
         if (cdUserGroup.getProjectId() == null) {
-            return getRecords(cdUserGroupService, cdUserGroup, offset, limit, new DataCallback<CdUserGroup>() {
+            return getRecords(cdUserGroupService, cdUserGroup, offset, limit, new DataCallback<CdUserGroup,CdUserGroup>() {
                 @Override
                 public List<CdUserGroup> onPushData(CrudService crudService, DataCallbackParam<CdUserGroup> params) {
                     CdUserGroupService service = (CdUserGroupService) crudService;
@@ -113,7 +113,7 @@ public class GroupController extends BaseController<CdGroup, CdGroupService> {
                 }
             });
         } else {
-            return getRecords(cdUserGroupService, cdUserGroup, offset, limit, new DataCallback<CdUserGroup>() {
+            return getRecords(cdUserGroupService, cdUserGroup, offset, limit, new DataCallback<CdUserGroup,CdUserGroup>() {
                 @Override
                 public List<CdUserGroup> onPushData(CrudService crudService, DataCallbackParam<CdUserGroup> params) {
                     CdUserGroupService service = (CdUserGroupService) crudService;

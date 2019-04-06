@@ -88,7 +88,7 @@ public class StatisticsController {
         if (UserUtil.isAdmin(request)) {
             queryResult = cdProjectService.selectRecord(cdProject, offset, limit);
         } else {
-            queryResult = cdProjectService.selectRecord(cdProject, offset, limit, new DataCallback<CdProject>() {
+            queryResult = cdProjectService.selectRecord(cdProject, offset, limit, new DataCallback<CdProject,CdProject>() {
                 @Override
                 public List<CdProject> onPushData(CrudService crudService, DataCallbackParam<CdProject> params) {
                     return cdProjectService.selectListByGroup(params.getEntity(), UserUtil.getUser(request).getId());

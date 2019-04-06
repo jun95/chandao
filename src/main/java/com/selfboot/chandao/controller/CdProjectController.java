@@ -55,7 +55,7 @@ public class CdProjectController extends BaseController<CdProject, CdProjectServ
             return getRecords(cdProject, offset, limit);
         }
 
-        return getRecords(cdProject, offset, limit, new DataCallback<CdProject>() {
+        return getRecords(cdProject, offset, limit, new DataCallback<CdProject,CdProject>() {
             @Override
             public List<CdProject> onPushData(CrudService crudService, DataCallbackParam<CdProject> params) {
                 return targetService.selectListByGroup(params.getEntity(),UserUtil.getUser(request).getId());

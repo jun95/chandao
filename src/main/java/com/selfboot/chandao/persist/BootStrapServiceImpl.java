@@ -44,7 +44,7 @@ public class BootStrapServiceImpl<T extends BaseEntity,D extends CrudDAO<T>> ext
     }
 
     @Override
-    public Map<String, Object> selectRecord(T t, Integer offset, Integer limit, DataCallback<T> callback) {
+    public Map<String, Object> selectRecord(T t, Integer offset, Integer limit, DataCallback<T,T> callback) {
         // 准备结果集
         Map<String, Object> resultSet = new HashMap<>();
         long total = 0;

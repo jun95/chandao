@@ -12,6 +12,6 @@ public interface BootStrapService<T extends BaseEntity> extends BaseService<T> {
 
     Map<String, Object> selectRecord(T t, Integer offset, Integer limit);
 
-    Map<String, Object> selectRecord(T t, Integer offset, Integer limit, DataCallback<T> callback);
+    Map<String, Object> selectRecord(T t, Integer offset, Integer limit, DataCallback<T,T> callback);
 
 }

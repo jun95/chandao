@@ -59,7 +59,7 @@ public class CdBugController extends BaseController<CdBug,CdBugService> {
             return getRecords(cdBug, offset, limit);
         }
 
-        return getRecords(cdBug, offset, limit, new DataCallback<CdBug>() {
+        return getRecords(cdBug, offset, limit, new DataCallback<CdBug,CdBug>() {
             @Override
             public List<CdBug> onPushData(CrudService crudService, DataCallbackParam<CdBug> params) {
                 return targetService.selectListByProject(params.getEntity(),UserUtil.getUser(request).getId());

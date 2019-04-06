@@ -1,7 +1,6 @@
 package com.selfboot.chandao.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.selfboot.chandao.domain.CdUser;
 import com.selfboot.chandao.listener.DataCallback;
 import com.selfboot.chandao.persist.BaseEntity;
 import com.selfboot.chandao.persist.BootStrapService;
@@ -26,10 +25,10 @@ public class BaseController<T extends BaseEntity,S extends BootStrapService<T>> 
     protected <V extends BaseEntity> Map<String,Object> getRecords(BootStrapService<V> service,V v,
                                                                    Integer offset,
                                                                    Integer limit,
-                                                                   DataCallback<V> callback) {
+                                                                   DataCallback<V,V> callback) {
         Map<String,Object> responseContent = new HashMap<>();
         long total = 0;
-        List<CdUser> rows = null;
+        List<V> rows = null;
         Map<String, Object> queryResult = null;
         if (callback == null) {
             queryResult = service.selectRecord(v,offset,limit);
@@ -40,7 +39,7 @@ public class BaseController<T extends BaseEntity,S extends BootStrapService<T>> 
         logger.info("查询出的结果为：{}", JSON.toJSONString(queryResult));
 
         if (queryResult != null) {
-            rows = (List<CdUser>) queryResult.get("data");
+            rows = (List<V>) queryResult.get("data");
             total = (long) queryResult.get("total");
         }
         responseContent.put("rows", rows);
@@ -64,7 +63,7 @@ public class BaseController<T extends BaseEntity,S extends BootStrapService<T>> 
 
     protected Map<String,Object> getRecords(T t,
                                             Integer offset,
-                                            Integer limit, DataCallback<T> callback) {
+                                            Integer limit, DataCallback<T,T> callback) {
 
         return getRecords(targetService,t,offset,limit,callback);
     }

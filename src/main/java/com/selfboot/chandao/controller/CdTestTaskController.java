@@ -58,7 +58,7 @@ public class CdTestTaskController extends BaseController<CdTestTask,CdTestTaskSe
             return getRecords(cdTestTask, offset, limit);
         }
 
-        return getRecords(cdTestTask, offset, limit, new DataCallback<CdTestTask>() {
+        return getRecords(cdTestTask, offset, limit, new DataCallback<CdTestTask,CdTestTask>() {
             @Override
             public List<CdTestTask> onPushData(CrudService crudService, DataCallbackParam<CdTestTask> params) {
                 return targetService.selectListByProject(params.getEntity(),UserUtil.getUser(request).getId());

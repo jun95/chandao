@@ -83,7 +83,7 @@ public class UserController extends BaseController<CdUser, CdUserService> {
         }
 
         if (cdUser.getGroupId() == null) {
-            return getRecords(cdUser, offset, limit, new DataCallback<CdUser>() {
+            return getRecords(cdUser, offset, limit, new DataCallback<CdUser,CdUser>() {
                 @Override
                 public List<CdUser> onPushData(CrudService crudService, DataCallbackParam<CdUser> params) {
                     CdUserService cdUserService = (CdUserService) crudService;
@@ -91,7 +91,7 @@ public class UserController extends BaseController<CdUser, CdUserService> {
                 }
             });
         } else {
-            return getRecords(cdUser, offset, limit, new DataCallback<CdUser>() {
+            return getRecords(cdUser, offset, limit, new DataCallback<CdUser,CdUser>() {
                 @Override
                 public List<CdUser> onPushData(CrudService crudService, DataCallbackParam<CdUser> params) {
                     CdUserService cdUserService = (CdUserService) crudService;

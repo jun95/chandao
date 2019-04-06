@@ -9,7 +9,7 @@ import java.util.Map;
  * 增删改查基础DAO
  * Created by hwj on 2018/10/23.
  */
-public interface CrudDAO<T> {
+public interface CrudDAO<T> extends RootDAO {
 
     Integer deleteByPrimaryKey(Long id);
 
